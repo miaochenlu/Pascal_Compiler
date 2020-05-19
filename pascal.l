@@ -35,18 +35,11 @@ whitespace  [\t]+
 "+"             {return PLUS;}
 "-"             {return MINUS;}
 "*"             {return MUL;}
-"/"             {return DIV;}
 "/" | "div"     {return DIV;}
-
 "OR"            {return OR;}
 "AND"           {return AND;}
 "NOT"           {return NOT;}
-{SIGN}?{number} {return INTEGER;}
-{SIGN}?(({number}\.{number})|({number}\.{number}e{SIGN}?{number})|({number}e{SIGN}?{number})) {return REAL;}
-\'.\'           {return CHAR;}
-
 "ARRAY"         {return ARRAY;}
-
 "PROGRAM"       {return PROGRAM;}
 "PROCEDURE"     {return PROCEDURE;}
 "FUNCTION"      {return FUNCTION;}
@@ -58,8 +51,6 @@ whitespace  [\t]+
 "END"           {return END;}
 "VAR"           {return VAR;}
 ":="            {return ASSIGN;}
-
-
 "IF"            {return IF;}
 "THEN"          {return THEN;}
 "ELSE"          {return ELSE;}
@@ -73,22 +64,25 @@ whitespace  [\t]+
 "CASE"          {return CASE;}
 "GOTO"          {return GOTO;}
 "READ"          {return READ;}
-
 "FALSE" | "TRUE" | "MAXINT"                                         {return SYS_CON;}
 "ABS" | "CHR" | "ODD" | "ORD" | "PRED" | "SQR" | "SQRT" | "SUCC"    {return SYS_FUNCT;}
 "WRITE" | "WRITELN"                                                 {return SYS_PROC;}
 "BOOLEAN" | "CHAR" | "INTEGER" | "REAL"                             {return SYS_TYPE}
 
+{SIGN}?{number} {return INTEGER;}
+{SIGN}?(({number}\.{number})|({number}\.{number}e{SIGN}?{number})|({number}e{SIGN}?{number})) {return REAL;}
+\'.\'           {return CHAR;}
 {identifier}    {return ID;}
                 {return NAME;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
-"{"             { char c;
-                  do
-                  { c = input();
-                    if (c == EOF) break;
-                    if (c == '\n') lineno++;
-                  } while (c != '}');
+"{"             { 
+                    char c;
+                    do { 
+                        c = input();
+                        if (c == EOF) break;
+                        if (c == '\n') lineno++;
+                    } while (c != '}');
                 }
 .               {return ERROR;}
 
