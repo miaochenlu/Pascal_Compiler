@@ -1,113 +1,157 @@
 #include<iostream>
 #include<vector>
+using namespace std;
+class Identifier;
+class Program;
+class ProgramHead;
+class Routine;
+class RoutineHead; ///
+class RoutineBody;
+class LabelDecl;
+typedef vector<LabelDecl*> LabelDeclList;
+class ConstDecl;
+typedef vector<ConstDecl*> ConstDeclList;
+class TypeDecl;
+class TypeDefinition;
+typedef vector<TypeDefinition*> TypeDeflList;
+class VarDecl;
+typedef vector<VarDecl*> VarDeclList;
+class RoutinePart;
+
+//for const_part
+class ConstExprList;
+class ConstValue;
+//for type_part
+class SimpleTypeDecl;
+class ArrayTypeDecl;
+class RecordTypeDecl;
+class FieldDecl;
+typedef vector<FieldDecl*> FieldDeclList;
+class NameList;
+//for routine_part
+class FuncDecl;
+class FuncHead;
+class SubRoutine;
+class Parameters;
+class ParaDeclList;
+class ParaTypeList;
+class VarParaList;
+class ProcDecl;
+class ProcHead;
+//for routine_body
+class CompoundStmt;
+class StmtList;
+class Stmt;
+class NonLabelStmt;
+class AssignStmt;
+class ProcStmt;
+class IfStmt;
+class ElseClause;
+class RepeatStmt;
+class WhileStmt;
+class ForStmt;
+class Direction;
+class CaseStmt;
+typedef vector<CaseStmt*> CaseExprList;
+class CaseExpr;
+class GotoStmt;
+class Expression;
+typedef vector<Expression*> ExpressionList;
+class Expr;
+class Term;
+class Factor;
+class ArgsList;
 
 
-
-class AstNode
+class BasicAstNode
 { 
+public:  
+    BasicAstNode(){};
+    ~BasicAstNode(){};
 }; 
 
-class Statement: public AstNode 
-{};
+class Program: public BasicAstNode
+{
+public:
+    ProgramHead* program_head;
+    Routine* routine;
+};
 
-class StatementList: public Statement
-{};
+class ProgramHead: public BasicAstNode 
+{
+public: 
 
-class Program: public AstNode
-{};
+};
 
-class Routine: public Program
-{};
+class Routine: public BasicAstNode 
+{
+public: 
+    RoutineHead* routine_head;
+    RoutineBody* routine_body;
 
-class Expression: public AstNode 
-{};
+};
 
-class LabelDecl: public Statement
-{};
+class RoutineHead: public BasicAstNode 
+{
+public:
+    LabelDeclList   label_part;
+    ConstDeclList   const_part;
+    TypeDeflList    type_part;
+    VarDeclList     var_part;
+    RoutinePart*    routine_part;
 
-class ArrayType: public Statement
-{};
+};
 
-class FieldDecl: public Statement
-{};
+class LabelDecl: public BasicAstNode {};
 
-class RecordType: public Statement
-{};
+class ConstDecl: public BasicAstNode 
+{
+public:  
+    Identifier* name;
+    ConstValue* const_value;
 
-class Identifier: public Expression
-{};
+};
 
-class ArrayRef: public Expression
-{};
+/************************** TYPE ************************/
+enum class TypeKind {
+    DEFAULT, INT, REAL, CHAR, STRING, ARRAY, RECORD, BOOLEAN,
+};
 
-class RecordRef: public Expression
-{};
+class TypeDefinition: public BasicAstNode
+{
+public:  
+    Identifier* name;
+    TypeDecl*   type_decl;
 
-class ConstValue: public Expression
-{};
+};
 
-class TypeCosnt: public Statement 
-{};
+class TypeDecl: public BasicAstNode
+{
+public:  
 
-class ConstDecl: public Statement
-{};
+};
 
-class VarDecl: public Statement
-{};
+class BasicTypeNode: public BasicAstNode
+{
+public:  
+    TypeKind type = TypeKind::DEFAULT;
+};
 
-class IntegerType: public ConstValue
-{};
+class ArrayType: public BasicTypeNode
+{
+public: 
 
-class RealType: public ConstValue
-{};
+};
+class RecordType: public BasicTypeNode
+{
+public:  
+    FieldDeclList* field_list;
+    RecordType() { this->type = TypeKind::RECORD;}
+};
 
-class CharType: public ConstValue
-{};
-
-class BooleanType: public ConstValue
-{};
-
-class RangeType: public Expression
-{};
-
-class FuncCall: public Expression, Statement
-{};
-
-class ProcCall: public Statement
-{};
-
-class SysProcCall: public ProcCall
-{};
-
-class SysFuncCall: public FuncCall
-{};
-
-class Operator: public Expression
-{};
-
-class AssignmentStmt: public Statement
-{};
-
-class IfStmt: public Statement
-{};
-
-class WhileStmt: public Statement
-{};
-
-class RepeatStmt: public Statement
-{};
-
-class ForStmt: public Statement
-{};
-
-class CaseStmt: public Statement
-{};
-
-class SwitchStmt: public Statement
-{};
-
-class LabelStmt: public Statement
-{};
-
-class GotoStmt: public Statement
-{};
+class FieldDecl: public BasicAstNode
+{
+public: 
+    Identifier* name;
+    
+}
