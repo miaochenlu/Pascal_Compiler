@@ -11,7 +11,7 @@ class Program;
 class ProgramHead;
 class Routine;
 class RoutineHead;
-typedef vector<Stmt*> RoutineBody;
+typedef vector<Stmt*> StmtList;
 
 /****************program head********************/
 class Parameter;
@@ -106,7 +106,7 @@ class Routine: public BasicAstNode
 {
 public: 
     RoutineHead* routine_head;
-    RoutineBody* routine_body;
+    StmtList* routine_body;
 
 };
 
@@ -198,6 +198,10 @@ public:
 };
 
 /***************** routine body ****************/
+enum class Direction {
+    TO, DOWNTO
+};
+
 class Stmt: public BasicAstNode 
 {
 public:
@@ -206,6 +210,10 @@ public:
 
 class AssignStmt: public Stmt
 {
+public:
+    Expression* name;   //ID, arrayref, recordref都继承了expression
+    Expression* value;
+    AssignStmt(Expression* name, Expression* value): name(name), value(value) {}
 
 };
 class ProcCallStmt: public Stmt
@@ -214,20 +222,47 @@ class ProcCallStmt: public Stmt
 };
 class IfStmt: public Stmt
 {
+public: 
+    Expression* cond;
+    StmtList* thenStmts;
+    StmtList* elseStmts;
+    
+    //with else clause
+    IfStmt(Expression* cond, StmtList* thenStmts, StmtList* elseStmts): cond(cond), thenStmts(thenStmts), elseStmts(elseStmts) {}
+    //miss else clause
+    IfStmt(Expression* cond, StmtList* thenStmts): cond(cond), thenStmts(thenStmts) {}
 
 };
+
 class RepeatStmt: public Stmt
 {
-
+public:
+    Expression* cond;
+    StmtList* loopStmts;
+    RepeatStmt(Expression* cond, StmtList* loopStmts): cond(cond), loopStmts(loopStmts) {}
 };
+
 class WhileStmt: public Stmt
 {
+public:
+    Expression* cond;
+    StmtList* loopStmts;
+    WhileStmt(Expression* cond, StmtList* loopStmts): cond(cond), loopStmts(loopStmts) {}
 
 };
+
 class ForStmt: public Stmt
 {
-
+public:  
+    Identifier* name;
+    Expression* start;
+    Direction direction;
+    Expression* end;
+    StmtList* loopStmts;
+    ForStmt(Identifier* name, Expression* start, Direction direction, Expression* end, StmtList* loopStmts): 
+        name(name), start(start), direction(direction), end(end), loopStmts(loopStmts) {}
 };
+
 class CaseStmt: public Stmt
 {
 
@@ -246,16 +281,52 @@ enum class BinaryOperator {
 enum class UnaryOperator {
     NOT,
 };
+enum class SYS_FUNC {
+    READ, READLN,
+    WRITE, WRITELN,
+};
 
 class Expression: public BasicAstNode
 {
 
 };
+
 class BinaryExpr: public Expression
 {
-
+public:  
+    BinaryOperator bOp;
+    Expression* leftOperand, *rightOperand;
+    BinaryExpr(Expression* leftOperand, BinaryOperator bOp, Expression* rightOperand): leftOperand(leftOperand), bOp(bOp), rightOperand(rightOperand) {}
 };
+
 class UnaryExpr: public Expression
 {
+public:  
+    UnaryOperator uOp;
+    Expression* operand;
+    UnaryExpr(UnaryOperator uOp, Expression* operand): uOp(uOp), operand(operand) {}
 
 };
+
+class Identifier: public Expression
+{
+public: 
+    string name;
+    Identifier(const string& name): name(name) {}
+};
+
+class ArrayElementRef: public Expression
+{
+public:
+    Identifier* arrayName;
+    Expression* index;
+    ArrayElementRef(Identifier* arrayName, Expression* index): arrayName(arrayName), index(index) {}
+};
+
+class RecordElementRef: public Expression
+{
+public:
+    Identifier* recordName;
+    Identifier* field;
+    RecordElementRef(Identifier* recordName, Identifier* field): recordName(recordName), field(field) {}
+}
