@@ -1,67 +1,82 @@
 #include<iostream>
 #include<vector>
 using namespace std;
+
+/************************************************/
 class Identifier;
+class Stmt;
+typedef vector<Identifier*> NameList;
+/******************program***********************/
 class Program;
 class ProgramHead;
 class Routine;
-class RoutineHead; ///
-class RoutineBody;
+class RoutineHead;
+typedef vector<Stmt*> RoutineBody;
+
+/****************program head********************/
+class Parameter;
+typedef vector<Parameter*> ParamList;
+
+/****************** routine head ****************/
 class LabelDecl;
-typedef vector<LabelDecl*> LabelDeclList;
 class ConstDecl;
-typedef vector<ConstDecl*> ConstDeclList;
 class TypeDecl;
-class TypeDefinition;
-typedef vector<TypeDefinition*> TypeDeflList;
+class VarDecl;
+class RoutinePart;
+typedef vector<LabelDecl*>      LabelDeclList;
+typedef vector<ConstDecl*>      ConstDeclList;
+typedef vector<TypeDecl*>       TypeDecllList;
+typedef vector<VarDecl*>        VarDeclList;
+typedef vector<Program*>        RoutinePartlList;
+
+/****************** const ***********************/
+class BasicConst;
+class IntegerNode;
+class RealNode;
+class CharNode;
+class StringNode;
+class BooleanNode;
+class RangeNode;
+
+/****************** type ************************/
+class BasicType;
+class SimpleType;
+class IntegerType;
+class RealType;
+class StringType;
+class BooleanType;
+class ArrayType;
+class RecordType;
+class FieldDecl;
+
+/****************** VAR *************************/
 class VarDecl;
 typedef vector<VarDecl*> VarDeclList;
-class RoutinePart;
 
-//for const_part
-class ConstExprList;
-class ConstValue;
-//for type_part
-class SimpleTypeDecl;
-class ArrayTypeDecl;
-class RecordTypeDecl;
-class FieldDecl;
-typedef vector<FieldDecl*> FieldDeclList;
-class NameList;
-//for routine_part
-class FuncDecl;
-class FuncHead;
-class SubRoutine;
-class Parameters;
-class ParaDeclList;
-class ParaTypeList;
-class VarParaList;
-class ProcDecl;
-class ProcHead;
-//for routine_body
-class CompoundStmt;
-class StmtList;
-class Stmt;
-class NonLabelStmt;
+/****************** routine body ****************/
 class AssignStmt;
-class ProcStmt;
+class ProcCallStmt;
 class IfStmt;
-class ElseClause;
 class RepeatStmt;
 class WhileStmt;
 class ForStmt;
-class Direction;
 class CaseStmt;
-typedef vector<CaseStmt*> CaseExprList;
-class CaseExpr;
 class GotoStmt;
-class Expression;
-typedef vector<Expression*> ExpressionList;
-class Expr;
-class Term;
-class Factor;
-class ArgsList;
 
+/****************** expr ************************/
+class Expression;
+class BinaryExpr;
+class UnaryExpr;
+typedef vector<Expression*> ExpressionList;
+
+
+/*
+|---------------------------------------------------------------|
+|                                                               |
+|                             START                             |
+|                                                               |
+|---------------------------------------------------------------|
+*/
 
 class BasicAstNode
 { 
@@ -70,6 +85,7 @@ public:
     ~BasicAstNode(){};
 }; 
 
+/******************program***********************/
 class Program: public BasicAstNode
 {
 public:
@@ -80,6 +96,9 @@ public:
 class ProgramHead: public BasicAstNode 
 {
 public: 
+    Identifier* name;
+    ParamList*  parameters;
+    BasicType*  returnType;
 
 };
 
@@ -96,62 +115,147 @@ class RoutineHead: public BasicAstNode
 public:
     LabelDeclList   label_part;
     ConstDeclList   const_part;
-    TypeDeflList    type_part;
+    TypeDecllList   type_part;
     VarDeclList     var_part;
     RoutinePart*    routine_part;
 
 };
 
-class LabelDecl: public BasicAstNode {};
-
-class ConstDecl: public BasicAstNode 
+/****************program head********************/
+class Parameter: public BasicAstNode
 {
 public:  
     Identifier* name;
-    ConstValue* const_value;
+    BasicType*  type;
 
 };
 
-/************************** TYPE ************************/
+
+
+/******************* TYPE ***********************/
 enum class TypeKind {
     DEFAULT, INT, REAL, CHAR, STRING, ARRAY, RECORD, BOOLEAN,
 };
 
-class TypeDefinition: public BasicAstNode
-{
-public:  
-    Identifier* name;
-    TypeDecl*   type_decl;
-
-};
 
 class TypeDecl: public BasicAstNode
 {
 public:  
+    Identifier*  name;
+    BasicType*   type;
 
 };
 
-class BasicTypeNode: public BasicAstNode
+class BasicType: public BasicAstNode
 {
 public:  
     TypeKind type = TypeKind::DEFAULT;
 };
 
-class ArrayType: public BasicTypeNode
+class ArrayType: public BasicType
 {
 public: 
-
+/**
+ * initialization
+ **/ 
+    ArrayType() { 
+        this->type = TypeKind:: ARRAY;
+    }
 };
-class RecordType: public BasicTypeNode
+class RecordType: public BasicType
 {
 public:  
-    FieldDeclList* field_list;
     RecordType() { this->type = TypeKind::RECORD;}
+
+    VarDeclList* field_decl_list;
 };
 
-class FieldDecl: public BasicAstNode
+class IntegerType: public BasicType 
 {
 public: 
-    Identifier* name;
-    
-}
+    IntegerType() { this->type = TypeKind::INT; }
+};
+
+class RealType: public BasicType 
+{
+public: 
+    RealType() { this->type = TypeKind::REAL; }
+};
+
+class StringType: public BasicType
+{
+public: 
+    StringType() { this->type = TypeKind::STRING; }
+};
+
+/******************** VAR ***********************/
+
+class VarDecl: public BasicAstNode
+{
+public:  
+    NameList* name_list;
+    BasicType* type;
+};
+
+/***************** routine body ****************/
+class Stmt: public BasicAstNode 
+{
+public:
+
+};
+
+class AssignStmt: public Stmt
+{
+
+};
+class ProcCallStmt: public Stmt
+{
+
+};
+class IfStmt: public Stmt
+{
+
+};
+class RepeatStmt: public Stmt
+{
+
+};
+class WhileStmt: public Stmt
+{
+
+};
+class ForStmt: public Stmt
+{
+
+};
+class CaseStmt: public Stmt
+{
+
+};
+class GotoStmt: public Stmt
+{
+
+};
+
+/******************** expr **********************/
+enum class BinaryOperator {
+    GE, GT, LE, LT, EQUAL, UNEQUAL,
+    PLUS, MINUS, MUL, DIV, MOD,
+    OR, AND
+};
+enum class UnaryOperator {
+    NOT,
+};
+
+class Expression: public BasicAstNode
+{
+
+};
+class BinaryExpr: public Expression
+{
+
+};
+class UnaryExpr: public Expression
+{
+
+};
