@@ -2,11 +2,13 @@
 #include<vector>
 using namespace std;
 
+namespace ast {
 /************************************************/
 class Identifier;
 class Expression;
 class Stmt;
 typedef vector<Identifier*> NameList;
+
 /******************program***********************/
 class Program;
 class ProgramHead;
@@ -47,12 +49,9 @@ class RealType;
 class StringType;
 class BooleanType;
 class RangeType;
+class VoidType;
 class ArrayType;
 class RecordType;
-
-/****************** VAR *************************/
-class VarDecl;
-typedef vector<VarDecl*> VarDeclList;
 
 /****************** routine body ****************/
 class AssignStmt;
@@ -306,6 +305,12 @@ public:
     RangeType(Expression* lowerB, Expression* upperB): lowerB(lowerB), upperB(upperB) {}
 };
 
+class VoidType: public SimpleType
+{
+public:
+    VoidType() { type = TypeKind::VOID; }
+};
+
 //这个可能会有点问题
 class UserDefType: public SimpleType
 {
@@ -452,7 +457,8 @@ public:
 class ReadProcCall: public ProcCallStmt
 {
 public:
-
+    Expression* readElement;
+    ReadProcCall(Expression* readElement): readElement(readElement) {}
 };
 
 /******************** expr **********************/
@@ -462,7 +468,7 @@ enum class BinaryOperator {
     OR, AND
 };
 enum class UnaryOperator {
-    NOT,
+    NOT, NEG,
 };
 
 class BinaryExpr: public Expression
@@ -503,4 +509,6 @@ public:
     Identifier* recordName;
     Identifier* field;
     RecordElementRef(Identifier* recordName, Identifier* field): recordName(recordName), field(field) {}
+};
+
 }
