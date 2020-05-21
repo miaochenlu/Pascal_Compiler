@@ -1,0 +1,305 @@
+clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated [-Wdeprecated]
+clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated [-Wdeprecated]
+In file included from pascal.l:2:
+./global.h:152:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class TypeKind {
+     ^
+./global.h:169:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERROR;
+                  ^
+./global.h:169:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERROR;
+                    ^
+./global.h:177:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::INT;
+               ^
+./global.h:186:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::REAL;
+               ^
+./global.h:195:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::CHAR;
+               ^
+./global.h:204:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::STRING;
+               ^
+./global.h:213:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::BOOLEAN;
+               ^
+./global.h:223:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::INT;
+               ^
+./global.h:241:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERROR;
+                  ^
+./global.h:241:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERROR;
+                    ^
+./global.h:257:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind:: ARRAY;
+               ^
+./global.h:266:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::RECORD;
+               ^
+./global.h:274:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    BooleanType() { type = TypeKind::BOOLEAN; }
+                           ^
+./global.h:280:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    CharType() { type = TypeKind::CHAR; }
+                        ^
+./global.h:286:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    IntegerType() { type = TypeKind::INT; }
+                           ^
+./global.h:292:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    RealType() { type = TypeKind::REAL; }
+                        ^
+./global.h:298:27: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    StringType() { type = TypeKind::STRING; }
+                          ^
+./global.h:311:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    VoidType() { type = TypeKind::VOID; }
+                        ^
+./global.h:331:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class Direction {
+     ^
+./global.h:411:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class SYSPROC {
+     ^
+./global.h:415:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class SYSFUNCT {
+     ^
+./global.h:464:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class BinaryOperator {
+     ^
+./global.h:469:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class UnaryOperator {
+     ^
+pascal.l:10:15: warning: alias declarations are a C++11 extension [-Wc++11-extensions]
+using token = yapc::Parser::token;
+              ^
+pascal.l:10:15: error: use of undeclared identifier 'yapc'
+lex.yy.c:763:1: error: use of undeclared identifier 'yapc'
+YY_DECL
+^
+pascal.l:8:21: note: expanded from macro 'YY_DECL'
+#define YY_DECL int yapc::Scanner::yylex(yapc::Parser::semantic_type* lval,yapc::Parser::location_type* loc)
+                    ^
+lex.yy.c:763:1: error: use of undeclared identifier 'yapc'
+pascal.l:8:42: note: expanded from macro 'YY_DECL'
+#define YY_DECL int yapc::Scanner::yylex(yapc::Parser::semantic_type* lval,yapc::Parser::location_type* loc)
+                                         ^
+lex.yy.c:763:1: error: use of undeclared identifier 'yapc'
+pascal.l:8:76: note: expanded from macro 'YY_DECL'
+#define YY_DECL int yapc::Scanner::yylex(yapc::Parser::semantic_type* lval,yapc::Parser::location_type* loc)
+                                                                           ^
+lex.yy.c:1801:40: error: use of undeclared identifier 'isatty'
+        b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+                                       ^
+25 warnings and 5 errors generated.
+In file included from pascal.y:6:
+./global.h:152:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class TypeKind {
+     ^
+./global.h:169:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERROR;
+                  ^
+./global.h:169:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERROR;
+                    ^
+./global.h:177:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::INT;
+               ^
+./global.h:186:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::REAL;
+               ^
+./global.h:195:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::CHAR;
+               ^
+./global.h:204:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::STRING;
+               ^
+./global.h:213:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::BOOLEAN;
+               ^
+./global.h:223:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::INT;
+               ^
+./global.h:241:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERROR;
+                  ^
+./global.h:241:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERROR;
+                    ^
+./global.h:257:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind:: ARRAY;
+               ^
+./global.h:266:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::RECORD;
+               ^
+./global.h:274:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    BooleanType() { type = TypeKind::BOOLEAN; }
+                           ^
+./global.h:280:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    CharType() { type = TypeKind::CHAR; }
+                        ^
+./global.h:286:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    IntegerType() { type = TypeKind::INT; }
+                           ^
+./global.h:292:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    RealType() { type = TypeKind::REAL; }
+                        ^
+./global.h:298:27: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    StringType() { type = TypeKind::STRING; }
+                          ^
+./global.h:311:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    VoidType() { type = TypeKind::VOID; }
+                        ^
+./global.h:331:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class Direction {
+     ^
+./global.h:411:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class SYSPROC {
+     ^
+./global.h:415:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class SYSFUNCT {
+     ^
+./global.h:464:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class BinaryOperator {
+     ^
+./global.h:469:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+enum class UnaryOperator {
+     ^
+y.tab.c:1493:16: error: use of undeclared identifier 'yylex'
+      yychar = yylex ();
+               ^
+pascal.y:108:28: error: no member named 'label' in 'YYSTYPE'
+                    (yyval.label) = new ast::ProgramHead(new ast::Identifier((yyvsp[-1].aststring)), new ast::ParamList(), new ast::VoidType()); 
+                     ~~~~~ ^
+pascal.y:123:50: error: no matching constructor for initialization of 'ast::RoutineHead'
+                    (yyval.astRoutineHead) = new ast::RoutineHead((yyvsp[-3].astConstDeclList), (yyvsp[-2].astTypeDeclList), (yyvsp[-1].astVarDeclList), (yyvsp[0].astRoutinePartList)); 
+                                                 ^                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./global.h:138:5: note: candidate constructor not viable: requires 5 arguments, but 4 were provided
+    RoutineHead(LabelDeclList* labelPart, ConstDeclList* constPart, TypeDeclList* typePart, VarDeclList* varPart, RoutinePartList* routinePart):
+    ^
+./global.h:130:7: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 4 were provided
+class RoutineHead: public BasicAstNode 
+      ^
+pascal.y:141:42: error: member reference base type 'char' is not a structure or union
+                    (yyvsp[-3].aststring)->push_back(new ast::ConstDecl(new ast::Identifier((yyvsp[-2].aststring)), (yyvsp[0].aststring)));
+                    ~~~~~~~~~~~~~~~~~~~~~^ ~~~~~~~~~
+pascal.y:141:58: error: no matching constructor for initialization of 'ast::ConstDecl'
+                    (yyvsp[-3].aststring)->push_back(new ast::ConstDecl(new ast::Identifier((yyvsp[-2].aststring)), (yyvsp[0].aststring)));
+                                                         ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./global.h:163:5: note: candidate constructor not viable: no known conversion from 'char *' to 'ast::BasicConst *' for 2nd argument
+    ConstDecl(Identifier* name, BasicConst* value): name(name), value(value) {}
+    ^
+./global.h:158:7: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 2 were provided
+class ConstDecl: public BasicAstNode 
+      ^
+pascal.y:150:58: error: no matching constructor for initialization of 'ast::MaxIntNode'
+                            {(yyval.astBasicConst) = new ast::MaxIntNode((yyvsp[0].aststring));}
+                                                         ^               ~~~~~~~~~~~~~~~~~~~~
+./global.h:217:7: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'char *' to 'const ast::MaxIntNode' for 1st argument
+class MaxIntNode: public BasicConst
+      ^
+./global.h:221:5: note: candidate constructor not viable: requires 0 arguments, but 1 was provided
+    MaxIntNode() {
+    ^
+pascal.y:170:47: error: no matching constructor for initialization of 'ast::TypeDecl'
+                    (yyval.astTypeDecl) = new ast::TypeDecl(ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astBasicType)); 
+                                              ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./global.h:230:7: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 2 were provided
+class TypeDecl: public BasicAstNode
+      ^
+./global.h:230:7: note: candidate constructor (the implicit default constructor) not viable: requires 0 arguments, but 2 were provided
+pascal.y:180:53: error: expected unqualified-id
+                    if((yyvsp[0].aststring) == ast::SYS_TYPE::INT) {
+                                                    ^
+y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
+#define SYS_TYPE 314
+                 ^
+pascal.y:182:60: error: expected unqualified-id
+                    } else if((yyvsp[0].aststring) == ast::SYS_TYPE::REAL) {
+                                                           ^
+y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
+#define SYS_TYPE 314
+                 ^
+pascal.y:184:60: error: expected unqualified-id
+                    } else if((yyvsp[0].aststring) == ast::SYS_TYPE::CHAR) {
+                                                           ^
+y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
+#define SYS_TYPE 314
+                 ^
+pascal.y:186:60: error: expected unqualified-id
+                    } else if((yyvsp[0].aststring) == ast::SYS_TYPE::BOOLEAN) {
+                                                           ^
+y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
+#define SYS_TYPE 314
+                 ^
+pascal.y:188:60: error: expected unqualified-id
+                    } else if((yyvsp[0].aststring) == ast::SYS_TYPE::STRING) {
+                                                           ^
+y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
+#define SYS_TYPE 314
+                 ^
+pascal.y:202:87: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[-2].astBasicConst)), (yyvsp[0].astBasicConst)); 
+                                                                                      ^
+pascal.y:205:87: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[-3].astBasicConst)), new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[0].astBasicConst))); 
+                                                                                      ^
+pascal.y:205:159: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[-3].astBasicConst)), new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[0].astBasicConst))); 
+                                                                                                                                                              ^
+pascal.y:214:48: error: no matching constructor for initialization of 'ast::ArrayType'
+                    (yyval.astBasicType) = new ast::ArrayType((yyvsp[-3].astBasicType), (yyvsp[0].astBasicType)); 
+                                               ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./global.h:256:5: note: candidate constructor not viable: cannot convert from base class pointer 'ast::BasicType *' to derived class pointer 'ast::SimpleType *' for 1st argument
+    ArrayType(SimpleType* range, BasicType* elementType): range(range), elementType(elementType) { 
+    ^
+./global.h:251:7: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 2 were provided
+class ArrayType: public BasicType
+      ^
+pascal.y:234:42: error: assigning to 'ast::VarDecl *' from incompatible type 'ast::VarDeclList *' (aka 'vector<ast::VarDecl *> *')
+                    (yyval.astVarDecl) = new ast::VarDeclList(); 
+                                         ^~~~~~~~~~~~~~~~~~~~~~
+pascal.y:235:25: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+                    for(auto name: *((yyvsp[-3].astNameList))) 
+                        ^
+pascal.y:235:34: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+                    for(auto name: *((yyvsp[-3].astNameList))) 
+                                 ^
+pascal.y:236:45: error: no member named 'push_back' in 'ast::VarDecl'
+                        (yyval.astVarDecl)->push_back(new ast::Parameter(new ast::Identifier(name), (yyvsp[-1].astBasicType)));
+                        ~~~~~~~~~~~~~~~~~~  ^
+pascal.y:236:78: error: no matching constructor for initialization of 'ast::Identifier'
+                        (yyval.astVarDecl)->push_back(new ast::Parameter(new ast::Identifier(name), (yyvsp[-1].astBasicType)));
+                                                                             ^               ~~~~
+./global.h:490:7: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'ast::Identifier *' to 'const ast::Identifier' for 1st argument; dereference the argument with *
+class Identifier: public Expression
+      ^
+./global.h:494:5: note: candidate constructor not viable: no known conversion from 'ast::Identifier *' to 'const std::__1::string' (aka 'const basic_string<char, char_traits<char>, allocator<char> >') for 1st argument
+    Identifier(const string& name): name(name) {}
+    ^
+pascal.y:263:42: error: assigning to 'ast::VarDecl *' from incompatible type 'ast::VarDeclList *' (aka 'vector<ast::VarDecl *> *')
+                    (yyval.astVarDecl) = new ast::VarDeclList(); 
+                                         ^~~~~~~~~~~~~~~~~~~~~~
+pascal.y:264:25: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+                    for(auto name: *((yyvsp[-3].astNameList))) 
+                        ^
+pascal.y:264:34: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+                    for(auto name: *((yyvsp[-3].astNameList))) 
+                                 ^
+pascal.y:265:45: error: no member named 'push_back' in 'ast::VarDecl'
+                        (yyval.astVarDecl)->push_back(new ast::Parameter(new ast::Identifier(name), (yyvsp[-1].astBasicType)));
+                        ~~~~~~~~~~~~~~~~~~  ^
+pascal.y:265:78: error: no matching constructor for initialization of 'ast::Identifier'
+                        (yyval.astVarDecl)->push_back(new ast::Parameter(new ast::Identifier(name), (yyvsp[-1].astBasicType)));
+                                                                             ^               ~~~~
+./global.h:490:7: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'ast::Identifier *' to 'const ast::Identifier' for 1st argument; dereference the argument with *
+class Identifier: public Expression
+      ^
+./global.h:494:5: note: candidate constructor not viable: no known conversion from 'ast::Identifier *' to 'const std::__1::string' (aka 'const basic_string<char, char_traits<char>, allocator<char> >') for 1st argument
+    Identifier(const string& name): name(name) {}
+    ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+31 warnings and 20 errors generated.

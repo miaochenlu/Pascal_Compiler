@@ -1,3 +1,4 @@
+
 %{
 #include <iostream>
 #include <vector>
@@ -8,24 +9,20 @@ using namespace std;
 ast::BasicAstNode* root;
 %}
 
-%token ID
-%token DOT DOTDOT SEMI COMMA COLON 
-%token LP RP LB RB
-%token EQUAL UNEQUAL GE GT LE LT
-%token PLUS MINUS MUL DIV MOD
-%token OR AND NOT
-%token INTEGER REAL CHAR STRING ARRAY BOOLEAN
-%token PROGRAM PROCEDURE FUNCTION CONST TYPE VAR RECORD BEGIN END ASSIGN
-%token IF THEN ELSE REPEAT UNTIL WHILE DO FOR TO DOWNTO CASE OF GOTO 
-%token READ
-%token SYS_CON SYS_PROC SYS_TYPE SYS_FUNCT
 
 %union {
-    string                  aststring;
+    char*                  aststring;
+    char                    astchar;
+    int                     astint;
+    double                  astreal;
+    bool                    astbool;
+    ast::SYSFUNCT           astSYSFUNCT;
+    ast::SYSPROC            astSYSPROC;
+    ast::TypeKind           astTypeKind;
     ast::Identifier*        astIdentifier;
     ast::NameList*          astNameList;
     ast::Expression*        astExpression;
-    ast::stmt*              astStmt;
+    ast::Stmt*              astStmt;
     ast::Program*           astProgram;
     ast::ProgramHead*       astProgramHead;
     ast::Routine*           astRoutine;
@@ -50,18 +47,25 @@ ast::BasicAstNode* root;
     ast::ExpressionList*    astExpressionList;
     ast::Direction          astDirection;
 }
-
-%type<aststring> ID
-%type<aststring> DOT DOTDOT SEMI COMMA COLON 
-%type<aststring> LP RP LB RB
-%type<aststring> EQUAL UNEQUAL GE GT LE LT
-%type<aststring> PLUS MINUS MUL DIV MOD
-%type<aststring> OR AND NOT
-%type<aststring> INTEGER REAL CHAR STRING ARRAY BOOLEAN
-%type<aststring> PROGRAM PROCEDURE FUNCTION CONST TYPE VAR RECORD BEGIN END ASSIGN
-%type<aststring> IF THEN ELSE REPEAT UNTIL WHILE DO FOR TO DOWNTO CASE OF GOTO 
-%type<aststring> READ
-%type<aststring> SYS_CON SYS_PROC SYS_TYPE SYS_FUNCT
+%token<aststring> ID
+%token<aststring> DOT DOTDOT SEMI COMMA COLON 
+%token<aststring> LP RP LB RB
+%token<aststring> EQUAL UNEQUAL GE GT LE LT
+%token<aststring> PLUS MINUS MUL DIV MOD
+%token<aststring> OR AND NOT
+%token<astint> INTEGER 
+%token<astreal>REAL 
+%token<astchar>CHAR 
+%token<aststring>STRING 
+%token<astbool>BOOLEAN
+%token<aststring> ARRAY
+%token<aststring> PROGRAM PROCEDURE FUNCTION CONST TYPE VAR RECORD BEG END ASSIGN
+%token<aststring> IF THEN ELSE REPEAT UNTIL WHILE DO FOR TO DOWNTO CASE OF GOTO 
+%token<aststring> READ
+%token<aststring> SYS_CON 
+%token<astSYSPROC>SYS_PROC 
+%token<astTypeKind>SYS_TYPE 
+%token<astSYSFUNCT>SYS_FUNCT
 
 %type<astProgram>           program function_decl procedure_decl;
 %type<astProgramHead>       program_head function_head procedure_head;
@@ -71,21 +75,19 @@ ast::BasicAstNode* root;
 // %type<astLabelDeclList>     label_part;
 %type<astConstDeclList>     const_part const_expr_list;
 %type<astTypeDeclList>      type_part type_decl_list;
-%type<astVarDeclList>       var_part var_decl_list field_decl_list;
+%type<astVarDeclList>       var_part var_decl_list field_decl_list var_decl field_decl;
 %type<astRoutinePartList>   routine_part;
 
 %type<astBasicConst>        const_value;
 
 %type<astTypeDecl>          type_definition;
 %type<astBasicType>         type_decl simple_type_decl array_type_decl record_type_decl;
+        
 
-%type<astVarDecl>           var_decl field_decl;
-
-%type<astParamList>         parameters para_decl_list;
-%type<astParameter>         para_type_list;
+%type<astParamList>         parameters para_decl_list para_type_list;;     
 %type<astNameList>          name_list; //val_para_list var_para_list
 
-%type<astStmt>              stmt  assign_stmt proc_stmt if_stmt else_clause repeat_stmt while_stmt for_stmt case_stmt goto_stmt; //non_label_stmt
+%type<astStmt>              stmt  assign_stmt proc_stmt if_stmt repeat_stmt while_stmt for_stmt case_stmt goto_stmt; //non_label_stmt else_clause
 %type<astCaseExprList>      case_expr_list;
 %type<astCaseExpr>          case_expr;
 
@@ -96,6 +98,7 @@ ast::BasicAstNode* root;
 %type<astDirection>         direction;
         
 
+
 %%
 
 programPrime    : program { root = $1; }
@@ -105,7 +108,7 @@ program         : program_head  routine  DOT {
 ;
 
 program_head    : PROGRAM  ID  SEMI { 
-                    $<label>$ = new ast::ProgramHead(new ast::Identifier($2), new ast::ParamList(), new ast::VoidType()); 
+                    $$ = new ast::ProgramHead(new ast::Identifier($2), new ast::ParamList(), new ast::VoidType()); 
                 }
 ;
 
@@ -128,17 +131,17 @@ const_part      : CONST  const_expr_list {
                     $$ = $2; 
                 }
                 | { 
-                    $$ = new ast::ConstDeclList() 
+                    $$ = new ast::ConstDeclList();
                 }
 ;
 
 const_expr_list : const_expr_list  ID  EQUAL  const_value  SEMI { 
                     $$ = $1;
-                    $1.push_back(new ast::ConstDecl(new ast::Identifier($2), $4));
+                    $1->push_back(new ast::ConstDecl(new ast::Identifier($2), $4));
                 }
                 |  ID  EQUAL  const_value  SEMI {
                     $$ = new ast::ConstDeclList();
-                    $1.push_back(new ast::ConstDecl(new ast::Identifier($2), $4));
+                    $$->push_back(new ast::ConstDecl(new ast::Identifier($1), $3));
                 }
 ;
 
@@ -147,7 +150,7 @@ const_value     :  INTEGER  {$$ = new ast::IntegerNode($1); /*需不需要atoi�
                 |  CHAR     {$$ = new ast::CharNode($1);}
                 |  STRING   {$$ = new ast::StringNode($1);}
                 |  BOOLEAN  {$$ = new ast::BooleanNode($1);}
-                |  SYS_CON  {$$ = new ast::MaxIntNode($1);}
+                |  SYS_CON  {$$ = new ast::MaxIntNode();}
 ;
 
 type_part       : TYPE type_decl_list  { $$ = $2; }
@@ -158,16 +161,16 @@ type_part       : TYPE type_decl_list  { $$ = $2; }
 
 type_decl_list  : type_decl_list  type_definition { 
                     $$ = $1;
-                    $1.push_back($2);
+                    $1->push_back($2);
                 }
                 |  type_definition {
                     $$ = new ast::TypeDeclList();
-                    $$.push_back($1);
+                    $$->push_back($1);
                 }
 ;
 
 type_definition : ID  EQUAL  type_decl  SEMI { 
-                    $$ = new ast::TypeDecl(ast::Identifier($1), $3); 
+                    $$ = new ast::TypeDecl(new ast::Identifier($1), $3); 
                 }
 ;
 
@@ -177,15 +180,15 @@ type_decl       : simple_type_decl  { $$ = $1; }
 ;
 
 simple_type_decl: SYS_TYPE { 
-                    if($1 == ast::SYS_TYPE::INT) {
+                    if($1 == ast::TypeKind::INTtype) {
                         $$ = new ast::IntegerType();
-                    } else if($1 == ast::SYS_TYPE::REAL) {
+                    } else if($1 == ast::TypeKind::REALtype) {
                         $$ = new ast::RealType();
-                    } else if($1 == ast::SYS_TYPE::CHAR) {
+                    } else if($1 == ast::TypeKind::CHARtype) {
                         $$ = new ast::CharType();
-                    } else if($1 == ast::SYS_TYPE::BOOLEAN) {
+                    } else if($1 == ast::TypeKind::BOOLEANtype) {
                         $$ = new ast::BooleanType();
-                    } else if($1 == ast::SYS_TYPE::STRING) {
+                    } else if($1 == ast::TypeKind::STRINGtype) {
                         $$ = new ast::StringType();
                     }
                 } 
@@ -199,10 +202,10 @@ simple_type_decl: SYS_TYPE {
                     $$ = new ast::RangeType($1, $3); 
                 }
                 |  MINUS  const_value  DOTDOT  const_value { 
-                    $$ = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEG, $2), $4); 
+                    $$ = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, $2), $4); 
                 }
                 |  MINUS  const_value  DOTDOT  MINUS  const_value { 
-                    $$ = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEG, $2), new ast::UnaryExpr(ast::UnaryOperator::NEG, $5)); 
+                    $$ = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, $2), new ast::UnaryExpr(ast::UnaryOperator::NEGop, $5)); 
                 }
                 |  ID  DOTDOT  ID {
                     $$ = new ast::RangeType((ast::Expression*)(new ast::Identifier($1)), (ast::Expression*)(new ast::Identifier($3)));
@@ -222,27 +225,26 @@ record_type_decl: RECORD  field_decl_list  END {
 
 field_decl_list : field_decl_list  field_decl { 
                     $$ = $1;
-                    $$.push_back($2);
+                    $1->insert($1->end(), $2->begin(), $2->end());;
                 }
                 |  field_decl {
-                    $$ = new ast::VarDeclList();
-                    $$.push_back($1);
+                    $$ = $1;
                 }
 ;
 
 field_decl      : name_list  COLON  type_decl  SEMI {
                     $$ = new ast::VarDeclList(); 
                     for(auto name: *($1)) 
-                        $$->push_back(new ast::Parameter(new ast::Identifier(name), $3));
+                        $$->push_back(new ast::VarDecl(name, $3));
                 }
 
 name_list       : name_list  COMMA  ID {
                     $$ = $1;
-                    $$.push_back(new ast::Identifier($3));
+                    $$->push_back(new ast::Identifier($3));
                 }
                 |  ID {
                     $$ = new ast::NameList;
-                    $$.push_back(new ast::Identifier($1));
+                    $$->push_back(new ast::Identifier($1));
                 }
 ;
 var_part        : VAR  var_decl_list { $$ = $2; }
@@ -251,7 +253,7 @@ var_part        : VAR  var_decl_list { $$ = $2; }
 
 var_decl_list   :  var_decl_list  var_decl { 
                     $$ = $1;
-                    $$.push_back($2);
+                    $1->insert($1->end(), $2->begin(), $2->end());
                 }
                 |  var_decl {
                     $$ = $1;
@@ -261,17 +263,17 @@ var_decl_list   :  var_decl_list  var_decl {
 var_decl        :  name_list  COLON  type_decl  SEMI {
                     $$ = new ast::VarDeclList(); 
                     for(auto name: *($1)) 
-                        $$->push_back(new ast::Parameter(new ast::Identifier(name), $3));
+                        $$->push_back(new ast::VarDecl(name, $3));
                 }
 ;
 
 routine_part    :  routine_part  function_decl {
                     $$ = $1;
-                    $$.push_back($2);
+                    $$->push_back($2);
                 }
                 |  routine_part  procedure_decl {
                     $$ = $1;
-                    $$.push_back($2);
+                    $$->push_back($2);
                 }
                 |   { $$ = new ast::RoutinePartList(); }
 ;
@@ -303,7 +305,7 @@ parameters : LP  para_decl_list  RP  {
 ;
 para_decl_list  : para_decl_list  SEMI  para_type_list {
                     $$ = $1;
-                    $$.push_back($3);
+                    $1->insert($1->end(), $3->begin(), $3->end());
                 }
                 | para_type_list {
                     $$ = $1;
@@ -313,14 +315,13 @@ para_decl_list  : para_decl_list  SEMI  para_type_list {
 ////////error
 para_type_list  : VAR name_list COLON  simple_type_decl  {
                     $$ = new ast::ParamList(); 
-                    for(auto name: *($1)) 
-                        $$->push_back(new ast::Parameter(new ast::Identifier(name), $3));
+                    for(auto name: *($2)) 
+                        $$->push_back(new ast::Parameter(name, $4));
                 }               
-                |  
-                name_list  COLON  simple_type_decl {
+                | name_list  COLON  simple_type_decl {
                     $$ = new ast::ParamList(); 
                     for(auto name: *($1)) 
-                        $$->push_back(new ast::Parameter(new ast::Identifier(name), $3));
+                        $$->push_back(new ast::Parameter(name, $3));
                 }
 ;
 
@@ -330,14 +331,14 @@ routine_body    : compound_stmt {
                     $$ = $1;
                 }
 ;
-compound_stmt   : BEGIN  stmt_list  END {
+compound_stmt   : BEG  stmt_list  END {
                     $$ = $2;
                 }
 ;
 
 stmt_list       : stmt_list  stmt  SEMI {
                     $$ = $1;
-                    $$.push_back($2);
+                    $$->push_back($2);
                 }
                 |  {
                     $$ = new ast::StmtList();
@@ -386,60 +387,68 @@ assign_stmt     : ID  ASSIGN  expression {
                     $$ = new ast::AssignStmt(new ast::Identifier($1), $3);
                 }
                 | ID LB expression RB ASSIGN expression {
-                    $$ = new ast::AssignStmt(new ast::ArrayElementRef($1, $3), $6);
+                    $$ = new ast::AssignStmt(new ast::ArrayElementRef(new ast::Identifier($1), $3), $6);
                 }
                 | ID  DOT  ID  ASSIGN  expression {
-                    $$ = new ast::AssignStmt(new ast::RecordElementRef($1, $3), $5);
+                    $$ = new ast::AssignStmt(new ast::RecordElementRef(new ast::Identifier($1), new ast::Identifier($3)), $5);
                 }
 ;
 
-//////////////error
 proc_stmt       :  ID {
                     $$ = new ast::UserDefProcCall(new ast::Identifier($1));
                 }
-                |  ID  LP  args_list  RP {
-                    $$ = new ast::UserDefProcCall(new ast::Identifier($1, $3));
+                |  ID LP args_list RP {
+                    $$ = new ast::UserDefProcCall(new ast::Identifier($1), $3);
                 }
                 |  SYS_PROC {
-                    $$ = new ast::SysProcCall(ast::SYS_PROC::$1);
+                    if($1 == ast::SYSPROC::WRITE)
+                        $$ = new ast::SysProcCall(ast::SYSPROC::WRITE);
+                    if($1 == ast::SYSPROC::WRITELN)
+                        $$ = new ast::SysProcCall(ast::SYSPROC::WRITELN);
                 }
                 |  SYS_PROC  LP  expression_list  RP {
-                    $$ = new ast::SysProcCall(ast::SYS_PROC::$1, $3);
+                    if($1 == ast::SYSPROC::WRITE)
+                        $$ = new ast::SysProcCall(ast::SYSPROC::WRITE, $3);
+                    if($1 == ast::SYSPROC::WRITELN)
+                        $$ = new ast::SysProcCall(ast::SYSPROC::WRITELN, $3);
                 }
                 |  READ  LP  factor  RP {
                     $$ = new ast::ReadProcCall($3);
                 }
 ;
-if_stmt         : IF  expression  THEN  stmt  else_clause {
-                    $$ = new ast::IfStmt($2, $4,$5);
+if_stmt         : IF  expression  THEN  stmt_list  ELSE stmt_list {
+                    $$ = new ast::IfStmt($2, $4, $6);
+                }
+                | IF  expression  THEN  stmt_list {
+                    $$ = new ast::IfStmt($2, $4);
                 }
 ;
-else_clause     : ELSE stmt {
-                    $$ = $2;
-                }
-                |  {
-                    $$ = NULL;
-                }
-;
+// else_clause     : ELSE stmt_list {
+//                     $$ = $2;
+//                 }
+//                 |  {
+//                     $$ = NULL;
+//                 }
+// ;
 
 repeat_stmt     : REPEAT  stmt_list  UNTIL  expression {
                     $$ = new ast::RepeatStmt($4, $2);
                 }
 ;
 
-while_stmt      : WHILE  expression  DO stmt {
+while_stmt      : WHILE  expression  DO stmt_list {
                     $$ = new ast::WhileStmt($2, $4);
                 }
 ;
-for_stmt        : FOR  ID  ASSIGN  expression  direction  expression  DO stmt {
+for_stmt        : FOR  ID  ASSIGN  expression  direction  expression  DO stmt_list {
                     $$ = new ast::ForStmt(new ast::Identifier($2), $4, $5, $6, $8);
                 }
 ;
 direction       : TO {
-                    $$ = ast::Direction::TO;
+                    $$ = ast::Direction::To;
                 }
                 | DOWNTO {
-                    $$ = ast::Direction::DOWNTO;
+                    $$ = ast::Direction::DownTo;
                 }
 ;
 
@@ -450,66 +459,66 @@ case_stmt       : CASE expression OF case_expr_list  END {
 
 case_expr_list  : case_expr_list  case_expr  {
                     $$ = $1;
-                    $$.push_back($2);
+                    $$->push_back($2);
                 }
                 |  case_expr {
                     $$ = new ast::CaseExprList();
-                    $$.push_back($1);
+                    $$->push_back($1);
                 }
 ;
 
-case_expr       : const_value  COLON  stmt  SEMI {
+case_expr       : const_value  COLON  stmt_list  SEMI {
                     $$ = new ast::CaseExpr($1, $3);
                 }
-                |  ID  COLON  stmt  SEMI {
+                |  ID  COLON  stmt_list  SEMI {
                     $$ = new ast::CaseExpr(new ast::Identifier($1), $3);
                 }
 ;
 
 goto_stmt       : GOTO  INTEGER {
-                    $$ = new ast::GoStmt(new ast::IntegerNode($2));
+                    $$ = new ast::GotoStmt($2);
                 }
 ;
 expression_list : expression_list  COMMA  expression  {
                     $$ = $1;
-                    $$.push_back($3);
+                    $$->push_back($3);
                 }
                 |  expression {
                     $$ = new ast::ExpressionList();
-                    $$.push_back($1);
+                    $$->push_back($1);
                 }
 ;
 
 expression      :  expression  GE  expr {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::GE, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::GEop, $3);
                 }
                 |  expression  GT  expr {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::GT, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::GTop, $3);
                 } 
                 |  expression  LE  expr {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::LE, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::LEop, $3);
                 }
                 |  expression  LT  expr {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::LT, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::LTop, $3);
                 }
                 |  expression  EQUAL  expr {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::EQUAL, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::EQUALop, $3);
                 }
                 |  expression  UNEQUAL  expr {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::UNEQUAL, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::UNEQUALop, $3);
                 }
                 |  expr {
                     $$ = $1;
                 }
 ;
 expr            :  expr  PLUS  term  {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::PLUS, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::PLUSop, $3);
                 } 
                 |  expr  MINUS  term {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::MINUS, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::MINUSop, $3);
                 }
                 |  expr  OR  term    {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::OR, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::ORop, $3);
                 }
                 |  term {
                     $$ = $1;
@@ -517,16 +526,16 @@ expr            :  expr  PLUS  term  {
 ;
 
 term            :  term  MUL  factor {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::MUL, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::MULop, $3);
                 }  
                 |  term  DIV  factor  {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::DIV, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::DIVop, $3);
                 }
                 |  term  MOD  factor {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::MOD, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::MODop, $3);
                 }
                 |  term  AND  factor  {
-                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::AND, $3);
+                    $$ = new ast::BinaryExpr($1, ast::BinaryOperator::ANDop, $3);
                 } 
                 |  factor {
                     $$ = $1;
@@ -552,24 +561,31 @@ factor          :  ID {
                     $$ = $2;
                 }
                 |  NOT  factor  {
-                    $$ = new ast::UnaryExpr(ast::UnaryOperator::NOT, $2);
+                    $$ = new ast::UnaryExpr(ast::UnaryOperator::NOTop, $2);
                 }
                 |  MINUS  factor {
-                    $$ = new ast::UnaryExpr(ast::UnaryOperator::NEG, $2);
+                    $$ = new ast::UnaryExpr(ast::UnaryOperator::NEGop, $2);
                 }
                 |  ID  LB  expression  RB {
                     $$ = new ast::ArrayElementRef(new ast::Identifier($1), $3);
                 }
                 |  ID  DOT  ID {
-                    $$ = new ast::RecordElementRef(new ast::Identifier($1), new ast::Identifier($3))
+                    $$ = new ast::RecordElementRef(new ast::Identifier($1), new ast::Identifier($3));
                 }
 ;
 args_list       : args_list  COMMA  expression  {
                     $$ = $1;
-                    $$.push_back($3);
+                    $$->push_back($3);
                 }
                 |  expression {
                     $$ = new ast::ArgList();
-                    $$.push_back($1);
+                    $$->push_back($1);
                 }
 ;
+
+%%
+void yyerror() {}
+int main() {
+        printf(">>> ");
+        while(1) yyparse();
+}
