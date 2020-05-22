@@ -8,7 +8,7 @@ label_part      : ε
 const_part      : CONST  const_expr_list  |  ε
 const_expr_list : const_expr_list  NAME  EQUAL  const_value  SEMI
 |  NAME  EQUAL  const_value  SEMI
-const_value     : INTEGER  |  REAL  |  CHAR  |  STRING  |  SYS_CON
+const_value     : INTEGER  |  MINUS INTEGER(新增) |  REAL | MINUS REAL(新增) |  CHAR  |  STRING  |  SYS_CON
 type_part       : TYPE type_decl_list  |  ε
 type_decl_list  : type_decl_list  type_definition  |  type_definition
 type_definition : NAME  EQUAL  type_decl  SEMI
@@ -49,8 +49,8 @@ non_label_stmt  : assign_stmt | proc_stmt | compound_stmt | if_stmt | repeat_stm
 assign_stmt     : ID  ASSIGN  expression
            | ID LB expression RB ASSIGN expression
            | ID  DOT  ID  ASSIGN  expression
-proc_stmt       :  ID
-          |  ID  LP  args_list  RP
+proc_stmt       :  NAME (ID修改为NAMA)
+          |  NAME(ID修改为NAMA)  LP  args_list  RP
           |  SYS_PROC
           |  SYS_PROC  LP  expression_list  RP
           |  READ  LP  factor  RP

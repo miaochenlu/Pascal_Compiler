@@ -74,6 +74,7 @@ static int yylex(void);
 %token<aststring>   PROGRAM PROCEDURE FUNCTION CONST TYPE VAR RECORD ARRAY BEG END ASSIGN
 %token<aststring>   IF THEN ELSE REPEAT UNTIL WHILE DO FOR TO DOWNTO CASE OF GOTO READ
 
+%type<aststring>            NAME;
 %type<astProgram>           program function_decl procedure_decl;
 %type<astProgramHead>       program_head function_head procedure_head;
 %type<astRoutine>           routine sub_routine;
@@ -145,22 +146,29 @@ const_part      : CONST  const_expr_list {
                 }
 ;
 
-const_expr_list : const_expr_list  ID  EQUAL  const_value  SEMI { 
-                    $$ = $1;
-                    $1->push_back(new ast::ConstDecl(new ast::Identifier($2), $4));
-                }
-                |  ID  EQUAL  const_value  SEMI {
-                    $$ = new ast::ConstDeclList();
-                    $$->push_back(new ast::ConstDecl(new ast::Identifier($1), $3));
+NAME            : ID { 
+                    new ast::Name($1); 
                 }
 ;
 
-const_value     :  INTEGER  {$$ = new ast::IntegerNode($1); /*需不需要atoi呢， 注意这里还有一些问题*/}
-                |  REAL     {$$ = new ast::RealNode($1);}
-                |  CHAR     {$$ = new ast::CharNode($1);}
-                |  STRING   {$$ = new ast::StringNode($1);}
-                |  BOOLEAN  {$$ = new ast::BooleanNode($1);}
-                |  SYS_CON  {$$ = new ast::MaxIntNode();}
+const_expr_list : const_expr_list  NAME  EQUAL  const_value  SEMI { 
+                    $$ = $1;
+                    $1->push_back(new ast::ConstDecl(new ast::Name($2), $4));
+                }
+                |  NAME  EQUAL  const_value  SEMI {
+                    $$ = new ast::ConstDeclList();
+                    $$->push_back(new ast::ConstDecl(new ast::Name($1), $3));
+                }
+;
+
+const_value     :  INTEGER          {$$ = new ast::IntegerNode($1);}
+                |  MINUS INTEGER    {$$ = new ast::IntegerNode(-$2);}
+                |  REAL             {$$ = new ast::RealNode($1);}
+                |  MINUS REAL       {$$ = new ast::RealNode(-$2);}
+                |  CHAR             {$$ = new ast::CharNode($1);}
+                |  STRING           {$$ = new ast::StringNode($1);}
+                |  BOOLEAN          {$$ = new ast::BooleanNode($1);}
+                |  SYS_CON          {$$ = new ast::MaxIntNode();}
 ;
 
 type_part       : TYPE type_decl_list  { $$ = $2; }
@@ -179,8 +187,8 @@ type_decl_list  : type_decl_list  type_definition {
                 }
 ;
 
-type_definition : ID  EQUAL  type_decl  SEMI { 
-                    $$ = new ast::TypeDecl(new ast::Identifier($1), $3); 
+type_definition : NAME  EQUAL  type_decl  SEMI { 
+                    $$ = new ast::TypeDecl(new ast::Name($1), $3); 
                 }
 ;
 
@@ -202,9 +210,9 @@ simple_type_decl: SYS_TYPE {
                         $$ = new ast::StringType();
                     }
                 } 
-                // |  ID  {
-                    
-                // }
+                |  NAME  {
+                    $$ = new ast::UserDefType(new ast::Name($1));
+                }
                 // |  LP  name_list  RP  {
 
                 // }
@@ -217,8 +225,8 @@ simple_type_decl: SYS_TYPE {
                 |  MINUS  const_value  DOTDOT  MINUS  const_value { 
                     $$ = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, $2), new ast::UnaryExpr(ast::UnaryOperator::NEGop, $5)); 
                 }
-                |  ID  DOTDOT  ID {
-                    $$ = new ast::RangeType((ast::Expression*)(new ast::Identifier($1)), (ast::Expression*)(new ast::Identifier($3)));
+                |  NAME  DOTDOT  NAME {
+                    $$ = new ast::RangeType(new ast::Name($1), new ast::Name($3));
                 }
 ;
 
@@ -404,11 +412,11 @@ assign_stmt     : ID  ASSIGN  expression {
                 }
 ;
 
-proc_stmt       :  ID {
-                    $$ = new ast::UserDefProcCall(new ast::Identifier($1));
+proc_stmt       :  NAME {
+                    $$ = new ast::UserDefProcCall(new ast::Name($1));
                 }
-                |  ID LP args_list RP {
-                    $$ = new ast::UserDefProcCall(new ast::Identifier($1), $3);
+                |  NAME LP args_list RP {
+                    $$ = new ast::UserDefProcCall(new ast::Name($1), $3);
                 }
                 |  SYS_PROC {
                     if($1 == ast::SYSPROC::WRITE)
@@ -555,8 +563,11 @@ term            :  term  MUL  factor {
 factor          :  ID {
                     $$ = new ast::Identifier($1);
                 }
-                |  ID  LP  args_list  RP  {
-                    $$ = new ast::UserDefProcCall(new ast::Identifier($1), $3);
+                |  NAME {
+                    $$ = new ast::Name($1);
+                }
+                |  NAME  LP  args_list  RP  {
+                    $$ = new ast::UserDefProcCall(new ast::Name($1), $3);
                 }
                 |  SYS_FUNCT {
                     $$ = new ast::SysFuncCall($1);

@@ -14,7 +14,7 @@ void yyerror(string msg, ...);
 
 digit       [0-9]
 number      {digit}+
-SIGN        "-"
+SIGN        "+" | "-"
 newline     \n
 whitespace  [ \t]+
 
@@ -38,7 +38,8 @@ whitespace  [ \t]+
 "+"             {return PLUS;}
 "-"             {return MINUS;}
 "*"             {return MUL;}
-"/" | "DIV"     {return DIV;}
+"/"             {return DIV;}
+"DIV"           {return DIV;}
 "OR"            {return OR;}
 "AND"           {return AND;}
 "NOT"           {return NOT;}
@@ -86,9 +87,10 @@ whitespace  [ \t]+
 "INTEGER"       {yylval.astTypeKind = ast::TypeKind::INTtype; return SYS_TYPE; }
 "REAL"          {yylval.astTypeKind = ast::TypeKind::REALtype; return SYS_TYPE; }
 
-{SIGN}?{number} {yylval.astint = atoi(yytext); return INTEGER;}
-{SIGN}?(({number}\.{number})|({number}\.{number}e{SIGN}?{number})|({number}e{SIGN}?{number})) {yylval.astreal = atof(yytext); return REAL;}
-\'.\'                       {yylval.astchar = yytext[0] ;return CHAR;}
+{number} {yylval.astint = atoi(yytext); return INTEGER;}
+\'.\'    {yylval.astchar = yytext[0]; return CHAR;}
+'([^']|'')+'  {yylval.aststring = strdup(yytext + 1); return STRING;}
+[0-9]+"."[0-9]+  {yylval.astreal = atof(yytext); return REAL;}
 [a-zA-Z]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
 {newline}       {lineno++;}
 {whitespace}    {}

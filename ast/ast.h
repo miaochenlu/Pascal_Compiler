@@ -8,6 +8,7 @@ namespace ast {
 class BasicAstNode;
 class Identifier;
 class Expression;
+class Name;
 class Stmt;
 typedef vector<BasicAstNode*> childrenList;
 typedef vector<Identifier*> NameList;
@@ -112,6 +113,16 @@ public:
 
     void printAstNode() {
         cout << "Identifier:" << name << endl;
+    }
+};
+
+class Name: public Expression
+{
+public:
+    string name;
+    Name(const string& name): name(name) {}
+    void printAstNode() {
+        cout << "Name:" << name << endl;
     }
 };
 
@@ -241,9 +252,9 @@ enum class TypeKind {
 class ConstDecl: public BasicAstNode 
 {
 public:
-    Identifier* name;
+    Name* name;
     BasicConst* value;
-    ConstDecl(Identifier* name, BasicConst* value): name(name), value(value) {}
+    ConstDecl(Name* name, BasicConst* value): name(name), value(value) {}
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)name);
@@ -341,9 +352,9 @@ public:
 class TypeDecl: public BasicAstNode
 {
 public:  
-    Identifier*  name;
-    BasicType*   type;
-    TypeDecl(Identifier* name, BasicType* type): name(name), type(type) {}
+    Name*       name;
+    BasicType*  type;
+    TypeDecl(Name* name, BasicType* type): name(name), type(type) {}
      childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)name);
@@ -454,11 +465,25 @@ class RangeType: public SimpleType
 {
 public:
     Expression* lowerB, *upperB;
-    RangeType(Expression* lowerB, Expression* upperB): lowerB(lowerB), upperB(upperB) {}
+    Name* lowerBName, *upperBName;
+    enum ValOrName { val, name};
+    int type;
+    RangeType(Name* lowerBName, Name* upperBName): lowerBName(lowerBName), upperBName(upperBName) {
+        type = ValOrName::name;
+    }
+    RangeType(Expression* lowerB, Expression* upperB): lowerB(lowerB), upperB(upperB) {
+        type = ValOrName::val;
+    }
+
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
-        children->push_back((BasicAstNode*)lowerB);
-        children->push_back((BasicAstNode*)upperB);
+        if(type == ValOrName::name) {
+            children->push_back((BasicAstNode*)lowerBName);
+            children->push_back((BasicAstNode*)upperBName);
+        } else if(type == ValOrName::val) {
+            children->push_back((BasicAstNode*)lowerB);
+            children->push_back((BasicAstNode*)upperB);
+        }
         return children;
     }
     void printAstNode() {
@@ -478,7 +503,11 @@ public:
 //这个可能会有点问题
 class UserDefType: public SimpleType
 {
-
+public: 
+    Name* typeName;
+    UserDefType(Name* typeName): typeName(typeName) { 
+        type = TypeKind::USERDEFtype; 
+    }
 };
 
 /******************** VAR ***********************/
@@ -736,12 +765,12 @@ public:
 class UserDefProcCall: public ProcCallStmt, public Expression
 {
 public:
-    Identifier* procName;
-    ArgList*    args;
+    Name*    procName;
+    ArgList* args;
     //有参数
-    UserDefProcCall(Identifier* procName, ArgList* args): procName(procName), args(args) {}
+    UserDefProcCall(Name* procName, ArgList* args): procName(procName), args(args) {}
     //无参数
-    UserDefProcCall(Identifier* procName): procName(procName) {}
+    UserDefProcCall(Name* procName): procName(procName) {}
 
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
@@ -779,7 +808,7 @@ enum class BinaryOperator {
     ORop, ANDop
 };
 enum class UnaryOperator {
-    NOTop, NEGop,
+    NOTop, NEGop, POSop,
 };
 
 class BinaryExpr: public Expression

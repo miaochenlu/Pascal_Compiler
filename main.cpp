@@ -10,7 +10,7 @@ extern FILE * yyin;
 
 
 int main(int argc, char** argv) {
-    yyin = fopen("test/demo1.pascal", "r");
+    yyin = fopen("test/demo2.pascal", "r");
     if (yyin == NULL) {
         printf("File does not exists.\n");
         exit(0);
