@@ -1,6 +1,11 @@
 #include<iostream>
 #include<vector>
 using namespace std;
+// extern "C" {
+// int yylex(void);
+// }
+// void yyerror(string msg, ...) { cout << msg << endl; }
+int get_token(void);
 
 namespace ast {
 /************************************************/

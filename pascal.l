@@ -1,11 +1,16 @@
 %{
 #include "global.h"
 #include "y.tab.h"
-/* lexeme of identifier or reserved word */
-/**注意这里STRING还没有实现**/
+
 int lineno = 0;
 extern YYSTYPE yylval;
+extern "C" {
+    int yylex(void);
+}
+void yyerror(string msg, ...);
+
 %}
+%option yylineno
 
 digit       [0-9]
 number      {digit}+
@@ -101,21 +106,14 @@ whitespace  [\t]+
 
 %%
 
-// TokenType getToken(void)
-// { 
-//     static int firstTime = TRUE;
-//     TokenType currentToken;
-//     if(firstTime) { 
-//         firstTime = FALSE;
-//         lineno++;
-//         yyin = source;
-//         yyout = listing;
-//     }
-//     currentToken = yylex();
-//     strncpy(tokenString,yytext,MAXTOKENLEN);
-//     if(TraceScan) {
-//         fprintf(listing,"\t%d: ",lineno);
-//         printToken(currentToken,tokenString);
-//     }
-//     return currentToken;
-// }
+int yywrap()
+{
+		return 1;
+}
+
+int get_token() {
+	int token = yylex();
+	// if (TraceScan)
+	// 	printf("%d: %s\n", yylineno, print_token(token, yytext).c_str());
+	return token;
+}

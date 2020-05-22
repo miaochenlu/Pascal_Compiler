@@ -5,67 +5,71 @@
 #include <string>
 #include "global.h"
 using namespace std;
+static ast::BasicAstNode* root;
+extern "C" {
+    int yyparse(void);
+    extern int yylineno;
+}
+void yyerror(string msg, ...);
+static int yylex(void);
 
-ast::BasicAstNode* root;
 %}
 
-
 %union {
-    char*                  aststring;
     char                    astchar;
+    char*                   aststring;
     int                     astint;
     double                  astreal;
     bool                    astbool;
+
     ast::SYSFUNCT           astSYSFUNCT;
     ast::SYSPROC            astSYSPROC;
     ast::TypeKind           astTypeKind;
+    ast::Direction          astDirection;
+
+    ast::BasicConst*        astBasicConst;
+    ast::BasicType*         astBasicType;
     ast::Identifier*        astIdentifier;
-    ast::NameList*          astNameList;
     ast::Expression*        astExpression;
+    ast::CaseExpr*          astCaseExpr;
     ast::Stmt*              astStmt;
+
     ast::Program*           astProgram;
     ast::ProgramHead*       astProgramHead;
     ast::Routine*           astRoutine;
     ast::RoutineHead*       astRoutineHead;
-    ast::StmtList*          astStmtList;
     ast::Parameter*         astParameter;
-    ast::ParamList*         astParamList;
     ast::LabelDecl*         astLabelDecl;
     ast::ConstDecl*         astConstDecl;
     ast::TypeDecl*          astTypeDecl;
     ast::VarDecl*           astVarDecl;
+
+    ast::NameList*          astNameList;
+    ast::StmtList*          astStmtList;
+    ast::ParamList*         astParamList;
     ast::LabelDeclList*     astLabelDeclList;
     ast::ConstDeclList*     astConstDeclList;
     ast::TypeDeclList*      astTypeDeclList;
     ast::VarDeclList*       astVarDeclList;
     ast::RoutinePartList*   astRoutinePartList;
-    ast::BasicConst*        astBasicConst;
-    ast::BasicType*         astBasicType;
-    ast::CaseExpr*          astCaseExpr;
+    ast::ExpressionList*    astExpressionList;
     ast::CaseExprList*      astCaseExprList;
     ast::ArgList*           astArgList;
-    ast::ExpressionList*    astExpressionList;
-    ast::Direction          astDirection;
 }
-%token<aststring> ID
-%token<aststring> DOT DOTDOT SEMI COMMA COLON 
-%token<aststring> LP RP LB RB
-%token<aststring> EQUAL UNEQUAL GE GT LE LT
-%token<aststring> PLUS MINUS MUL DIV MOD
-%token<aststring> OR AND NOT
-%token<astint> INTEGER 
-%token<astreal>REAL 
-%token<astchar>CHAR 
-%token<aststring>STRING 
-%token<astbool>BOOLEAN
-%token<aststring> ARRAY
-%token<aststring> PROGRAM PROCEDURE FUNCTION CONST TYPE VAR RECORD BEG END ASSIGN
-%token<aststring> IF THEN ELSE REPEAT UNTIL WHILE DO FOR TO DOWNTO CASE OF GOTO 
-%token<aststring> READ
-%token<aststring> SYS_CON 
-%token<astSYSPROC>SYS_PROC 
-%token<astTypeKind>SYS_TYPE 
-%token<astSYSFUNCT>SYS_FUNCT
+%token<aststring>   ID
+%token<astint>      INTEGER 
+%token<astreal>     REAL 
+%token<astchar>     CHAR 
+%token<aststring>   STRING 
+%token<astbool>     BOOLEAN
+%token<astSYSPROC>  SYS_PROC 
+%token<astTypeKind> SYS_TYPE 
+%token<astSYSFUNCT> SYS_FUNCT
+%token<aststring>   SYS_CON 
+%token<aststring>   DOT DOTDOT SEMI COMMA COLON LP RP LB RB
+%token<aststring>   EQUAL UNEQUAL GE GT LE LT PLUS MINUS MUL DIV MOD OR AND NOT
+%token<aststring>   PROGRAM PROCEDURE FUNCTION CONST TYPE VAR RECORD ARRAY BEG END ASSIGN
+%token<aststring>   IF THEN ELSE REPEAT UNTIL WHILE DO FOR TO DOWNTO CASE OF GOTO READ
 
 %type<astProgram>           program function_decl procedure_decl;
 %type<astProgramHead>       program_head function_head procedure_head;
@@ -584,7 +588,23 @@ args_list       : args_list  COMMA  expression  {
 ;
 
 %%
-void yyerror() {}
+
+
+void yyerror(string msg, ...) {
+    cout << msg << endl;
+}
+
+static int yylex() {
+	return get_token();
+}
+
+ast::BasicAstNode* parse(void)
+{ 
+    yyparse();
+    return root;
+}
+
+
 int main() {
         printf(">>> ");
         while(1) yyparse();

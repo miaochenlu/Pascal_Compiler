@@ -74,10 +74,18 @@
 #include <string>
 #include "global.h"
 using namespace std;
+static ast::BasicAstNode* root;
+extern "C"
+{
+        int yyparse(void);
+//        int yylex(void);
+        extern int yylineno;
+}
+void yyerror(string msg, ...);
+static int yylex(void);
 
-ast::BasicAstNode* root;
 
-#line 81 "y.tab.c"
+#line 89 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -249,7 +257,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "pascal.y"
+#line 20 "pascal.y"
 
     char*                  aststring;
     char                    astchar;
@@ -287,7 +295,7 @@ union YYSTYPE
     ast::ExpressionList*    astExpressionList;
     ast::Direction          astDirection;
 
-#line 291 "y.tab.c"
+#line 299 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -790,18 +798,18 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINEYYN -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   104,   104,   105,   110,   115,   120,   125,   130,   133,
-     138,   142,   148,   149,   150,   151,   152,   153,   156,   157,
-     162,   166,   172,   177,   178,   179,   182,   201,   204,   207,
-     210,   216,   221,   226,   230,   235,   241,   245,   250,   251,
-     254,   258,   263,   270,   274,   278,   281,   285,   289,   294,
-     299,   302,   306,   310,   316,   321,   330,   334,   339,   343,
-     357,   360,   363,   366,   369,   372,   375,   378,   381,   386,
-     389,   392,   398,   401,   404,   410,   416,   420,   423,   435,
-     440,   444,   448,   451,   456,   461,   465,   471,   474,   479,
-     483,   487,   493,   496,   499,   502,   505,   508,   511,   515,
-     518,   521,   524,   529,   532,   535,   538,   541,   546,   549,
-     552,   555,   558,   561,   564,   567,   570,   573,   577,   581
+       0,   111,   111,   112,   117,   122,   127,   132,   137,   140,
+     145,   149,   155,   156,   157,   158,   159,   160,   163,   164,
+     169,   173,   179,   184,   185,   186,   189,   208,   211,   214,
+     217,   223,   228,   233,   237,   242,   248,   252,   257,   258,
+     261,   265,   270,   277,   281,   285,   288,   292,   296,   301,
+     306,   309,   313,   317,   323,   328,   337,   341,   346,   350,
+     364,   367,   370,   373,   376,   379,   382,   385,   388,   393,
+     396,   399,   404,   407,   410,   416,   422,   426,   429,   441,
+     446,   450,   454,   457,   462,   467,   471,   477,   480,   485,
+     489,   493,   499,   502,   505,   508,   511,   514,   517,   521,
+     524,   527,   530,   535,   538,   541,   544,   547,   552,   555,
+     558,   561,   564,   567,   570,   573,   576,   579,   583,   587
 };
 #endif
 
@@ -1587,181 +1595,181 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 104 "pascal.y"
+#line 111 "pascal.y"
                           { root = (yyvsp[0].astProgram); }
-#line 1593 "y.tab.c"
-    break;
-
-  case 3:
-#line 105 "pascal.y"
-                                             { 
-                    (yyval.astProgram) = new ast::Program((yyvsp[-2].astProgramHead), (yyvsp[-1].astRoutine)); 
-                }
 #line 1601 "y.tab.c"
     break;
 
-  case 4:
-#line 110 "pascal.y"
-                                    { 
-                    (yyval.astProgramHead) = new ast::ProgramHead(new ast::Identifier((yyvsp[-1].aststring)), new ast::ParamList(), new ast::VoidType()); 
+  case 3:
+#line 112 "pascal.y"
+                                             { 
+                    (yyval.astProgram) = new ast::Program((yyvsp[-2].astProgramHead), (yyvsp[-1].astRoutine)); 
                 }
 #line 1609 "y.tab.c"
     break;
 
-  case 5:
-#line 115 "pascal.y"
-                                             { 
-                    (yyval.astRoutine) = new ast::Routine((yyvsp[-1].astRoutineHead), (yyvsp[0].astStmtList)); 
+  case 4:
+#line 117 "pascal.y"
+                                    { 
+                    (yyval.astProgramHead) = new ast::ProgramHead(new ast::Identifier((yyvsp[-1].aststring)), new ast::ParamList(), new ast::VoidType()); 
                 }
 #line 1617 "y.tab.c"
     break;
 
-  case 6:
-#line 120 "pascal.y"
+  case 5:
+#line 122 "pascal.y"
                                              { 
                     (yyval.astRoutine) = new ast::Routine((yyvsp[-1].astRoutineHead), (yyvsp[0].astStmtList)); 
                 }
 #line 1625 "y.tab.c"
     break;
 
-  case 7:
-#line 125 "pascal.y"
-                                                                { 
-                    (yyval.astRoutineHead) = new ast::RoutineHead((yyvsp[-3].astConstDeclList), (yyvsp[-2].astTypeDeclList), (yyvsp[-1].astVarDeclList), (yyvsp[0].astRoutinePartList)); 
+  case 6:
+#line 127 "pascal.y"
+                                             { 
+                    (yyval.astRoutine) = new ast::Routine((yyvsp[-1].astRoutineHead), (yyvsp[0].astStmtList)); 
                 }
 #line 1633 "y.tab.c"
     break;
 
-  case 8:
-#line 130 "pascal.y"
-                                         { 
-                    (yyval.astConstDeclList) = (yyvsp[0].astConstDeclList); 
+  case 7:
+#line 132 "pascal.y"
+                                                                { 
+                    (yyval.astRoutineHead) = new ast::RoutineHead((yyvsp[-3].astConstDeclList), (yyvsp[-2].astTypeDeclList), (yyvsp[-1].astVarDeclList), (yyvsp[0].astRoutinePartList)); 
                 }
 #line 1641 "y.tab.c"
     break;
 
-  case 9:
-#line 133 "pascal.y"
-                  { 
-                    (yyval.astConstDeclList) = new ast::ConstDeclList();
+  case 8:
+#line 137 "pascal.y"
+                                         { 
+                    (yyval.astConstDeclList) = (yyvsp[0].astConstDeclList); 
                 }
 #line 1649 "y.tab.c"
     break;
 
+  case 9:
+#line 140 "pascal.y"
+                  { 
+                    (yyval.astConstDeclList) = new ast::ConstDeclList();
+                }
+#line 1657 "y.tab.c"
+    break;
+
   case 10:
-#line 138 "pascal.y"
+#line 145 "pascal.y"
                                                                 { 
                     (yyval.astConstDeclList) = (yyvsp[-4].astConstDeclList);
                     (yyvsp[-4].astConstDeclList)->push_back(new ast::ConstDecl(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astBasicConst)));
                 }
-#line 1658 "y.tab.c"
+#line 1666 "y.tab.c"
     break;
 
   case 11:
-#line 142 "pascal.y"
+#line 149 "pascal.y"
                                                 {
                     (yyval.astConstDeclList) = new ast::ConstDeclList();
                     (yyval.astConstDeclList)->push_back(new ast::ConstDecl(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astBasicConst)));
                 }
-#line 1667 "y.tab.c"
+#line 1675 "y.tab.c"
     break;
 
   case 12:
-#line 148 "pascal.y"
+#line 155 "pascal.y"
                             {(yyval.astBasicConst) = new ast::IntegerNode((yyvsp[0].astint)); /*需不需要atoi呢， 注意这里还有一些问题*/}
-#line 1673 "y.tab.c"
+#line 1681 "y.tab.c"
     break;
 
   case 13:
-#line 149 "pascal.y"
+#line 156 "pascal.y"
                             {(yyval.astBasicConst) = new ast::RealNode((yyvsp[0].astreal));}
-#line 1679 "y.tab.c"
+#line 1687 "y.tab.c"
     break;
 
   case 14:
-#line 150 "pascal.y"
+#line 157 "pascal.y"
                             {(yyval.astBasicConst) = new ast::CharNode((yyvsp[0].astchar));}
-#line 1685 "y.tab.c"
+#line 1693 "y.tab.c"
     break;
 
   case 15:
-#line 151 "pascal.y"
+#line 158 "pascal.y"
                             {(yyval.astBasicConst) = new ast::StringNode((yyvsp[0].aststring));}
-#line 1691 "y.tab.c"
+#line 1699 "y.tab.c"
     break;
 
   case 16:
-#line 152 "pascal.y"
+#line 159 "pascal.y"
                             {(yyval.astBasicConst) = new ast::BooleanNode((yyvsp[0].astbool));}
-#line 1697 "y.tab.c"
+#line 1705 "y.tab.c"
     break;
 
   case 17:
-#line 153 "pascal.y"
+#line 160 "pascal.y"
                             {(yyval.astBasicConst) = new ast::MaxIntNode();}
-#line 1703 "y.tab.c"
+#line 1711 "y.tab.c"
     break;
 
   case 18:
-#line 156 "pascal.y"
+#line 163 "pascal.y"
                                        { (yyval.astTypeDeclList) = (yyvsp[0].astTypeDeclList); }
-#line 1709 "y.tab.c"
-    break;
-
-  case 19:
-#line 157 "pascal.y"
-                    { 
-                    (yyval.astTypeDeclList) = new ast::TypeDeclList(); 
-                }
 #line 1717 "y.tab.c"
     break;
 
+  case 19:
+#line 164 "pascal.y"
+                    { 
+                    (yyval.astTypeDeclList) = new ast::TypeDeclList(); 
+                }
+#line 1725 "y.tab.c"
+    break;
+
   case 20:
-#line 162 "pascal.y"
+#line 169 "pascal.y"
                                                   { 
                     (yyval.astTypeDeclList) = (yyvsp[-1].astTypeDeclList);
                     (yyvsp[-1].astTypeDeclList)->push_back((yyvsp[0].astTypeDecl));
                 }
-#line 1726 "y.tab.c"
+#line 1734 "y.tab.c"
     break;
 
   case 21:
-#line 166 "pascal.y"
+#line 173 "pascal.y"
                                    {
                     (yyval.astTypeDeclList) = new ast::TypeDeclList();
                     (yyval.astTypeDeclList)->push_back((yyvsp[0].astTypeDecl));
                 }
-#line 1735 "y.tab.c"
-    break;
-
-  case 22:
-#line 172 "pascal.y"
-                                             { 
-                    (yyval.astTypeDecl) = new ast::TypeDecl(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astBasicType)); 
-                }
 #line 1743 "y.tab.c"
     break;
 
+  case 22:
+#line 179 "pascal.y"
+                                             { 
+                    (yyval.astTypeDecl) = new ast::TypeDecl(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astBasicType)); 
+                }
+#line 1751 "y.tab.c"
+    break;
+
   case 23:
-#line 177 "pascal.y"
+#line 184 "pascal.y"
                                     { (yyval.astBasicType) = (yyvsp[0].astBasicType); }
-#line 1749 "y.tab.c"
+#line 1757 "y.tab.c"
     break;
 
   case 24:
-#line 178 "pascal.y"
+#line 185 "pascal.y"
                                     { (yyval.astBasicType) = (yyvsp[0].astBasicType); }
-#line 1755 "y.tab.c"
+#line 1763 "y.tab.c"
     break;
 
   case 25:
-#line 179 "pascal.y"
+#line 186 "pascal.y"
                                     { (yyval.astBasicType) = (yyvsp[0].astBasicType); }
-#line 1761 "y.tab.c"
+#line 1769 "y.tab.c"
     break;
 
   case 26:
-#line 182 "pascal.y"
+#line 189 "pascal.y"
                            { 
                     if((yyvsp[0].astTypeKind) == ast::TypeKind::INTtype) {
                         (yyval.astBasicType) = new ast::IntegerType();
@@ -1775,777 +1783,777 @@ yyreduce:
                         (yyval.astBasicType) = new ast::StringType();
                     }
                 }
-#line 1779 "y.tab.c"
-    break;
-
-  case 27:
-#line 201 "pascal.y"
-                                                    { 
-                    (yyval.astBasicType) = new ast::RangeType((yyvsp[-2].astBasicConst), (yyvsp[0].astBasicConst)); 
-                }
 #line 1787 "y.tab.c"
     break;
 
-  case 28:
-#line 204 "pascal.y"
-                                                           { 
-                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[-2].astBasicConst)), (yyvsp[0].astBasicConst)); 
+  case 27:
+#line 208 "pascal.y"
+                                                    { 
+                    (yyval.astBasicType) = new ast::RangeType((yyvsp[-2].astBasicConst), (yyvsp[0].astBasicConst)); 
                 }
 #line 1795 "y.tab.c"
     break;
 
-  case 29:
-#line 207 "pascal.y"
-                                                                  { 
-                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[-3].astBasicConst)), new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[0].astBasicConst))); 
+  case 28:
+#line 211 "pascal.y"
+                                                           { 
+                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[-2].astBasicConst)), (yyvsp[0].astBasicConst)); 
                 }
 #line 1803 "y.tab.c"
     break;
 
-  case 30:
-#line 210 "pascal.y"
-                                  {
-                    (yyval.astBasicType) = new ast::RangeType((ast::Expression*)(new ast::Identifier((yyvsp[-2].aststring))), (ast::Expression*)(new ast::Identifier((yyvsp[0].aststring))));
+  case 29:
+#line 214 "pascal.y"
+                                                                  { 
+                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[-3].astBasicConst)), new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[0].astBasicConst))); 
                 }
 #line 1811 "y.tab.c"
     break;
 
-  case 31:
-#line 216 "pascal.y"
-                                                                 { 
-                    (yyval.astBasicType) = new ast::ArrayType((yyvsp[-3].astBasicType), (yyvsp[0].astBasicType)); 
+  case 30:
+#line 217 "pascal.y"
+                                  {
+                    (yyval.astBasicType) = new ast::RangeType((ast::Expression*)(new ast::Identifier((yyvsp[-2].aststring))), (ast::Expression*)(new ast::Identifier((yyvsp[0].aststring))));
                 }
 #line 1819 "y.tab.c"
     break;
 
-  case 32:
-#line 221 "pascal.y"
-                                               { 
-                    (yyval.astBasicType) = new ast::RecordType((yyvsp[-1].astVarDeclList)); 
+  case 31:
+#line 223 "pascal.y"
+                                                                 { 
+                    (yyval.astBasicType) = new ast::ArrayType((yyvsp[-3].astBasicType), (yyvsp[0].astBasicType)); 
                 }
 #line 1827 "y.tab.c"
     break;
 
+  case 32:
+#line 228 "pascal.y"
+                                               { 
+                    (yyval.astBasicType) = new ast::RecordType((yyvsp[-1].astVarDeclList)); 
+                }
+#line 1835 "y.tab.c"
+    break;
+
   case 33:
-#line 226 "pascal.y"
+#line 233 "pascal.y"
                                               { 
                     (yyval.astVarDeclList) = (yyvsp[-1].astVarDeclList);
                     (yyvsp[-1].astVarDeclList)->insert((yyvsp[-1].astVarDeclList)->end(), (yyvsp[0].astVarDeclList)->begin(), (yyvsp[0].astVarDeclList)->end());;
                 }
-#line 1836 "y.tab.c"
-    break;
-
-  case 34:
-#line 230 "pascal.y"
-                              {
-                    (yyval.astVarDeclList) = (yyvsp[0].astVarDeclList);
-                }
 #line 1844 "y.tab.c"
     break;
 
+  case 34:
+#line 237 "pascal.y"
+                              {
+                    (yyval.astVarDeclList) = (yyvsp[0].astVarDeclList);
+                }
+#line 1852 "y.tab.c"
+    break;
+
   case 35:
-#line 235 "pascal.y"
+#line 242 "pascal.y"
                                                     {
                     (yyval.astVarDeclList) = new ast::VarDeclList(); 
                     for(auto name: *((yyvsp[-3].astNameList))) 
                         (yyval.astVarDeclList)->push_back(new ast::VarDecl(name, (yyvsp[-1].astBasicType)));
                 }
-#line 1854 "y.tab.c"
+#line 1862 "y.tab.c"
     break;
 
   case 36:
-#line 241 "pascal.y"
+#line 248 "pascal.y"
                                        {
                     (yyval.astNameList) = (yyvsp[-2].astNameList);
                     (yyval.astNameList)->push_back(new ast::Identifier((yyvsp[0].aststring)));
                 }
-#line 1863 "y.tab.c"
+#line 1871 "y.tab.c"
     break;
 
   case 37:
-#line 245 "pascal.y"
+#line 252 "pascal.y"
                       {
                     (yyval.astNameList) = new ast::NameList;
                     (yyval.astNameList)->push_back(new ast::Identifier((yyvsp[0].aststring)));
                 }
-#line 1872 "y.tab.c"
+#line 1880 "y.tab.c"
     break;
 
   case 38:
-#line 250 "pascal.y"
+#line 257 "pascal.y"
                                      { (yyval.astVarDeclList) = (yyvsp[0].astVarDeclList); }
-#line 1878 "y.tab.c"
+#line 1886 "y.tab.c"
     break;
 
   case 39:
-#line 251 "pascal.y"
+#line 258 "pascal.y"
                   { (yyval.astVarDeclList) = new ast::VarDeclList(); }
-#line 1884 "y.tab.c"
+#line 1892 "y.tab.c"
     break;
 
   case 40:
-#line 254 "pascal.y"
+#line 261 "pascal.y"
                                            { 
                     (yyval.astVarDeclList) = (yyvsp[-1].astVarDeclList);
                     (yyvsp[-1].astVarDeclList)->insert((yyvsp[-1].astVarDeclList)->end(), (yyvsp[0].astVarDeclList)->begin(), (yyvsp[0].astVarDeclList)->end());
                 }
-#line 1893 "y.tab.c"
-    break;
-
-  case 41:
-#line 258 "pascal.y"
-                            {
-                    (yyval.astVarDeclList) = (yyvsp[0].astVarDeclList);
-                }
 #line 1901 "y.tab.c"
     break;
 
+  case 41:
+#line 265 "pascal.y"
+                            {
+                    (yyval.astVarDeclList) = (yyvsp[0].astVarDeclList);
+                }
+#line 1909 "y.tab.c"
+    break;
+
   case 42:
-#line 263 "pascal.y"
+#line 270 "pascal.y"
                                                      {
                     (yyval.astVarDeclList) = new ast::VarDeclList(); 
                     for(auto name: *((yyvsp[-3].astNameList))) 
                         (yyval.astVarDeclList)->push_back(new ast::VarDecl(name, (yyvsp[-1].astBasicType)));
                 }
-#line 1911 "y.tab.c"
+#line 1919 "y.tab.c"
     break;
 
   case 43:
-#line 270 "pascal.y"
+#line 277 "pascal.y"
                                                {
                     (yyval.astRoutinePartList) = (yyvsp[-1].astRoutinePartList);
                     (yyval.astRoutinePartList)->push_back((yyvsp[0].astProgram));
                 }
-#line 1920 "y.tab.c"
+#line 1928 "y.tab.c"
     break;
 
   case 44:
-#line 274 "pascal.y"
+#line 281 "pascal.y"
                                                 {
                     (yyval.astRoutinePartList) = (yyvsp[-1].astRoutinePartList);
                     (yyval.astRoutinePartList)->push_back((yyvsp[0].astProgram));
                 }
-#line 1929 "y.tab.c"
+#line 1937 "y.tab.c"
     break;
 
   case 45:
-#line 278 "pascal.y"
+#line 285 "pascal.y"
                     { (yyval.astRoutinePartList) = new ast::RoutinePartList(); }
-#line 1935 "y.tab.c"
-    break;
-
-  case 46:
-#line 281 "pascal.y"
-                                                         {
-                    (yyval.astProgram) = new ast::Program((yyvsp[-3].astProgramHead), (yyvsp[-1].astRoutine));
-                }
 #line 1943 "y.tab.c"
     break;
 
-  case 47:
-#line 285 "pascal.y"
-                                                                     {
-                    (yyval.astProgramHead) = new ast::ProgramHead(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-2].astParamList), (yyvsp[0].astBasicType));
+  case 46:
+#line 288 "pascal.y"
+                                                         {
+                    (yyval.astProgram) = new ast::Program((yyvsp[-3].astProgramHead), (yyvsp[-1].astRoutine));
                 }
 #line 1951 "y.tab.c"
     break;
 
-  case 48:
-#line 289 "pascal.y"
-                                                           {
-                    (yyval.astProgram) = new ast::Program((yyvsp[-3].astProgramHead), (yyvsp[-1].astRoutine));
+  case 47:
+#line 292 "pascal.y"
+                                                                     {
+                    (yyval.astProgramHead) = new ast::ProgramHead(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-2].astParamList), (yyvsp[0].astBasicType));
                 }
 #line 1959 "y.tab.c"
     break;
 
-  case 49:
-#line 294 "pascal.y"
-                                           {
-                    (yyval.astProgramHead) = new ast::ProgramHead(new ast::Identifier((yyvsp[-1].aststring)), (yyvsp[0].astParamList), new ast::VoidType()); 
+  case 48:
+#line 296 "pascal.y"
+                                                           {
+                    (yyval.astProgram) = new ast::Program((yyvsp[-3].astProgramHead), (yyvsp[-1].astRoutine));
                 }
 #line 1967 "y.tab.c"
     break;
 
-  case 50:
-#line 299 "pascal.y"
-                                     {
-                    (yyval.astParamList) = (yyvsp[-1].astParamList);
+  case 49:
+#line 301 "pascal.y"
+                                           {
+                    (yyval.astProgramHead) = new ast::ProgramHead(new ast::Identifier((yyvsp[-1].aststring)), (yyvsp[0].astParamList), new ast::VoidType()); 
                 }
 #line 1975 "y.tab.c"
     break;
 
-  case 51:
-#line 302 "pascal.y"
-                   {
-                    (yyval.astParamList) = new ast::ParamList();
+  case 50:
+#line 306 "pascal.y"
+                                     {
+                    (yyval.astParamList) = (yyvsp[-1].astParamList);
                 }
 #line 1983 "y.tab.c"
     break;
 
+  case 51:
+#line 309 "pascal.y"
+                   {
+                    (yyval.astParamList) = new ast::ParamList();
+                }
+#line 1991 "y.tab.c"
+    break;
+
   case 52:
-#line 306 "pascal.y"
+#line 313 "pascal.y"
                                                        {
                     (yyval.astParamList) = (yyvsp[-2].astParamList);
                     (yyvsp[-2].astParamList)->insert((yyvsp[-2].astParamList)->end(), (yyvsp[0].astParamList)->begin(), (yyvsp[0].astParamList)->end());
                 }
-#line 1992 "y.tab.c"
-    break;
-
-  case 53:
-#line 310 "pascal.y"
-                                 {
-                    (yyval.astParamList) = (yyvsp[0].astParamList);
-                }
 #line 2000 "y.tab.c"
     break;
 
+  case 53:
+#line 317 "pascal.y"
+                                 {
+                    (yyval.astParamList) = (yyvsp[0].astParamList);
+                }
+#line 2008 "y.tab.c"
+    break;
+
   case 54:
-#line 316 "pascal.y"
+#line 323 "pascal.y"
                                                          {
                     (yyval.astParamList) = new ast::ParamList(); 
                     for(auto name: *((yyvsp[-2].astNameList))) 
                         (yyval.astParamList)->push_back(new ast::Parameter(name, (yyvsp[0].astBasicType)));
                 }
-#line 2010 "y.tab.c"
+#line 2018 "y.tab.c"
     break;
 
   case 55:
-#line 321 "pascal.y"
+#line 328 "pascal.y"
                                                      {
                     (yyval.astParamList) = new ast::ParamList(); 
                     for(auto name: *((yyvsp[-2].astNameList))) 
                         (yyval.astParamList)->push_back(new ast::Parameter(name, (yyvsp[0].astBasicType)));
                 }
-#line 2020 "y.tab.c"
-    break;
-
-  case 56:
-#line 330 "pascal.y"
-                                {
-                    (yyval.astStmtList) = (yyvsp[0].astStmtList);
-                }
 #line 2028 "y.tab.c"
     break;
 
-  case 57:
-#line 334 "pascal.y"
-                                      {
-                    (yyval.astStmtList) = (yyvsp[-1].astStmtList);
+  case 56:
+#line 337 "pascal.y"
+                                {
+                    (yyval.astStmtList) = (yyvsp[0].astStmtList);
                 }
 #line 2036 "y.tab.c"
     break;
 
+  case 57:
+#line 341 "pascal.y"
+                                      {
+                    (yyval.astStmtList) = (yyvsp[-1].astStmtList);
+                }
+#line 2044 "y.tab.c"
+    break;
+
   case 58:
-#line 339 "pascal.y"
+#line 346 "pascal.y"
                                         {
                     (yyval.astStmtList) = (yyvsp[-2].astStmtList);
                     (yyval.astStmtList)->push_back((yyvsp[-1].astStmt));
                 }
-#line 2045 "y.tab.c"
-    break;
-
-  case 59:
-#line 343 "pascal.y"
-                   {
-                    (yyval.astStmtList) = new ast::StmtList();
-                }
 #line 2053 "y.tab.c"
     break;
 
-  case 60:
-#line 357 "pascal.y"
-                              {
-                    (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
+  case 59:
+#line 350 "pascal.y"
+                   {
+                    (yyval.astStmtList) = new ast::StmtList();
                 }
 #line 2061 "y.tab.c"
     break;
 
-  case 61:
-#line 360 "pascal.y"
-                            {
+  case 60:
+#line 364 "pascal.y"
+                              {
                     (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
                 }
 #line 2069 "y.tab.c"
     break;
 
-  case 62:
-#line 363 "pascal.y"
-                                {
-                    (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmtList);
+  case 61:
+#line 367 "pascal.y"
+                            {
+                    (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
                 }
 #line 2077 "y.tab.c"
     break;
 
-  case 63:
-#line 366 "pascal.y"
-                          {
-                    (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
+  case 62:
+#line 370 "pascal.y"
+                                {
+                    (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmtList);
                 }
 #line 2085 "y.tab.c"
     break;
 
-  case 64:
-#line 369 "pascal.y"
-                              {
+  case 63:
+#line 373 "pascal.y"
+                          {
                     (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
                 }
 #line 2093 "y.tab.c"
     break;
 
-  case 65:
-#line 372 "pascal.y"
-                             {
+  case 64:
+#line 376 "pascal.y"
+                              {
                     (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
                 }
 #line 2101 "y.tab.c"
     break;
 
-  case 66:
-#line 375 "pascal.y"
-                           {
+  case 65:
+#line 379 "pascal.y"
+                             {
                     (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
                 }
 #line 2109 "y.tab.c"
     break;
 
-  case 67:
-#line 378 "pascal.y"
-                            {
+  case 66:
+#line 382 "pascal.y"
+                           {
                     (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
                 }
 #line 2117 "y.tab.c"
     break;
 
-  case 68:
-#line 381 "pascal.y"
-                           {
+  case 67:
+#line 385 "pascal.y"
+                            {
                     (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
                 }
 #line 2125 "y.tab.c"
     break;
 
-  case 69:
-#line 386 "pascal.y"
-                                         {
-                    (yyval.astStmt) = new ast::AssignStmt(new ast::Identifier((yyvsp[-2].aststring)), (yyvsp[0].astExpression));
+  case 68:
+#line 388 "pascal.y"
+                           {
+                    (yyval.astStmt) = (ast::Stmt*)(yyvsp[0].astStmt);
                 }
 #line 2133 "y.tab.c"
     break;
 
-  case 70:
-#line 389 "pascal.y"
-                                                        {
-                    (yyval.astStmt) = new ast::AssignStmt(new ast::ArrayElementRef(new ast::Identifier((yyvsp[-5].aststring)), (yyvsp[-3].astExpression)), (yyvsp[0].astExpression));
+  case 69:
+#line 393 "pascal.y"
+                                         {
+                    (yyval.astStmt) = new ast::AssignStmt(new ast::Identifier((yyvsp[-2].aststring)), (yyvsp[0].astExpression));
                 }
 #line 2141 "y.tab.c"
     break;
 
-  case 71:
-#line 392 "pascal.y"
-                                                  {
-                    (yyval.astStmt) = new ast::AssignStmt(new ast::RecordElementRef(new ast::Identifier((yyvsp[-4].aststring)), new ast::Identifier((yyvsp[-2].aststring))), (yyvsp[0].astExpression));
+  case 70:
+#line 396 "pascal.y"
+                                                        {
+                    (yyval.astStmt) = new ast::AssignStmt(new ast::ArrayElementRef(new ast::Identifier((yyvsp[-5].aststring)), (yyvsp[-3].astExpression)), (yyvsp[0].astExpression));
                 }
 #line 2149 "y.tab.c"
     break;
 
-  case 72:
-#line 398 "pascal.y"
-                      {
-                    (yyval.astStmt) = new ast::UserDefProcCall(new ast::Identifier((yyvsp[0].aststring)));
+  case 71:
+#line 399 "pascal.y"
+                                                  {
+                    (yyval.astStmt) = new ast::AssignStmt(new ast::RecordElementRef(new ast::Identifier((yyvsp[-4].aststring)), new ast::Identifier((yyvsp[-2].aststring))), (yyvsp[0].astExpression));
                 }
 #line 2157 "y.tab.c"
     break;
 
-  case 73:
-#line 401 "pascal.y"
-                                      {
-                    (yyval.astStmt) = new ast::UserDefProcCall(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astArgList));
+  case 72:
+#line 404 "pascal.y"
+                      {
+                    (yyval.astStmt) = new ast::UserDefProcCall(new ast::Identifier((yyvsp[0].aststring)));
                 }
 #line 2165 "y.tab.c"
     break;
 
+  case 73:
+#line 407 "pascal.y"
+                                      {
+                    (yyval.astStmt) = new ast::UserDefProcCall(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astArgList));
+                }
+#line 2173 "y.tab.c"
+    break;
+
   case 74:
-#line 404 "pascal.y"
+#line 410 "pascal.y"
                             {
                     if((yyvsp[0].astSYSPROC) == ast::SYSPROC::WRITE)
                         (yyval.astStmt) = new ast::SysProcCall(ast::SYSPROC::WRITE);
                     if((yyvsp[0].astSYSPROC) == ast::SYSPROC::WRITELN)
                         (yyval.astStmt) = new ast::SysProcCall(ast::SYSPROC::WRITELN);
                 }
-#line 2176 "y.tab.c"
+#line 2184 "y.tab.c"
     break;
 
   case 75:
-#line 410 "pascal.y"
+#line 416 "pascal.y"
                                                      {
                     if((yyvsp[-3].astSYSPROC) == ast::SYSPROC::WRITE)
                         (yyval.astStmt) = new ast::SysProcCall(ast::SYSPROC::WRITE, (yyvsp[-1].astExpressionList));
                     if((yyvsp[-3].astSYSPROC) == ast::SYSPROC::WRITELN)
                         (yyval.astStmt) = new ast::SysProcCall(ast::SYSPROC::WRITELN, (yyvsp[-1].astExpressionList));
                 }
-#line 2187 "y.tab.c"
-    break;
-
-  case 76:
-#line 416 "pascal.y"
-                                        {
-                    (yyval.astStmt) = new ast::ReadProcCall((yyvsp[-1].astExpression));
-                }
 #line 2195 "y.tab.c"
     break;
 
-  case 77:
-#line 420 "pascal.y"
-                                                                  {
-                    (yyval.astStmt) = new ast::IfStmt((yyvsp[-4].astExpression), (yyvsp[-2].astStmtList), (yyvsp[0].astStmtList));
+  case 76:
+#line 422 "pascal.y"
+                                        {
+                    (yyval.astStmt) = new ast::ReadProcCall((yyvsp[-1].astExpression));
                 }
 #line 2203 "y.tab.c"
     break;
 
-  case 78:
-#line 423 "pascal.y"
-                                                  {
-                    (yyval.astStmt) = new ast::IfStmt((yyvsp[-2].astExpression), (yyvsp[0].astStmtList));
+  case 77:
+#line 426 "pascal.y"
+                                                                  {
+                    (yyval.astStmt) = new ast::IfStmt((yyvsp[-4].astExpression), (yyvsp[-2].astStmtList), (yyvsp[0].astStmtList));
                 }
 #line 2211 "y.tab.c"
     break;
 
-  case 79:
-#line 435 "pascal.y"
-                                                       {
-                    (yyval.astStmt) = new ast::RepeatStmt((yyvsp[0].astExpression), (yyvsp[-2].astStmtList));
+  case 78:
+#line 429 "pascal.y"
+                                                  {
+                    (yyval.astStmt) = new ast::IfStmt((yyvsp[-2].astExpression), (yyvsp[0].astStmtList));
                 }
 #line 2219 "y.tab.c"
     break;
 
-  case 80:
-#line 440 "pascal.y"
-                                                  {
-                    (yyval.astStmt) = new ast::WhileStmt((yyvsp[-2].astExpression), (yyvsp[0].astStmtList));
+  case 79:
+#line 441 "pascal.y"
+                                                       {
+                    (yyval.astStmt) = new ast::RepeatStmt((yyvsp[0].astExpression), (yyvsp[-2].astStmtList));
                 }
 #line 2227 "y.tab.c"
     break;
 
-  case 81:
-#line 444 "pascal.y"
-                                                                                   {
-                    (yyval.astStmt) = new ast::ForStmt(new ast::Identifier((yyvsp[-6].aststring)), (yyvsp[-4].astExpression), (yyvsp[-3].astDirection), (yyvsp[-2].astExpression), (yyvsp[0].astStmtList));
+  case 80:
+#line 446 "pascal.y"
+                                                  {
+                    (yyval.astStmt) = new ast::WhileStmt((yyvsp[-2].astExpression), (yyvsp[0].astStmtList));
                 }
 #line 2235 "y.tab.c"
     break;
 
-  case 82:
-#line 448 "pascal.y"
-                     {
-                    (yyval.astDirection) = ast::Direction::To;
+  case 81:
+#line 450 "pascal.y"
+                                                                                   {
+                    (yyval.astStmt) = new ast::ForStmt(new ast::Identifier((yyvsp[-6].aststring)), (yyvsp[-4].astExpression), (yyvsp[-3].astDirection), (yyvsp[-2].astExpression), (yyvsp[0].astStmtList));
                 }
 #line 2243 "y.tab.c"
     break;
 
-  case 83:
-#line 451 "pascal.y"
-                         {
-                    (yyval.astDirection) = ast::Direction::DownTo;
+  case 82:
+#line 454 "pascal.y"
+                     {
+                    (yyval.astDirection) = ast::Direction::To;
                 }
 #line 2251 "y.tab.c"
     break;
 
-  case 84:
-#line 456 "pascal.y"
-                                                         {
-                    (yyval.astStmt) = new ast::CaseStmt((yyvsp[-3].astExpression), (yyvsp[-1].astCaseExprList));
+  case 83:
+#line 457 "pascal.y"
+                         {
+                    (yyval.astDirection) = ast::Direction::DownTo;
                 }
 #line 2259 "y.tab.c"
     break;
 
+  case 84:
+#line 462 "pascal.y"
+                                                         {
+                    (yyval.astStmt) = new ast::CaseStmt((yyvsp[-3].astExpression), (yyvsp[-1].astCaseExprList));
+                }
+#line 2267 "y.tab.c"
+    break;
+
   case 85:
-#line 461 "pascal.y"
+#line 467 "pascal.y"
                                              {
                     (yyval.astCaseExprList) = (yyvsp[-1].astCaseExprList);
                     (yyval.astCaseExprList)->push_back((yyvsp[0].astCaseExpr));
                 }
-#line 2268 "y.tab.c"
+#line 2276 "y.tab.c"
     break;
 
   case 86:
-#line 465 "pascal.y"
+#line 471 "pascal.y"
                              {
                     (yyval.astCaseExprList) = new ast::CaseExprList();
                     (yyval.astCaseExprList)->push_back((yyvsp[0].astCaseExpr));
                 }
-#line 2277 "y.tab.c"
-    break;
-
-  case 87:
-#line 471 "pascal.y"
-                                                      {
-                    (yyval.astCaseExpr) = new ast::CaseExpr((yyvsp[-3].astBasicConst), (yyvsp[-1].astStmtList));
-                }
 #line 2285 "y.tab.c"
     break;
 
-  case 88:
-#line 474 "pascal.y"
-                                              {
-                    (yyval.astCaseExpr) = new ast::CaseExpr(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astStmtList));
+  case 87:
+#line 477 "pascal.y"
+                                                      {
+                    (yyval.astCaseExpr) = new ast::CaseExpr((yyvsp[-3].astBasicConst), (yyvsp[-1].astStmtList));
                 }
 #line 2293 "y.tab.c"
     break;
 
-  case 89:
-#line 479 "pascal.y"
-                                {
-                    (yyval.astStmt) = new ast::GotoStmt((yyvsp[0].astint));
+  case 88:
+#line 480 "pascal.y"
+                                              {
+                    (yyval.astCaseExpr) = new ast::CaseExpr(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astStmtList));
                 }
 #line 2301 "y.tab.c"
     break;
 
+  case 89:
+#line 485 "pascal.y"
+                                {
+                    (yyval.astStmt) = new ast::GotoStmt((yyvsp[0].astint));
+                }
+#line 2309 "y.tab.c"
+    break;
+
   case 90:
-#line 483 "pascal.y"
+#line 489 "pascal.y"
                                                       {
                     (yyval.astExpressionList) = (yyvsp[-2].astExpressionList);
                     (yyval.astExpressionList)->push_back((yyvsp[0].astExpression));
                 }
-#line 2310 "y.tab.c"
+#line 2318 "y.tab.c"
     break;
 
   case 91:
-#line 487 "pascal.y"
+#line 493 "pascal.y"
                               {
                     (yyval.astExpressionList) = new ast::ExpressionList();
                     (yyval.astExpressionList)->push_back((yyvsp[0].astExpression));
                 }
-#line 2319 "y.tab.c"
-    break;
-
-  case 92:
-#line 493 "pascal.y"
-                                        {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::GEop, (yyvsp[0].astExpression));
-                }
 #line 2327 "y.tab.c"
     break;
 
-  case 93:
-#line 496 "pascal.y"
+  case 92:
+#line 499 "pascal.y"
                                         {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::GTop, (yyvsp[0].astExpression));
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::GEop, (yyvsp[0].astExpression));
                 }
 #line 2335 "y.tab.c"
     break;
 
-  case 94:
-#line 499 "pascal.y"
+  case 93:
+#line 502 "pascal.y"
                                         {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::LEop, (yyvsp[0].astExpression));
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::GTop, (yyvsp[0].astExpression));
                 }
 #line 2343 "y.tab.c"
     break;
 
-  case 95:
-#line 502 "pascal.y"
+  case 94:
+#line 505 "pascal.y"
                                         {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::LTop, (yyvsp[0].astExpression));
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::LEop, (yyvsp[0].astExpression));
                 }
 #line 2351 "y.tab.c"
     break;
 
-  case 96:
-#line 505 "pascal.y"
-                                           {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::EQUALop, (yyvsp[0].astExpression));
+  case 95:
+#line 508 "pascal.y"
+                                        {
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::LTop, (yyvsp[0].astExpression));
                 }
 #line 2359 "y.tab.c"
     break;
 
-  case 97:
-#line 508 "pascal.y"
-                                             {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::UNEQUALop, (yyvsp[0].astExpression));
+  case 96:
+#line 511 "pascal.y"
+                                           {
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::EQUALop, (yyvsp[0].astExpression));
                 }
 #line 2367 "y.tab.c"
     break;
 
-  case 98:
-#line 511 "pascal.y"
-                        {
-                    (yyval.astExpression) = (yyvsp[0].astExpression);
+  case 97:
+#line 514 "pascal.y"
+                                             {
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::UNEQUALop, (yyvsp[0].astExpression));
                 }
 #line 2375 "y.tab.c"
     break;
 
-  case 99:
-#line 515 "pascal.y"
-                                     {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::PLUSop, (yyvsp[0].astExpression));
+  case 98:
+#line 517 "pascal.y"
+                        {
+                    (yyval.astExpression) = (yyvsp[0].astExpression);
                 }
 #line 2383 "y.tab.c"
     break;
 
-  case 100:
-#line 518 "pascal.y"
+  case 99:
+#line 521 "pascal.y"
                                      {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MINUSop, (yyvsp[0].astExpression));
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::PLUSop, (yyvsp[0].astExpression));
                 }
 #line 2391 "y.tab.c"
     break;
 
-  case 101:
-#line 521 "pascal.y"
+  case 100:
+#line 524 "pascal.y"
                                      {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::ORop, (yyvsp[0].astExpression));
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MINUSop, (yyvsp[0].astExpression));
                 }
 #line 2399 "y.tab.c"
     break;
 
-  case 102:
-#line 524 "pascal.y"
-                        {
-                    (yyval.astExpression) = (yyvsp[0].astExpression);
+  case 101:
+#line 527 "pascal.y"
+                                     {
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::ORop, (yyvsp[0].astExpression));
                 }
 #line 2407 "y.tab.c"
     break;
 
-  case 103:
-#line 529 "pascal.y"
-                                     {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MULop, (yyvsp[0].astExpression));
+  case 102:
+#line 530 "pascal.y"
+                        {
+                    (yyval.astExpression) = (yyvsp[0].astExpression);
                 }
 #line 2415 "y.tab.c"
     break;
 
-  case 104:
-#line 532 "pascal.y"
-                                      {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::DIVop, (yyvsp[0].astExpression));
+  case 103:
+#line 535 "pascal.y"
+                                     {
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MULop, (yyvsp[0].astExpression));
                 }
 #line 2423 "y.tab.c"
     break;
 
-  case 105:
-#line 535 "pascal.y"
-                                     {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MODop, (yyvsp[0].astExpression));
+  case 104:
+#line 538 "pascal.y"
+                                      {
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::DIVop, (yyvsp[0].astExpression));
                 }
 #line 2431 "y.tab.c"
     break;
 
-  case 106:
-#line 538 "pascal.y"
-                                      {
-                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::ANDop, (yyvsp[0].astExpression));
+  case 105:
+#line 541 "pascal.y"
+                                     {
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MODop, (yyvsp[0].astExpression));
                 }
 #line 2439 "y.tab.c"
     break;
 
-  case 107:
-#line 541 "pascal.y"
-                          {
-                    (yyval.astExpression) = (yyvsp[0].astExpression);
+  case 106:
+#line 544 "pascal.y"
+                                      {
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::ANDop, (yyvsp[0].astExpression));
                 }
 #line 2447 "y.tab.c"
     break;
 
-  case 108:
-#line 546 "pascal.y"
-                      {
-                    (yyval.astExpression) = new ast::Identifier((yyvsp[0].aststring));
+  case 107:
+#line 547 "pascal.y"
+                          {
+                    (yyval.astExpression) = (yyvsp[0].astExpression);
                 }
 #line 2455 "y.tab.c"
     break;
 
-  case 109:
-#line 549 "pascal.y"
-                                          {
-                    (yyval.astExpression) = new ast::UserDefProcCall(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astArgList));
+  case 108:
+#line 552 "pascal.y"
+                      {
+                    (yyval.astExpression) = new ast::Identifier((yyvsp[0].aststring));
                 }
 #line 2463 "y.tab.c"
     break;
 
-  case 110:
-#line 552 "pascal.y"
-                             {
-                    (yyval.astExpression) = new ast::SysFuncCall((yyvsp[0].astSYSFUNCT));
+  case 109:
+#line 555 "pascal.y"
+                                          {
+                    (yyval.astExpression) = new ast::UserDefProcCall(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astArgList));
                 }
 #line 2471 "y.tab.c"
     break;
 
-  case 111:
-#line 555 "pascal.y"
-                                                 {
-                    (yyval.astExpression) = new ast::SysFuncCall((yyvsp[-3].astSYSFUNCT), (yyvsp[-1].astArgList));
+  case 110:
+#line 558 "pascal.y"
+                             {
+                    (yyval.astExpression) = new ast::SysFuncCall((yyvsp[0].astSYSFUNCT));
                 }
 #line 2479 "y.tab.c"
     break;
 
-  case 112:
-#line 558 "pascal.y"
-                                {
-                    (yyval.astExpression) = (yyvsp[0].astBasicConst);
+  case 111:
+#line 561 "pascal.y"
+                                                 {
+                    (yyval.astExpression) = new ast::SysFuncCall((yyvsp[-3].astSYSFUNCT), (yyvsp[-1].astArgList));
                 }
 #line 2487 "y.tab.c"
     break;
 
-  case 113:
-#line 561 "pascal.y"
-                                      {
-                    (yyval.astExpression) = (yyvsp[-1].astExpression);
+  case 112:
+#line 564 "pascal.y"
+                                {
+                    (yyval.astExpression) = (yyvsp[0].astBasicConst);
                 }
 #line 2495 "y.tab.c"
     break;
 
-  case 114:
-#line 564 "pascal.y"
-                                {
-                    (yyval.astExpression) = new ast::UnaryExpr(ast::UnaryOperator::NOTop, (yyvsp[0].astExpression));
+  case 113:
+#line 567 "pascal.y"
+                                      {
+                    (yyval.astExpression) = (yyvsp[-1].astExpression);
                 }
 #line 2503 "y.tab.c"
     break;
 
-  case 115:
-#line 567 "pascal.y"
-                                 {
-                    (yyval.astExpression) = new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[0].astExpression));
+  case 114:
+#line 570 "pascal.y"
+                                {
+                    (yyval.astExpression) = new ast::UnaryExpr(ast::UnaryOperator::NOTop, (yyvsp[0].astExpression));
                 }
 #line 2511 "y.tab.c"
     break;
 
-  case 116:
-#line 570 "pascal.y"
-                                          {
-                    (yyval.astExpression) = new ast::ArrayElementRef(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astExpression));
+  case 115:
+#line 573 "pascal.y"
+                                 {
+                    (yyval.astExpression) = new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[0].astExpression));
                 }
 #line 2519 "y.tab.c"
     break;
 
-  case 117:
-#line 573 "pascal.y"
-                               {
-                    (yyval.astExpression) = new ast::RecordElementRef(new ast::Identifier((yyvsp[-2].aststring)), new ast::Identifier((yyvsp[0].aststring)));
+  case 116:
+#line 576 "pascal.y"
+                                          {
+                    (yyval.astExpression) = new ast::ArrayElementRef(new ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astExpression));
                 }
 #line 2527 "y.tab.c"
     break;
 
+  case 117:
+#line 579 "pascal.y"
+                               {
+                    (yyval.astExpression) = new ast::RecordElementRef(new ast::Identifier((yyvsp[-2].aststring)), new ast::Identifier((yyvsp[0].aststring)));
+                }
+#line 2535 "y.tab.c"
+    break;
+
   case 118:
-#line 577 "pascal.y"
+#line 583 "pascal.y"
                                                 {
                     (yyval.astArgList) = (yyvsp[-2].astArgList);
                     (yyval.astArgList)->push_back((yyvsp[0].astExpression));
                 }
-#line 2536 "y.tab.c"
+#line 2544 "y.tab.c"
     break;
 
   case 119:
-#line 581 "pascal.y"
+#line 587 "pascal.y"
                               {
                     (yyval.astArgList) = new ast::ArgList();
                     (yyval.astArgList)->push_back((yyvsp[0].astExpression));
                 }
-#line 2545 "y.tab.c"
+#line 2553 "y.tab.c"
     break;
 
 
-#line 2549 "y.tab.c"
+#line 2557 "y.tab.c"
 
       default: break;
     }
@@ -2739,9 +2747,29 @@ yyreturn:
   return yyresult;
 }
 
-#line 587 "pascal.y"
+#line 593 "pascal.y"
 
-void yyerror() {}
+
+
+
+/* yylex calls getToken to make Yacc/Bison output
+ * compatible with ealier versions of the TINY scanner
+ */
+void yyerror(string msg, ...) {
+    cout << msg << endl;
+}
+
+static int yylex() {
+	return get_token();
+}
+
+ast::BasicAstNode* parse(void)
+{ 
+    yyparse();
+    return root;
+}
+
+
 int main() {
         printf(">>> ");
         while(1) yyparse();

@@ -182,7 +182,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "pascal.y"
+#line 20 "pascal.y"
 
     char*                  aststring;
     char                    astchar;

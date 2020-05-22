@@ -166,7 +166,20 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 
-    #define YY_LESS_LINENO(n)
+    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
+     *       access to the local variable yy_act. Since yyless() is a macro, it would break
+     *       existing scanners that call yyless() from OUTSIDE yylex. 
+     *       One obvious solution it to make yy_act a global. I tried that, and saw
+     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
+     *       normally declared as a register variable-- so it is not worth it.
+     */
+    #define  YY_LESS_LINENO(n) \
+            do { \
+                yy_size_t yyl;\
+                for ( yyl = n; yyl < yyleng; ++yyl )\
+                    if ( yytext[yyl] == '\n' )\
+                        --yylineno;\
+            }while(0)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -552,6 +565,14 @@ static yyconst flex_int16_t yy_chk[259] =
       194,  194,  194,  194,  194,  194,  194,  194
     } ;
 
+/* Table of booleans, true if rule could match eol. */
+static yyconst flex_int32_t yy_rule_can_match_eol[74] =
+    {   0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,     };
+
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
 
@@ -572,9 +593,19 @@ char *yytext;
 #include "y.tab.h"
 /* lexeme of identifier or reserved word */
 /**注意这里STRING还没有实现**/
+// #if defined(YYBISON)
+//     #define YYCONST const
+//     void yyerror (YYCONST char *);
+// #endif /* defined(YYBISON) */
+
 int lineno = 0;
 extern YYSTYPE yylval;
-#line 578 "lex.yy.c"
+extern "C" {
+int yylex(void);
+}
+void yyerror(string msg, ...);
+
+#line 609 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -756,9 +787,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 19 "pascal.l"
+#line 30 "pascal.l"
 
-#line 762 "lex.yy.c"
+#line 793 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -830,6 +861,16 @@ yy_find_action:
 
 		YY_DO_BEFORE_ACTION;
 
+		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
+			{
+			yy_size_t yyl;
+			for ( yyl = 0; yyl < yyleng; ++yyl )
+				if ( yytext[yyl] == '\n' )
+					   
+    yylineno++;
+;
+			}
+
 do_action:	/* This label is used only to access EOF actions. */
 
 		switch ( yy_act )
@@ -843,355 +884,355 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 20 "pascal.l"
+#line 31 "pascal.l"
 {return DOT;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 21 "pascal.l"
+#line 32 "pascal.l"
 {return DOTDOT;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 22 "pascal.l"
+#line 33 "pascal.l"
 {return SEMI;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 23 "pascal.l"
+#line 34 "pascal.l"
 {return COMMA;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 24 "pascal.l"
+#line 35 "pascal.l"
 {return COLON;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 25 "pascal.l"
+#line 36 "pascal.l"
 {return LP;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 26 "pascal.l"
+#line 37 "pascal.l"
 {return RP;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 27 "pascal.l"
+#line 38 "pascal.l"
 {return LB;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 28 "pascal.l"
+#line 39 "pascal.l"
 {return RB;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "pascal.l"
+#line 40 "pascal.l"
 {return EQUAL;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 30 "pascal.l"
+#line 41 "pascal.l"
 {return UNEQUAL;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 31 "pascal.l"
+#line 42 "pascal.l"
 {return GE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 32 "pascal.l"
+#line 43 "pascal.l"
 {return GT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 33 "pascal.l"
+#line 44 "pascal.l"
 {return LE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 34 "pascal.l"
+#line 45 "pascal.l"
 {return LT;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 35 "pascal.l"
+#line 46 "pascal.l"
 {return PLUS;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 36 "pascal.l"
+#line 47 "pascal.l"
 {return MINUS;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 37 "pascal.l"
+#line 48 "pascal.l"
 {return MUL;}
 	YY_BREAK
 case 19:
-#line 39 "pascal.l"
+#line 50 "pascal.l"
 case 20:
 YY_RULE_SETUP
-#line 39 "pascal.l"
+#line 50 "pascal.l"
 {return OR;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 40 "pascal.l"
+#line 51 "pascal.l"
 {return AND;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 41 "pascal.l"
+#line 52 "pascal.l"
 {return NOT;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 42 "pascal.l"
+#line 53 "pascal.l"
 {return ARRAY;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 43 "pascal.l"
+#line 54 "pascal.l"
 {return PROGRAM;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 44 "pascal.l"
+#line 55 "pascal.l"
 {return PROCEDURE;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 45 "pascal.l"
+#line 56 "pascal.l"
 {return FUNCTION;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 46 "pascal.l"
+#line 57 "pascal.l"
 {return CONST;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 47 "pascal.l"
+#line 58 "pascal.l"
 {return TYPE;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 48 "pascal.l"
+#line 59 "pascal.l"
 {return OF;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 49 "pascal.l"
+#line 60 "pascal.l"
 {return RECORD;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 50 "pascal.l"
+#line 61 "pascal.l"
 {return BEG;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 51 "pascal.l"
+#line 62 "pascal.l"
 {return END;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 52 "pascal.l"
+#line 63 "pascal.l"
 {return VAR;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 53 "pascal.l"
+#line 64 "pascal.l"
 {return ASSIGN;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 54 "pascal.l"
+#line 65 "pascal.l"
 {return IF;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 55 "pascal.l"
+#line 66 "pascal.l"
 {return THEN;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 56 "pascal.l"
+#line 67 "pascal.l"
 {return ELSE;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 57 "pascal.l"
+#line 68 "pascal.l"
 {return REPEAT;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 58 "pascal.l"
+#line 69 "pascal.l"
 {return UNTIL;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 59 "pascal.l"
+#line 70 "pascal.l"
 {return WHILE;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 60 "pascal.l"
+#line 71 "pascal.l"
 {return DO;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 61 "pascal.l"
+#line 72 "pascal.l"
 {return FOR;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 62 "pascal.l"
+#line 73 "pascal.l"
 {return TO;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 63 "pascal.l"
+#line 74 "pascal.l"
 {return DOWNTO;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 64 "pascal.l"
+#line 75 "pascal.l"
 {return CASE;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 65 "pascal.l"
+#line 76 "pascal.l"
 {return GOTO;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 66 "pascal.l"
+#line 77 "pascal.l"
 {return READ;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 67 "pascal.l"
+#line 78 "pascal.l"
 {yylval.astbool = true; return BOOLEAN;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 68 "pascal.l"
+#line 79 "pascal.l"
 {yylval.astbool = false; return BOOLEAN;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 69 "pascal.l"
+#line 80 "pascal.l"
 {return SYS_CON;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 70 "pascal.l"
+#line 81 "pascal.l"
 {yylval.astSYSFUNCT = ast::SYSFUNCT::ABS; return SYS_FUNCT;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 71 "pascal.l"
+#line 82 "pascal.l"
 {yylval.astSYSFUNCT = ast::SYSFUNCT::CHR; return SYS_FUNCT;}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 72 "pascal.l"
+#line 83 "pascal.l"
 {yylval.astSYSFUNCT = ast::SYSFUNCT::ODD; return SYS_FUNCT;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 73 "pascal.l"
+#line 84 "pascal.l"
 {yylval.astSYSFUNCT = ast::SYSFUNCT::ORD; return SYS_FUNCT;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 74 "pascal.l"
+#line 85 "pascal.l"
 {yylval.astSYSFUNCT = ast::SYSFUNCT::PRED; return SYS_FUNCT;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 75 "pascal.l"
+#line 86 "pascal.l"
 {yylval.astSYSFUNCT = ast::SYSFUNCT::SQR; return SYS_FUNCT;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 76 "pascal.l"
+#line 87 "pascal.l"
 {yylval.astSYSFUNCT = ast::SYSFUNCT::SQRT; return SYS_FUNCT;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 77 "pascal.l"
+#line 88 "pascal.l"
 {yylval.astSYSFUNCT = ast::SYSFUNCT::SUCC; return SYS_FUNCT;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 79 "pascal.l"
+#line 90 "pascal.l"
 {yylval.astSYSPROC = ast::SYSPROC::WRITE; return SYS_PROC;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 80 "pascal.l"
+#line 91 "pascal.l"
 {yylval.astSYSPROC = ast::SYSPROC::WRITELN; return SYS_PROC;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 81 "pascal.l"
+#line 92 "pascal.l"
 {yylval.astTypeKind = ast::TypeKind::BOOLEANtype; return SYS_TYPE; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 82 "pascal.l"
+#line 93 "pascal.l"
 {yylval.astTypeKind = ast::TypeKind::CHARtype; return SYS_TYPE; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 83 "pascal.l"
+#line 94 "pascal.l"
 {yylval.astTypeKind = ast::TypeKind::INTtype; return SYS_TYPE; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 84 "pascal.l"
+#line 95 "pascal.l"
 {yylval.astTypeKind = ast::TypeKind::REALtype; return SYS_TYPE; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 86 "pascal.l"
+#line 97 "pascal.l"
 {yylval.astint = atoi(yytext); return INTEGER;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 87 "pascal.l"
+#line 98 "pascal.l"
 {yylval.astreal = atof(yytext); return REAL;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 88 "pascal.l"
+#line 99 "pascal.l"
 {yylval.astchar = yytext[0] ;return CHAR;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 89 "pascal.l"
+#line 100 "pascal.l"
 {yylval.aststring = strdup(yytext); return ID;}
 	YY_BREAK
 case 69:
 /* rule 69 can match eol */
 YY_RULE_SETUP
-#line 90 "pascal.l"
+#line 101 "pascal.l"
 {lineno++;}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 91 "pascal.l"
+#line 102 "pascal.l"
 {/* skip whitespace */}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 92 "pascal.l"
+#line 103 "pascal.l"
 { 
                     char c;
                     do { 
@@ -1203,15 +1244,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 100 "pascal.l"
+#line 111 "pascal.l"
 { printf("ERROR: Invalid character\n");} 
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 102 "pascal.l"
+#line 113 "pascal.l"
 ECHO;
 	YY_BREAK
-#line 1215 "lex.yy.c"
+#line 1256 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1572,6 +1613,10 @@ static int yy_get_next_buffer (void)
 
 	*--yy_cp = (char) c;
 
+    if ( c == '\n' ){
+        --yylineno;
+    }
+
 	(yytext_ptr) = yy_bp;
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
@@ -1646,6 +1691,11 @@ static int yy_get_next_buffer (void)
 	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
 	*(yy_c_buf_p) = '\0';	/* preserve yytext */
 	(yy_hold_char) = *++(yy_c_buf_p);
+
+	if ( c == '\n' )
+		   
+    yylineno++;
+;
 
 	return c;
 }
@@ -2116,6 +2166,9 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
+    /* We do not touch yylineno unless the option is enabled. */
+    yylineno =  1;
+    
     (yy_buffer_stack) = 0;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
@@ -2208,25 +2261,18 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 102 "pascal.l"
+#line 113 "pascal.l"
 
 
 
-// TokenType getToken(void)
-// { 
-//     static int firstTime = TRUE;
-//     TokenType currentToken;
-//     if(firstTime) { 
-//         firstTime = FALSE;
-//         lineno++;
-//         yyin = source;
-//         yyout = listing;
-//     }
-//     currentToken = yylex();
-//     strncpy(tokenString,yytext,MAXTOKENLEN);
-//     if(TraceScan) {
-//         fprintf(listing,"\t%d: ",lineno);
-//         printToken(currentToken,tokenString);
-//     }
-//     return currentToken;
-// }
+int yywrap()
+{
+		return 1;
+}
+
+int get_token() {
+	int token = yylex();
+	// if (TraceScan)
+	// 	printf("%d: %s\n", yylineno, print_token(token, yytext).c_str());
+	return token;
+}
