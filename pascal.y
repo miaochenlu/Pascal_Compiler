@@ -3,7 +3,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "global.h"
+#include "ast.h"
+#include "parser.hpp"
+
 using namespace std;
 static ast::BasicAstNode* root;
 extern "C" {
@@ -56,6 +58,7 @@ static int yylex(void);
     ast::CaseExprList*      astCaseExprList;
     ast::ArgList*           astArgList;
 }
+
 %token<aststring>   ID
 %token<astint>      INTEGER 
 %token<astreal>     REAL 
@@ -605,7 +608,7 @@ ast::BasicAstNode* parse(void)
 }
 
 
-int main() {
-        printf(">>> ");
-        while(1) yyparse();
-}
+// int main() {
+//         printf(">>> ");
+//         while(1) yyparse();
+// }

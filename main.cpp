@@ -1,51 +1,19 @@
 #include <iostream>
-#include <cstdio>
-#include "y.tab.h"
-#include "global.h"
+#include "ast.h"
+#include "parser.hpp"
 
 using namespace std;
 
-extern bool Error;
-const bool GEN_INTERMEDIATE = true;
-
-FILE *listing = stdout;
-FILE *code = stdout;
-
+extern int yyparse();
+extern ast::BasicAstNode* parse(void);
 extern FILE * yyin;
 
-int main(int argc, char * argv[])
-{
-    if (argc != 3) {
-        cout << "Usage: cminus [INPUT] [OUTPUT]";
-        exit(0);
-    }
-    yyin = fopen(argv[1], "r");
+int main(int argc, char** argv) {
+    yyin = fopen("test/demo1.pascal", "r");
     if (yyin == NULL) {
-        printf("File %s does not exists.\n", argv[1]);
+        printf("File does not exists.\n");
         exit(0);
     }
-    // Node * tree = parse();
-
-    // buildTable(tree);
-    // typeCheck(tree);
-
-    // if (Error) {
-    //     exit(0);
-    // }
-
-    // code = fopen(argv[2], "w");
-    // if (code == NULL) {
-    //     printf("Cannot create file %s.\n", argv[2]);
-    //     exit(0);
-    // }
-    // // generate tiny code
-    // gentiny(tree);
-    // fclose(code);
-
-    // // generate intermediate code
-    // if (GEN_INTERMEDIATE)
-    //     cgen(tree, "./result.tac");
-
-    // cout << "compilation completed\n";
-    // return 0;
+	ast::BasicAstNode* tree = parse();
+	return 0;
 }
