@@ -2,11 +2,13 @@
 #include<vector>
 using namespace std;
 
+namespace ast {
 /************************************************/
 class Identifier;
 class Expression;
 class Stmt;
 typedef vector<Identifier*> NameList;
+
 /******************program***********************/
 class Program;
 class ProgramHead;
@@ -25,7 +27,7 @@ class TypeDecl;
 class VarDecl;
 typedef vector<LabelDecl*>      LabelDeclList;
 typedef vector<ConstDecl*>      ConstDeclList;
-typedef vector<TypeDecl*>       TypeDecllList;
+typedef vector<TypeDecl*>       TypeDeclList;
 typedef vector<VarDecl*>        VarDeclList;
 typedef vector<Program*>        RoutinePartList;
 
@@ -47,12 +49,9 @@ class RealType;
 class StringType;
 class BooleanType;
 class RangeType;
+class VoidType;
 class ArrayType;
 class RecordType;
-
-/****************** VAR *************************/
-class VarDecl;
-typedef vector<VarDecl*> VarDeclList;
 
 /****************** routine body ****************/
 class AssignStmt;
@@ -131,13 +130,12 @@ public:
 class RoutineHead: public BasicAstNode 
 {
 public:
-    LabelDeclList*      labelPart;
     ConstDeclList*      constPart;
-    TypeDecllList*      typePart;
+    TypeDeclList*       typePart;
     VarDeclList*        varPart;
     RoutinePartList*    routinePart;
-    RoutineHead(LabelDeclList* labelPart, ConstDeclList* constPart, TypeDecllList* typePart, VarDeclList* varPart, RoutinePartList* routinePart):
-        labelPart(labelPart), constPart(constPart), typePart(typePart), varPart(varPart), routinePart(routinePart) {}
+    RoutineHead(ConstDeclList* constPart, TypeDeclList* typePart, VarDeclList* varPart, RoutinePartList* routinePart):
+        constPart(constPart), typePart(typePart), varPart(varPart), routinePart(routinePart) {}
 };
 
 /****************program head********************/
@@ -151,9 +149,9 @@ public:
 
 /****************** const ***********************/
 enum class TypeKind {
-    ERROR, INT, REAL, CHAR, STRING, 
-    ARRAY, RECORD, BOOLEAN, RANGE,
-    VOID, USERDEF,
+    ERRORtype, INTtype, REALtype, CHARtype, STRINGtype, 
+    ARRAYtype, RECORDtype, BOOLEANtype, RANGEtype,
+    VOIDtype, USERDEFtype,
 };
 
 class ConstDecl: public BasicAstNode 
@@ -167,7 +165,7 @@ public:
 class BasicConst: public Expression
 {
 public:
-    TypeKind type = TypeKind::ERROR;
+    TypeKind type = TypeKind::ERRORtype;
 };
 
 class IntegerNode: public BasicConst
@@ -175,7 +173,7 @@ class IntegerNode: public BasicConst
 public:
     int integerVal;
     IntegerNode(int integerVal): integerVal(integerVal) {
-        type = TypeKind::INT;
+        type = TypeKind::INTtype;
     }
 };
 
@@ -184,7 +182,7 @@ class RealNode: public BasicConst
 public:
     double realVal;
     RealNode(double realVal): realVal(realVal) {
-        type = TypeKind::REAL;
+        type = TypeKind::REALtype;
     }
 };
 
@@ -193,7 +191,7 @@ class CharNode: public BasicConst
 public:
     char charVal;
     CharNode(char charVal): charVal(charVal) {
-        type = TypeKind::CHAR;
+        type = TypeKind::CHARtype;
     }
 };
 
@@ -202,7 +200,7 @@ class StringNode: public BasicConst
 public:
     string stringVal;
     StringNode(string stringVal): stringVal(stringVal) {
-        type = TypeKind::STRING;
+        type = TypeKind::STRINGtype;
     }
 };
 
@@ -211,7 +209,7 @@ class BooleanNode: public BasicConst
 public:
     bool boolVal;
     BooleanNode(bool boolVal): boolVal(boolVal) {
-        type = TypeKind::BOOLEAN;
+        type = TypeKind::BOOLEANtype;
     }
 };
 
@@ -221,7 +219,7 @@ public:
     int maxintVal;
     MaxIntNode() {
         maxintVal = 32767;
-        type = TypeKind::INT;
+        type = TypeKind::INTtype;
     }
 };
 
@@ -233,13 +231,14 @@ class TypeDecl: public BasicAstNode
 public:  
     Identifier*  name;
     BasicType*   type;
+    TypeDecl(Identifier* name, BasicType* type): name(name), type(type) {}
 
 };
 
 class BasicType: public BasicAstNode
 {
 public:  
-    TypeKind type = TypeKind::ERROR;
+    TypeKind type = TypeKind::ERRORtype;
     BasicType() {}
 };
 
@@ -252,10 +251,10 @@ public:
 class ArrayType: public BasicType
 {
 public: 
-    SimpleType* range;
+    BasicType* range;
     BasicType* elementType;
-    ArrayType(SimpleType* range, BasicType* elementType): range(range), elementType(elementType) { 
-        type = TypeKind:: ARRAY;
+    ArrayType(BasicType* range, BasicType* elementType): range(range), elementType(elementType) { 
+        type = TypeKind:: ARRAYtype;
     }
 };
 
@@ -264,7 +263,7 @@ class RecordType: public BasicType
 public:  
     VarDeclList* fieldList;
     RecordType(VarDeclList* fieldList): fieldList(fieldList) { 
-        type = TypeKind::RECORD;
+        type = TypeKind::RECORDtype;
     }
 
 };
@@ -272,31 +271,31 @@ public:
 class BooleanType: public SimpleType
 {
 public:
-    BooleanType() { type = TypeKind::BOOLEAN; }
+    BooleanType() { type = TypeKind::BOOLEANtype; }
 };
 
 class CharType: public SimpleType
 {
 public:
-    CharType() { type = TypeKind::CHAR; }
+    CharType() { type = TypeKind::CHARtype; }
 };
 
 class IntegerType: public SimpleType 
 {
 public: 
-    IntegerType() { type = TypeKind::INT; }
+    IntegerType() { type = TypeKind::INTtype; }
 };
 
 class RealType: public SimpleType
 {
 public: 
-    RealType() { type = TypeKind::REAL; }
+    RealType() { type = TypeKind::REALtype; }
 };
 
 class StringType: public SimpleType
 {
 public: 
-    StringType() { type = TypeKind::STRING; }
+    StringType() { type = TypeKind::STRINGtype; }
 };
 
 class RangeType: public SimpleType
@@ -304,6 +303,12 @@ class RangeType: public SimpleType
 public:
     Expression* lowerB, *upperB;
     RangeType(Expression* lowerB, Expression* upperB): lowerB(lowerB), upperB(upperB) {}
+};
+
+class VoidType: public SimpleType
+{
+public:
+    VoidType() { type = TypeKind::VOIDtype; }
 };
 
 //这个可能会有点问题
@@ -324,7 +329,7 @@ public:
 
 /***************** routine body ****************/
 enum class Direction {
-    TO, DOWNTO
+    To, DownTo
 };
 
 class AssignStmt: public Stmt
@@ -403,11 +408,11 @@ public:
     GotoStmt(int label): label(label) {}
 };
 
-enum class SYS_PROC {
+enum class SYSPROC {
     WRITE, WRITELN,
 };
 
-enum class SYS_FUNCT {
+enum class SYSFUNCT {
     ABS,  CHR, ODD,  ORD, 
     PRED, SQR, SQRT, SUCC,
 };
@@ -420,23 +425,24 @@ class ProcCallStmt: public Stmt
 class SysProcCall: public ProcCallStmt
 {
 public:  
-    SYS_PROC procName;
+    SYSPROC procName;
     ArgList* args;
     //有参数
-    SysProcCall(SYS_PROC procName, ArgList* args): procName(procName), args(args) {}
+    SysProcCall(SYSPROC procName, ArgList* args): procName(procName), args(args) {}
     //无参数
-    SysProcCall(SYS_PROC procName): procName(procName) {}
+    SysProcCall(SYSPROC procName): procName(procName) {}
 };
 
-class SysFuncCall: public ProcCallStmt
+class SysFuncCall: public ProcCallStmt, public Expression
 {
-    SYS_FUNCT functName;
+public:
+    SYSFUNCT functName;
     ArgList* args;
-    SysFuncCall(SYS_FUNCT functName, ArgList* args): functName(functName), args(args) {}
-    SysFuncCall(SYS_FUNCT functName): functName(functName) {}
+    SysFuncCall(SYSFUNCT functName, ArgList* args): functName(functName), args(args) {}
+    SysFuncCall(SYSFUNCT functName): functName(functName) {}
 };
 
-class UserDefProcCall: public ProcCallStmt
+class UserDefProcCall: public ProcCallStmt, public Expression
 {
 public:
     Identifier* procName;
@@ -448,21 +454,21 @@ public:
 
 };
 
-//有问题
 class ReadProcCall: public ProcCallStmt
 {
 public:
-
+    Expression* readElement;
+    ReadProcCall(Expression* readElement): readElement(readElement) {}
 };
 
 /******************** expr **********************/
 enum class BinaryOperator {
-    GE, GT, LE, LT, EQUAL, UNEQUAL,
-    PLUS, MINUS, MUL, DIV, MOD,
-    OR, AND
+    GEop, GTop, LEop, LTop, EQUALop, UNEQUALop,
+    PLUSop, MINUSop, MULop, DIVop, MODop,
+    ORop, ANDop
 };
 enum class UnaryOperator {
-    NOT,
+    NOTop, NEGop,
 };
 
 class BinaryExpr: public Expression
@@ -503,4 +509,6 @@ public:
     Identifier* recordName;
     Identifier* field;
     RecordElementRef(Identifier* recordName, Identifier* field): recordName(recordName), field(field) {}
+};
+
 }
