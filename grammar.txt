@@ -1,0 +1,165 @@
+program         : program_head  routine  DOT
+program_head    : PROGRAM  ID  SEMI
+routine         : routine_head  routine_body
+sub_routine     : routine_head  routine_body
+
+routine_head    : label_part  const_part  type_part  var_part  routine_part
+label_part      : ε
+const_part      : CONST  const_expr_list  |  ε
+const_expr_list : const_expr_list  NAME  EQUAL  const_value  SEMI
+|  NAME  EQUAL  const_value  SEMI
+const_value     : INTEGER  |  MINUS INTEGER(新增) |  REAL | MINUS REAL(新增) |  CHAR  |  STRING  |  SYS_CON
+type_part       : TYPE type_decl_list  |  ε
+type_decl_list  : type_decl_list  type_definition  |  type_definition
+type_definition : NAME  EQUAL  type_decl  SEMI
+type_decl : simple_type_decl  |  array_type_decl  |  record_type_decl
+simple_type_decl: SYS_TYPE  |  NAME  |  LP  name_list  RP  
+                |  const_value  DOTDOT  const_value  
+                |  MINUS  const_value  DOTDOT  const_value
+                |  MINUS  const_value  DOTDOT  MINUS  const_value
+                |  NAME  DOTDOT  NAME
+array_type_decl : ARRAY  LB  simple_type_decl  RB  OF  type_decl
+record_type_decl: RECORD  field_decl_list  END
+field_decl_list : field_decl_list  field_decl  |  field_decl
+field_decl      : name_list  COLON  type_decl  SEMI
+name_list       : name_list  COMMA  ID  |  ID
+var_part        : VAR  var_decl_list  |  ε
+var_decl_list   :  var_decl_list  var_decl  |  var_decl
+var_decl        :  name_list  COLON  type_decl  SEMI
+
+routine_part    : routine_part  function_decl  |  routine_part  procedure_decl
+           |  function_decl  |  procedure_decl  | ε
+function_decl   : function_head  SEMI  sub_routine  SEMI
+function_head   :  FUNCTION  ID  parameters  COLON  simple_type_decl 
+procedure_decl  :  procedure_head  SEMI  sub_routine  SEMI
+procedure_head  :  PROCEDURE ID parameters 
+parameters : LP  para_decl_list  RP  |  ε
+para_decl_list  : para_decl_list  SEMI  para_type_list | para_type_list
+para_type_list  : var_para_list COLON  simple_type_decl  
+|  val_para_list  COLON  simple_type_decl
+var_para_list   : VAR  name_list
+val_para_list   : name_list
+
+routine_body    : compound_stmt
+compound_stmt   : BEGIN  stmt_list  END
+stmt_list       : stmt_list  stmt  SEMI  |  ε
+stmt            : INTEGER  COLON  non_label_stmt  |  non_label_stmt
+non_label_stmt  : assign_stmt | proc_stmt | compound_stmt | if_stmt | repeat_stmt | while_stmt 
+| for_stmt | case_stmt | goto_stmt
+assign_stmt     : ID  ASSIGN  expression
+           | ID LB expression RB ASSIGN expression
+           | ID  DOT  ID  ASSIGN  expression
+proc_stmt       :  NAME (ID修改为NAMA)
+          |  NAME(ID修改为NAMA)  LP  args_list  RP
+          |  SYS_PROC
+          |  SYS_PROC  LP  expression_list  RP
+          |  READ  LP  factor  RP
+if_stmt         : IF  expression  THEN  stmt  else_clause
+else_clause     : ELSE stmt |  ε
+repeat_stmt     : REPEAT  stmt_list  UNTIL  expression
+while_stmt      : WHILE  expression  DO stmt
+for_stmt        : FOR  ID  ASSIGN  expression  direction  expression  DO stmt
+direction       : TO | DOWNTO
+case_stmt       : CASE expression OF case_expr_list  END
+case_expr_list  : case_expr_list  case_expr  |  case_expr
+case_expr       : const_value  COLON  stmt  SEMI
+          |  ID  COLON  stmt  SEMI
+goto_stmt       : GOTO  INTEGER
+expression_list : expression_list  COMMA  expression  |  expression
+expression      : expression  GE  expr  |  expression  GT  expr  |  expression  LE  expr
+          |  expression  LT  expr  |  expression  EQUAL  expr  
+|  expression  UNEQUAL  expr  |  expr
+expr            : expr  PLUS  term  |  expr  MINUS  term  |  expr  OR  term  |  term
+term            : term  MUL  factor  |  term  DIV  factor  |  term  MOD  factor 
+ |  term  AND  factor  |  factor
+factor          : NAME  |  NAME  LP  args_list  RP  |  SYS_FUNCT |
+SYS_FUNCT  LP  args_list  RP  |  const_value  |  LP  expression  RP
+|  NOT  factor  |  MINUS  factor  |  ID  LB  expression  RB
+|  ID  DOT  ID
+
+args_list       : args_list  COMMA  expression  |  expression
+
+
+
+
+// "."             {cout << yytext << endl; return DOT;}
+// ".."            {cout << yytext << endl; return DOTDOT;}
+// ";"             {cout << yytext << endl; return SEMI;}
+// ","             {cout << yytext << endl; return COMMA;}
+// ":"             {cout << yytext << endl; return COLON;}
+// "("             {cout << yytext << endl; return LP;}
+// ")"             {cout << yytext << endl; return RP;}
+// "["             {cout << yytext << endl; return LB;}
+// "]"             {cout << yytext << endl; return RB;}
+// "="             {cout << yytext << endl; return EQUAL;}
+// "<>"            {cout << yytext << endl; return UNEQUAL;}
+// ">="            {cout << yytext << endl; return GE;}
+// ">"             {cout << yytext << endl; return GT;}
+// "<="            {cout << yytext << endl; return LE;}
+// "<"             {cout << yytext << endl; return LT;}
+// "+"             {cout << yytext << endl; return PLUS;}
+// "-"             {cout << yytext << endl; return MINUS;}
+// "*"             {cout << yytext << endl; return MUL;}
+// "/" | "DIV"     {cout << yytext << endl; return DIV;}
+// "OR"            {cout << yytext << endl; return OR;}
+// "AND"           {cout << yytext << endl; return AND;}
+// "NOT"           {cout << yytext << endl; return NOT;}
+// "ARRAY"         {cout << yytext << endl; return ARRAY;}
+// "PROGRAM"       {cout << yytext << endl; return PROGRAM;}
+// "PROCEDURE"     {cout << yytext << endl; return PROCEDURE;}
+// "FUNCTION"      {cout << yytext << endl; return FUNCTION;}
+// "CONST"         {cout << yytext << endl; return CONST;}
+// "TYPE"          {cout << yytext << endl; return TYPE;}
+// "OF"            {cout << yytext << endl; return OF;}
+// "RECORD"        {cout << yytext << endl; return RECORD;}
+// "BEGIN"         {cout << yytext << endl; return BEG;}
+// "END"           {cout << yytext << endl; return END;}
+// "VAR"           {cout << yytext << endl; return VAR;}
+// ":="            {cout << yytext << endl; return ASSIGN;}
+// "IF"            {cout << yytext << endl; return IF;}
+// "THEN"          {cout << yytext << endl; return THEN;}
+// "ELSE"          {cout << yytext << endl; return ELSE;}
+// "REPEAT"        {cout << yytext << endl; return REPEAT;}
+// "UNTIL"         {cout << yytext << endl; return UNTIL;}
+// "WHILE"         {cout << yytext << endl; return WHILE;}
+// "DO"            {cout << yytext << endl; return DO;}
+// "FOR"           {cout << yytext << endl; return FOR;}
+// "TO"            {cout << yytext << endl; return TO;}
+// "DOWNTO"        {cout << yytext << endl; return DOWNTO;}
+// "CASE"          {cout << yytext << endl; return CASE;}
+// "GOTO"          {cout << yytext << endl; return GOTO;}
+// "READ"          {cout << yytext << endl; return READ;}
+// "FALSE"         {cout << yytext << endl; yylval.astbool = true; return BOOLEAN;}
+// "TRUE"          {cout << yytext << endl; yylval.astbool = false; return BOOLEAN;}
+// "MAXINT"        {cout << yytext << endl; return SYS_CON;}
+// "ABS"           {cout << yytext << endl; yylval.astSYSFUNCT = ast::SYSFUNCT::ABS; return SYS_FUNCT;}
+// "CHR"           {cout << yytext << endl; yylval.astSYSFUNCT = ast::SYSFUNCT::CHR; return SYS_FUNCT;}
+// "ODD"           {cout << yytext << endl; yylval.astSYSFUNCT = ast::SYSFUNCT::ODD; return SYS_FUNCT;}
+// "ORD"           {cout << yytext << endl; yylval.astSYSFUNCT = ast::SYSFUNCT::ORD; return SYS_FUNCT;}
+// "PRED"          {cout << yytext << endl; yylval.astSYSFUNCT = ast::SYSFUNCT::PRED; return SYS_FUNCT;}
+// "SQR"           {cout << yytext << endl; yylval.astSYSFUNCT = ast::SYSFUNCT::SQR; return SYS_FUNCT;}
+// "SQRT"          {cout << yytext << endl; yylval.astSYSFUNCT = ast::SYSFUNCT::SQRT; return SYS_FUNCT;}
+// "SUCC"          {cout << yytext << endl; yylval.astSYSFUNCT = ast::SYSFUNCT::SUCC; return SYS_FUNCT;}
+
+// "WRITE"         {cout << yytext << endl; yylval.astSYSPROC = ast::SYSPROC::WRITE; return SYS_PROC;}
+// "WRITELN"       {cout << yytext << endl; yylval.astSYSPROC = ast::SYSPROC::WRITELN; return SYS_PROC;}
+// "BOOLEAN"       {cout << yytext << endl; yylval.astTypeKind = ast::TypeKind::BOOLEANtype; return SYS_TYPE; }
+// "CHAR"          {cout << yytext << endl; yylval.astTypeKind = ast::TypeKind::CHARtype; return SYS_TYPE; }
+// "INTEGER"       {cout << yytext << endl; yylval.astTypeKind = ast::TypeKind::INTtype; return SYS_TYPE; }
+// "REAL"          {cout << yytext << endl; yylval.astTypeKind = ast::TypeKind::REALtype; return SYS_TYPE; }
+
+// {SIGN}?{number} {cout << yytext << endl; yylval.astint = atoi(yytext); return INTEGER;}
+// {SIGN}?(({number}\.{number})|({number}\.{number}e{SIGN}?{number})|({number}e{SIGN}?{number})) {cout << yytext << endl; yylval.astreal = atof(yytext); return REAL;}
+// \'.\'                       {cout << yytext << endl; yylval.astchar = yytext[0] ;return CHAR;}
+// [a-zA-Z]([_a-zA-Z0-9])*     {cout << yytext << endl ; yylval.aststring = strdup(yytext); return ID;}
+// {newline}       {lineno++;}
+// {whitespace}    {}
+// "{"             {   cout << yytext << endl;
+//                     char c;
+//                     do { 
+//                         c = yyinput();
+//                         if (c == EOF) break;
+//                         if (c == '\n') lineno++;
+//                     } while (c != '}');
+//                 }
+// .               { printf("ERROR: Invalid character\n"); cout << yytext << "???" << endl;} 

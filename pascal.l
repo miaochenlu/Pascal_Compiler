@@ -1,19 +1,19 @@
 %{
-#include "global.h"
-#include "y.tab.h"
-/* lexeme of identifier or reserved word */
-/**注意这里STRING还没有实现**/
+#include "ast/ast.h"
+#include "parser.hpp"
+
 int lineno = 0;
 extern YYSTYPE yylval;
+void yyerror(string msg, ...);
+
 %}
+%option yylineno
 
 digit       [0-9]
 number      {digit}+
-SIGN        "+"|"-"
-letter      [a-zA-Z]
-identifier  {letter}+
+SIGN        "+" | "-"
 newline     \n
-whitespace  [\t]+
+whitespace  [ \t]+
 
 
 %%
@@ -35,7 +35,8 @@ whitespace  [\t]+
 "+"             {return PLUS;}
 "-"             {return MINUS;}
 "*"             {return MUL;}
-"/" | "div"     {return DIV;}
+"/"             {return DIV;}
+"DIV"           {return DIV;}
 "OR"            {return OR;}
 "AND"           {return AND;}
 "NOT"           {return NOT;}
@@ -83,13 +84,14 @@ whitespace  [\t]+
 "INTEGER"       {yylval.astTypeKind = ast::TypeKind::INTtype; return SYS_TYPE; }
 "REAL"          {yylval.astTypeKind = ast::TypeKind::REALtype; return SYS_TYPE; }
 
-{SIGN}?{number} {yylval.astint = atoi(yytext); return INTEGER;}
-{SIGN}?(({number}\.{number})|({number}\.{number}e{SIGN}?{number})|({number}e{SIGN}?{number})) {yylval.astreal = atof(yytext); return REAL;}
-\'.\'           {yylval.astchar = yytext[0] ;return CHAR;}
-{identifier}    {yylval.aststring = strdup(yytext); return ID;}
+{number} {yylval.astint = atoi(yytext); return INTEGER;}
+\'.\'    {yylval.astchar = yytext[1]; return CHAR;}
+'([^']|'')+'  {yylval.aststring = strdup(yytext); return STRING;}
+[0-9]+"."[0-9]+  {yylval.astreal = atof(yytext); return REAL;}
+[a-zA-Z]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
 {newline}       {lineno++;}
-{whitespace}    {/* skip whitespace */}
-"{"             { 
+{whitespace}    {}
+"{"             {  
                     char c;
                     do { 
                         c = yyinput();
@@ -97,25 +99,11 @@ whitespace  [\t]+
                         if (c == '\n') lineno++;
                     } while (c != '}');
                 }
-.               { printf("ERROR: Invalid character\n");} 
+.               { printf("ERROR: Invalid character\n"); cout << yytext << "???" << endl;} 
+
 
 %%
 
-// TokenType getToken(void)
-// { 
-//     static int firstTime = TRUE;
-//     TokenType currentToken;
-//     if(firstTime) { 
-//         firstTime = FALSE;
-//         lineno++;
-//         yyin = source;
-//         yyout = listing;
-//     }
-//     currentToken = yylex();
-//     strncpy(tokenString,yytext,MAXTOKENLEN);
-//     if(TraceScan) {
-//         fprintf(listing,"\t%d: ",lineno);
-//         printToken(currentToken,tokenString);
-//     }
-//     return currentToken;
-// }
+int yywrap() {
+		return 1;
+}

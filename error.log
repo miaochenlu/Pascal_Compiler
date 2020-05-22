@@ -1,305 +1,400 @@
-clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated [-Wdeprecated]
-clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated [-Wdeprecated]
-In file included from pascal.l:2:
-./global.h:152:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
-enum class TypeKind {
-     ^
-./global.h:169:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
-    TypeKind type = TypeKind::ERROR;
-                  ^
-./global.h:169:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    TypeKind type = TypeKind::ERROR;
-                    ^
-./global.h:177:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::INT;
-               ^
-./global.h:186:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::REAL;
-               ^
-./global.h:195:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::CHAR;
-               ^
-./global.h:204:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::STRING;
-               ^
-./global.h:213:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::BOOLEAN;
-               ^
-./global.h:223:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::INT;
-               ^
-./global.h:241:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
-    TypeKind type = TypeKind::ERROR;
-                  ^
-./global.h:241:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    TypeKind type = TypeKind::ERROR;
-                    ^
-./global.h:257:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind:: ARRAY;
-               ^
-./global.h:266:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::RECORD;
-               ^
-./global.h:274:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    BooleanType() { type = TypeKind::BOOLEAN; }
-                           ^
-./global.h:280:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    CharType() { type = TypeKind::CHAR; }
-                        ^
-./global.h:286:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    IntegerType() { type = TypeKind::INT; }
-                           ^
-./global.h:292:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    RealType() { type = TypeKind::REAL; }
-                        ^
-./global.h:298:27: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    StringType() { type = TypeKind::STRING; }
-                          ^
-./global.h:311:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    VoidType() { type = TypeKind::VOID; }
-                        ^
-./global.h:331:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
-enum class Direction {
-     ^
-./global.h:411:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
-enum class SYSPROC {
-     ^
-./global.h:415:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
-enum class SYSFUNCT {
-     ^
-./global.h:464:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
-enum class BinaryOperator {
-     ^
-./global.h:469:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
-enum class UnaryOperator {
-     ^
-pascal.l:10:15: warning: alias declarations are a C++11 extension [-Wc++11-extensions]
-using token = yapc::Parser::token;
-              ^
-pascal.l:10:15: error: use of undeclared identifier 'yapc'
-lex.yy.c:763:1: error: use of undeclared identifier 'yapc'
-YY_DECL
-^
-pascal.l:8:21: note: expanded from macro 'YY_DECL'
-#define YY_DECL int yapc::Scanner::yylex(yapc::Parser::semantic_type* lval,yapc::Parser::location_type* loc)
-                    ^
-lex.yy.c:763:1: error: use of undeclared identifier 'yapc'
-pascal.l:8:42: note: expanded from macro 'YY_DECL'
-#define YY_DECL int yapc::Scanner::yylex(yapc::Parser::semantic_type* lval,yapc::Parser::location_type* loc)
-                                         ^
-lex.yy.c:763:1: error: use of undeclared identifier 'yapc'
-pascal.l:8:76: note: expanded from macro 'YY_DECL'
-#define YY_DECL int yapc::Scanner::yylex(yapc::Parser::semantic_type* lval,yapc::Parser::location_type* loc)
-                                                                           ^
-lex.yy.c:1801:40: error: use of undeclared identifier 'isatty'
-        b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
-                                       ^
-25 warnings and 5 errors generated.
+pascal.y: warning: 46 reduce/reduce conflicts [-Wconflicts-rr]
 In file included from pascal.y:6:
-./global.h:152:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+./ast/ast.h:166:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto param : *parameters) {
+            ^
+./ast/ast.h:166:24: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto param : *parameters) {
+                       ^
+./ast/ast.h:186:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *routineBody) {
+            ^
+./ast/ast.h:186:23: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *routineBody) {
+                      ^
+./ast/ast.h:208:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto constdecl : *constPart) {
+            ^
+./ast/ast.h:208:28: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto constdecl : *constPart) {
+                           ^
+./ast/ast.h:211:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto typedecl : *typePart) {
+            ^
+./ast/ast.h:211:27: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto typedecl : *typePart) {
+                          ^
+./ast/ast.h:214:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto vardecl : *varPart) {
+            ^
+./ast/ast.h:214:26: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto vardecl : *varPart) {
+                         ^
+./ast/ast.h:217:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto routine : *routinePart) {
+            ^
+./ast/ast.h:217:26: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto routine : *routinePart) {
+                         ^
+./ast/ast.h:246:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
 enum class TypeKind {
      ^
-./global.h:169:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
-    TypeKind type = TypeKind::ERROR;
+./ast/ast.h:272:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERRORtype;
                   ^
-./global.h:169:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    TypeKind type = TypeKind::ERROR;
+./ast/ast.h:272:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERRORtype;
                     ^
-./global.h:177:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::INT;
+./ast/ast.h:281:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::INTtype;
                ^
-./global.h:186:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::REAL;
+./ast/ast.h:293:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::REALtype;
                ^
-./global.h:195:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::CHAR;
+./ast/ast.h:305:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::CHARtype;
                ^
-./global.h:204:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::STRING;
+./ast/ast.h:317:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::STRINGtype;
                ^
-./global.h:213:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::BOOLEAN;
+./ast/ast.h:329:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::BOOLEANtype;
                ^
-./global.h:223:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::INT;
+./ast/ast.h:342:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::INTtype;
                ^
-./global.h:241:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
-    TypeKind type = TypeKind::ERROR;
+./ast/ast.h:372:19: warning: in-class initialization of non-static data member is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERRORtype;
                   ^
-./global.h:241:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    TypeKind type = TypeKind::ERROR;
+./ast/ast.h:372:21: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    TypeKind type = TypeKind::ERRORtype;
                     ^
-./global.h:257:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind:: ARRAY;
+./ast/ast.h:388:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind:: ARRAYtype;
                ^
-./global.h:266:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-        type = TypeKind::RECORD;
+./ast/ast.h:406:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::RECORDtype;
                ^
-./global.h:274:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    BooleanType() { type = TypeKind::BOOLEAN; }
+./ast/ast.h:410:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto field : *fieldList)
+            ^
+./ast/ast.h:410:24: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto field : *fieldList)
+                       ^
+./ast/ast.h:422:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    BooleanType() { type = TypeKind::BOOLEANtype; }
                            ^
-./global.h:280:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    CharType() { type = TypeKind::CHAR; }
+./ast/ast.h:431:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    CharType() { type = TypeKind::CHARtype; }
                         ^
-./global.h:286:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    IntegerType() { type = TypeKind::INT; }
+./ast/ast.h:440:28: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    IntegerType() { type = TypeKind::INTtype; }
                            ^
-./global.h:292:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    RealType() { type = TypeKind::REAL; }
+./ast/ast.h:449:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    RealType() { type = TypeKind::REALtype; }
                         ^
-./global.h:298:27: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    StringType() { type = TypeKind::STRING; }
+./ast/ast.h:458:27: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    StringType() { type = TypeKind::STRINGtype; }
                           ^
-./global.h:311:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-    VoidType() { type = TypeKind::VOID; }
+./ast/ast.h:472:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = ValOrName::name;
+               ^
+./ast/ast.h:475:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = ValOrName::val;
+               ^
+./ast/ast.h:480:20: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        if(type == ValOrName::name) {
+                   ^
+./ast/ast.h:483:27: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        } else if(type == ValOrName::val) {
+                          ^
+./ast/ast.h:497:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+    VoidType() { type = TypeKind::VOIDtype; }
                         ^
-./global.h:331:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+./ast/ast.h:509:16: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        type = TypeKind::USERDEFtype; 
+               ^
+./ast/ast.h:533:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
 enum class Direction {
      ^
-./global.h:411:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+./ast/ast.h:571:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *thenStmts) {
+            ^
+./ast/ast.h:571:23: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *thenStmts) {
+                      ^
+./ast/ast.h:574:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *elseStmts) {
+            ^
+./ast/ast.h:574:23: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *elseStmts) {
+                      ^
+./ast/ast.h:594:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *loopStmts) {
+            ^
+./ast/ast.h:594:23: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *loopStmts) {
+                      ^
+./ast/ast.h:613:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *loopStmts) {
+            ^
+./ast/ast.h:613:23: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *loopStmts) {
+                      ^
+./ast/ast.h:639:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *loopStmts) {
+            ^
+./ast/ast.h:639:23: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *loopStmts) {
+                      ^
+./ast/ast.h:658:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto caseexpr : *caseList) {
+            ^
+./ast/ast.h:658:27: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto caseexpr : *caseList) {
+                          ^
+./ast/ast.h:678:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *exeStmts) {
+            ^
+./ast/ast.h:678:23: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto stmt : *exeStmts) {
+                      ^
+./ast/ast.h:698:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
 enum class SYSPROC {
      ^
-./global.h:415:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+./ast/ast.h:702:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
 enum class SYSFUNCT {
      ^
-./global.h:464:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+./ast/ast.h:725:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto arg : *args) {
+            ^
+./ast/ast.h:725:22: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto arg : *args) {
+                     ^
+./ast/ast.h:732:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        if(procName == SYSPROC::WRITE) cout << "WRITE" << endl;
+                       ^
+./ast/ast.h:733:29: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(procName == SYSPROC::WRITELN) cout << "WRITELN" << endl;
+                            ^
+./ast/ast.h:746:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto arg : *args) {
+            ^
+./ast/ast.h:746:22: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto arg : *args) {
+                     ^
+./ast/ast.h:753:25: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        if(functName == SYSFUNCT::ABS) cout << "ABS" << endl;
+                        ^
+./ast/ast.h:754:30: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(functName == SYSFUNCT::CHR) cout << "CHR" << endl;
+                             ^
+./ast/ast.h:755:30: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(functName == SYSFUNCT::ODD) cout << "ODD" << endl;
+                             ^
+./ast/ast.h:756:30: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(functName == SYSFUNCT::ORD) cout << "ORD" << endl;
+                             ^
+./ast/ast.h:757:30: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(functName == SYSFUNCT::PRED) cout << "PRED" << endl;
+                             ^
+./ast/ast.h:758:30: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(functName == SYSFUNCT::SQR) cout << "SQR" << endl;
+                             ^
+./ast/ast.h:759:30: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(functName == SYSFUNCT::SQRT) cout << "SQRT" << endl;
+                             ^
+./ast/ast.h:760:30: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(functName == SYSFUNCT::SUCC) cout << "SUCC" << endl;
+                             ^
+./ast/ast.h:777:13: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+        for(auto arg : *args) {
+            ^
+./ast/ast.h:777:22: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+        for(auto arg : *args) {
+                     ^
+./ast/ast.h:805:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
 enum class BinaryOperator {
      ^
-./global.h:469:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
+./ast/ast.h:810:6: warning: scoped enumerations are a C++11 extension [-Wc++11-extensions]
 enum class UnaryOperator {
      ^
-y.tab.c:1493:16: error: use of undeclared identifier 'yylex'
+./ast/ast.h:828:19: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        if(bOp == BinaryOperator::GEop) cout << ">=" << endl;
+                  ^
+./ast/ast.h:829:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::GTop) cout << ">" << endl;
+                       ^
+./ast/ast.h:830:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::LEop) cout << "<=" << endl;
+                       ^
+./ast/ast.h:831:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::LTop) cout << "<" << endl;
+                       ^
+./ast/ast.h:832:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::EQUALop) cout << "=" << endl;
+                       ^
+./ast/ast.h:833:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::UNEQUALop) cout << "!=" << endl;
+                       ^
+./ast/ast.h:834:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::PLUSop) cout << "+" << endl;
+                       ^
+./ast/ast.h:835:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::MINUSop) cout << "-" << endl;
+                       ^
+./ast/ast.h:836:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::MULop) cout << "*" << endl;
+                       ^
+./ast/ast.h:837:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::DIVop) cout << "/" << endl;
+                       ^
+./ast/ast.h:838:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::MODop) cout << "%" << endl;
+                       ^
+./ast/ast.h:839:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::ORop) cout << "OR" << endl;
+                       ^
+./ast/ast.h:840:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(bOp == BinaryOperator::ANDop) cout << "AND" << endl;
+                       ^
+./ast/ast.h:857:19: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        if(uOp == UnaryOperator::NEGop) cout << "-" << endl;
+                  ^
+./ast/ast.h:858:24: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+        else if(uOp == UnaryOperator::NOTop) cout << "NOT" << endl;
+                       ^
+parser.cpp:1473:16: error: use of undeclared identifier 'yylex'
       yychar = yylex ();
                ^
-pascal.y:108:28: error: no member named 'label' in 'YYSTYPE'
-                    (yyval.label) = new ast::ProgramHead(new ast::Identifier((yyvsp[-1].aststring)), new ast::ParamList(), new ast::VoidType()); 
-                     ~~~~~ ^
-pascal.y:123:50: error: no matching constructor for initialization of 'ast::RoutineHead'
-                    (yyval.astRoutineHead) = new ast::RoutineHead((yyvsp[-3].astConstDeclList), (yyvsp[-2].astTypeDeclList), (yyvsp[-1].astVarDeclList), (yyvsp[0].astRoutinePartList)); 
-                                                 ^                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./global.h:138:5: note: candidate constructor not viable: requires 5 arguments, but 4 were provided
-    RoutineHead(LabelDeclList* labelPart, ConstDeclList* constPart, TypeDeclList* typePart, VarDeclList* varPart, RoutinePartList* routinePart):
-    ^
-./global.h:130:7: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 4 were provided
-class RoutineHead: public BasicAstNode 
-      ^
-pascal.y:141:42: error: member reference base type 'char' is not a structure or union
-                    (yyvsp[-3].aststring)->push_back(new ast::ConstDecl(new ast::Identifier((yyvsp[-2].aststring)), (yyvsp[0].aststring)));
-                    ~~~~~~~~~~~~~~~~~~~~~^ ~~~~~~~~~
-pascal.y:141:58: error: no matching constructor for initialization of 'ast::ConstDecl'
-                    (yyvsp[-3].aststring)->push_back(new ast::ConstDecl(new ast::Identifier((yyvsp[-2].aststring)), (yyvsp[0].aststring)));
-                                                         ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./global.h:163:5: note: candidate constructor not viable: no known conversion from 'char *' to 'ast::BasicConst *' for 2nd argument
-    ConstDecl(Identifier* name, BasicConst* value): name(name), value(value) {}
-    ^
-./global.h:158:7: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 2 were provided
-class ConstDecl: public BasicAstNode 
-      ^
-pascal.y:150:58: error: no matching constructor for initialization of 'ast::MaxIntNode'
-                            {(yyval.astBasicConst) = new ast::MaxIntNode((yyvsp[0].aststring));}
-                                                         ^               ~~~~~~~~~~~~~~~~~~~~
-./global.h:217:7: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'char *' to 'const ast::MaxIntNode' for 1st argument
-class MaxIntNode: public BasicConst
-      ^
-./global.h:221:5: note: candidate constructor not viable: requires 0 arguments, but 1 was provided
-    MaxIntNode() {
-    ^
-pascal.y:170:47: error: no matching constructor for initialization of 'ast::TypeDecl'
-                    (yyval.astTypeDecl) = new ast::TypeDecl(ast::Identifier((yyvsp[-3].aststring)), (yyvsp[-1].astBasicType)); 
-                                              ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./global.h:230:7: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 2 were provided
-class TypeDecl: public BasicAstNode
-      ^
-./global.h:230:7: note: candidate constructor (the implicit default constructor) not viable: requires 0 arguments, but 2 were provided
-pascal.y:180:53: error: expected unqualified-id
-                    if((yyvsp[0].aststring) == ast::SYS_TYPE::INT) {
-                                                    ^
-y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
-#define SYS_TYPE 314
-                 ^
-pascal.y:182:60: error: expected unqualified-id
-                    } else if((yyvsp[0].aststring) == ast::SYS_TYPE::REAL) {
-                                                           ^
-y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
-#define SYS_TYPE 314
-                 ^
-pascal.y:184:60: error: expected unqualified-id
-                    } else if((yyvsp[0].aststring) == ast::SYS_TYPE::CHAR) {
-                                                           ^
-y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
-#define SYS_TYPE 314
-                 ^
-pascal.y:186:60: error: expected unqualified-id
-                    } else if((yyvsp[0].aststring) == ast::SYS_TYPE::BOOLEAN) {
-                                                           ^
-y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
-#define SYS_TYPE 314
-                 ^
-pascal.y:188:60: error: expected unqualified-id
-                    } else if((yyvsp[0].aststring) == ast::SYS_TYPE::STRING) {
-                                                           ^
-y.tab.c:242:18: note: expanded from macro 'SYS_TYPE'
-#define SYS_TYPE 314
-                 ^
-pascal.y:202:87: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[-2].astBasicConst)), (yyvsp[0].astBasicConst)); 
+pascal.y:201:55: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    if((yyvsp[0].astTypeKind) == ast::TypeKind::INTtype) {
+                                                      ^
+pascal.y:203:62: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    } else if((yyvsp[0].astTypeKind) == ast::TypeKind::REALtype) {
+                                                             ^
+pascal.y:205:62: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    } else if((yyvsp[0].astTypeKind) == ast::TypeKind::CHARtype) {
+                                                             ^
+pascal.y:207:62: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    } else if((yyvsp[0].astTypeKind) == ast::TypeKind::BOOLEANtype) {
+                                                             ^
+pascal.y:209:62: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    } else if((yyvsp[0].astTypeKind) == ast::TypeKind::STRINGtype) {
+                                                             ^
+pascal.y:223:87: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[-2].astBasicConst)), (yyvsp[0].astBasicConst)); 
                                                                                       ^
-pascal.y:205:87: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[-3].astBasicConst)), new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[0].astBasicConst))); 
+pascal.y:226:87: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[-3].astBasicConst)), new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[0].astBasicConst))); 
                                                                                       ^
-pascal.y:205:159: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
-                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[-3].astBasicConst)), new ast::UnaryExpr(ast::UnaryOperator::NEG, (yyvsp[0].astBasicConst))); 
-                                                                                                                                                              ^
-pascal.y:214:48: error: no matching constructor for initialization of 'ast::ArrayType'
-                    (yyval.astBasicType) = new ast::ArrayType((yyvsp[-3].astBasicType), (yyvsp[0].astBasicType)); 
-                                               ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./global.h:256:5: note: candidate constructor not viable: cannot convert from base class pointer 'ast::BasicType *' to derived class pointer 'ast::SimpleType *' for 1st argument
-    ArrayType(SimpleType* range, BasicType* elementType): range(range), elementType(elementType) { 
-    ^
-./global.h:251:7: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 2 were provided
-class ArrayType: public BasicType
-      ^
-pascal.y:234:42: error: assigning to 'ast::VarDecl *' from incompatible type 'ast::VarDeclList *' (aka 'vector<ast::VarDecl *> *')
-                    (yyval.astVarDecl) = new ast::VarDeclList(); 
-                                         ^~~~~~~~~~~~~~~~~~~~~~
-pascal.y:235:25: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+pascal.y:226:161: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astBasicType) = new ast::RangeType(new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[-3].astBasicConst)), new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[0].astBasicConst))); 
+                                                                                                                                                                ^
+pascal.y:255:25: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
                     for(auto name: *((yyvsp[-3].astNameList))) 
                         ^
-pascal.y:235:34: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+pascal.y:255:34: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
                     for(auto name: *((yyvsp[-3].astNameList))) 
                                  ^
-pascal.y:236:45: error: no member named 'push_back' in 'ast::VarDecl'
-                        (yyval.astVarDecl)->push_back(new ast::Parameter(new ast::Identifier(name), (yyvsp[-1].astBasicType)));
-                        ~~~~~~~~~~~~~~~~~~  ^
-pascal.y:236:78: error: no matching constructor for initialization of 'ast::Identifier'
-                        (yyval.astVarDecl)->push_back(new ast::Parameter(new ast::Identifier(name), (yyvsp[-1].astBasicType)));
-                                                                             ^               ~~~~
-./global.h:490:7: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'ast::Identifier *' to 'const ast::Identifier' for 1st argument; dereference the argument with *
-class Identifier: public Expression
-      ^
-./global.h:494:5: note: candidate constructor not viable: no known conversion from 'ast::Identifier *' to 'const std::__1::string' (aka 'const basic_string<char, char_traits<char>, allocator<char> >') for 1st argument
-    Identifier(const string& name): name(name) {}
-    ^
-pascal.y:263:42: error: assigning to 'ast::VarDecl *' from incompatible type 'ast::VarDeclList *' (aka 'vector<ast::VarDecl *> *')
-                    (yyval.astVarDecl) = new ast::VarDeclList(); 
-                                         ^~~~~~~~~~~~~~~~~~~~~~
-pascal.y:264:25: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+pascal.y:283:25: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
                     for(auto name: *((yyvsp[-3].astNameList))) 
                         ^
-pascal.y:264:34: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+pascal.y:283:34: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
                     for(auto name: *((yyvsp[-3].astNameList))) 
                                  ^
-pascal.y:265:45: error: no member named 'push_back' in 'ast::VarDecl'
-                        (yyval.astVarDecl)->push_back(new ast::Parameter(new ast::Identifier(name), (yyvsp[-1].astBasicType)));
-                        ~~~~~~~~~~~~~~~~~~  ^
-pascal.y:265:78: error: no matching constructor for initialization of 'ast::Identifier'
-                        (yyval.astVarDecl)->push_back(new ast::Parameter(new ast::Identifier(name), (yyvsp[-1].astBasicType)));
-                                                                             ^               ~~~~
-./global.h:490:7: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'ast::Identifier *' to 'const ast::Identifier' for 1st argument; dereference the argument with *
-class Identifier: public Expression
+pascal.y:336:25: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+                    for(auto name: *((yyvsp[-2].astNameList))) 
+                        ^
+pascal.y:336:34: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+                    for(auto name: *((yyvsp[-2].astNameList))) 
+                                 ^
+pascal.y:341:25: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+                    for(auto name: *((yyvsp[-2].astNameList))) 
+                        ^
+pascal.y:341:34: warning: range-based for loop is a C++11 extension [-Wc++11-extensions]
+                    for(auto name: *((yyvsp[-2].astNameList))) 
+                                 ^
+pascal.y:422:54: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    if((yyvsp[0].astSYSPROC) == ast::SYSPROC::WRITE)
+                                                     ^
+pascal.y:423:69: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                        (yyval.astStmt) = new ast::SysProcCall(ast::SYSPROC::WRITE);
+                                                                    ^
+pascal.y:424:54: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    if((yyvsp[0].astSYSPROC) == ast::SYSPROC::WRITELN)
+                                                     ^
+pascal.y:425:69: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                        (yyval.astStmt) = new ast::SysProcCall(ast::SYSPROC::WRITELN);
+                                                                    ^
+pascal.y:428:55: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    if((yyvsp[-3].astSYSPROC) == ast::SYSPROC::WRITE)
+                                                      ^
+pascal.y:429:69: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                        (yyval.astStmt) = new ast::SysProcCall(ast::SYSPROC::WRITE, (yyvsp[-1].astExpressionList));
+                                                                    ^
+pascal.y:430:55: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    if((yyvsp[-3].astSYSPROC) == ast::SYSPROC::WRITELN)
+                                                      ^
+pascal.y:431:69: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                        (yyval.astStmt) = new ast::SysProcCall(ast::SYSPROC::WRITELN, (yyvsp[-1].astExpressionList));
+                                                                    ^
+pascal.y:466:49: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astDirection) = ast::Direction::To;
+                                                ^
+pascal.y:469:49: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astDirection) = ast::Direction::DownTo;
+                                                ^
+pascal.y:511:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::GEop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:514:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::GTop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:517:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::LEop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:520:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::LTop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:523:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::EQUALop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:526:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::UNEQUALop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:533:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::PLUSop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:536:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MINUSop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:539:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::ORop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:547:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MULop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:550:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::DIVop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:553:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::MODop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:556:97: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::BinaryExpr((yyvsp[-2].astExpression), ast::BinaryOperator::ANDop, (yyvsp[0].astExpression));
+                                                                                                ^
+pascal.y:582:69: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::UnaryExpr(ast::UnaryOperator::NOTop, (yyvsp[0].astExpression));
+                                                                    ^
+pascal.y:585:69: warning: use of enumeration in a nested name specifier is a C++11 extension [-Wc++11-extensions]
+                    (yyval.astExpression) = new ast::UnaryExpr(ast::UnaryOperator::NEGop, (yyvsp[0].astExpression));
+                                                                    ^
+parser.cpp:2597:7: error: use of undeclared identifier 'yyerror'
+      yyerror (YY_("syntax error"));
       ^
-./global.h:494:5: note: candidate constructor not viable: no known conversion from 'ast::Identifier *' to 'const std::__1::string' (aka 'const basic_string<char, char_traits<char>, allocator<char> >') for 1st argument
-    Identifier(const string& name): name(name) {}
-    ^
-fatal error: too many errors emitted, stopping now [-ferror-limit=]
-31 warnings and 20 errors generated.
+parser.cpp:2708:3: error: use of undeclared identifier 'yyerror'
+  yyerror (YY_("memory exhausted"));
+  ^
+129 warnings and 3 errors generated.
+make: *** [parser.o] Error 1
