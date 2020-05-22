@@ -8,6 +8,7 @@ void yyerror(string msg, ...);
 
 %}
 %option yylineno
+%option   caseless
 
 digit       [0-9]
 number      {digit}+
@@ -86,12 +87,13 @@ whitespace  [ \t]+
 "CHAR"          {yylval.astTypeKind = ast::TypeKind::CHARtype; return SYS_TYPE; }
 "INTEGER"       {yylval.astTypeKind = ast::TypeKind::INTtype; return SYS_TYPE; }
 "REAL"          {yylval.astTypeKind = ast::TypeKind::REALtype; return SYS_TYPE; }
+"STRING"        {yylval.astTypeKind = ast::TypeKind::STRINGtype; return SYS_TYPE; }
 
 {number} {yylval.astint = atoi(yytext); return INTEGER;}
 \'.\'    {yylval.astchar = yytext[1]; return CHAR;}
 '([^']|'')+'  {yylval.aststring = strdup(yytext); return STRING;}
 [0-9]+"."[0-9]+  {yylval.astreal = atof(yytext); return REAL;}
-[a-zA-Z]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
+[a-zA-Z_]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
 {newline}       {lineno++;}
 {whitespace}    {}
 "{"             {   
