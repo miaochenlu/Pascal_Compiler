@@ -3,15 +3,15 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "ast.h"
+#include "ast/ast.h"
 #include "parser.hpp"
 
 using namespace std;
 static ast::BasicAstNode* root;
-extern "C" {
-    int yyparse(void);
-    extern int yylineno;
-}
+// extern "C" {
+//     int yyparse(void);
+//     extern int yylineno;
+// }
 void yyerror(string msg, ...);
 static int yylex(void);
 
@@ -108,9 +108,12 @@ static int yylex(void);
 
 %%
 
-programPrime    : program { root = $1; }
+programPrime    : program { 
+                    root = $1;
+                }
 program         : program_head  routine  DOT { 
                     $$ = new ast::Program($1, $2); 
+                    $$->printAstNode();
                 }
 ;
 
@@ -606,9 +609,3 @@ ast::BasicAstNode* parse(void)
     yyparse();
     return root;
 }
-
-
-// int main() {
-//         printf(">>> ");
-//         while(1) yyparse();
-// }
