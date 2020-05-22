@@ -17,6 +17,7 @@ whitespace  [ \t]+
 
 
 %%
+
 "."             {return DOT;}
 ".."            {return DOTDOT;}
 ";"             {return SEMI;}
@@ -37,6 +38,8 @@ whitespace  [ \t]+
 "*"             {return MUL;}
 "/"             {return DIV;}
 "DIV"           {return DIV;}
+"%"             {return MOD;}
+"MOD"           {return MOD;}
 "OR"            {return OR;}
 "AND"           {return AND;}
 "NOT"           {return NOT;}
@@ -65,8 +68,8 @@ whitespace  [ \t]+
 "CASE"          {return CASE;}
 "GOTO"          {return GOTO;}
 "READ"          {return READ;}
-"FALSE"         {yylval.astbool = true; return BOOLEAN;}
-"TRUE"          {yylval.astbool = false; return BOOLEAN;}
+"FALSE"         {yylval.astbool = false; return BOOLEAN;}
+"TRUE"          {yylval.astbool = true; return BOOLEAN;}
 "MAXINT"        {return SYS_CON;}
 "ABS"           {yylval.astSYSFUNCT = ast::SYSFUNCT::ABS; return SYS_FUNCT;}
 "CHR"           {yylval.astSYSFUNCT = ast::SYSFUNCT::CHR; return SYS_FUNCT;}
@@ -91,7 +94,7 @@ whitespace  [ \t]+
 [a-zA-Z]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
 {newline}       {lineno++;}
 {whitespace}    {}
-"{"             {  
+"{"             {   
                     char c;
                     do { 
                         c = yyinput();
@@ -99,7 +102,7 @@ whitespace  [ \t]+
                         if (c == '\n') lineno++;
                     } while (c != '}');
                 }
-.               { printf("ERROR: Invalid character\n"); cout << yytext << "???" << endl;} 
+.               { cout << "ERROR: Invalid character: " <<  yytext << endl;} 
 
 
 %%

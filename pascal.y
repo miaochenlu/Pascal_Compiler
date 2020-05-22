@@ -75,7 +75,7 @@ extern int yylex(void);
 %type<astProgramHead>       program_head function_head procedure_head;
 %type<astRoutine>           routine sub_routine;
 %type<astRoutineHead>       routine_head;
-%type<astStmtList>          routine_body compound_stmt stmt_list;
+%type<astStmtList>          routine_body compound_stmt stmt_list stmt;
 // %type<astLabelDeclList>     label_part;
 %type<astConstDeclList>     const_part const_expr_list;
 %type<astTypeDeclList>      type_part type_decl_list;
@@ -91,7 +91,7 @@ extern int yylex(void);
 %type<astParamList>         parameters para_decl_list para_type_list;;     
 %type<astNameList>          name_list; //val_para_list var_para_list
 
-%type<astStmt>              stmt  assign_stmt proc_stmt if_stmt repeat_stmt while_stmt for_stmt case_stmt goto_stmt; //non_label_stmt else_clause
+%type<astStmt>              assign_stmt proc_stmt if_stmt repeat_stmt while_stmt for_stmt case_stmt goto_stmt; //non_label_stmt else_clause
 %type<astCaseExprList>      case_expr_list;
 %type<astCaseExpr>          case_expr;
 
@@ -110,7 +110,6 @@ programPrime    : program {
                 }
 program         : program_head  routine  DOT { 
                     $$ = new ast::Program($1, $2); 
-                    $$->printAstNode();
                 }
 ;
 
@@ -257,7 +256,7 @@ name_list       : name_list  COMMA  ID {
                     $$->push_back(new ast::Identifier($3));
                 }
                 |  ID {
-                    $$ = new ast::NameList;
+                    $$ = new ast::NameList();
                     $$->push_back(new ast::Identifier($1));
                 }
 ;
@@ -352,7 +351,8 @@ compound_stmt   : BEG  stmt_list  END {
 
 stmt_list       : stmt_list  stmt  SEMI {
                     $$ = $1;
-                    $$->push_back($2);
+                    for(auto s : *($2))
+                        $$->push_back(s);
                 }
                 |  {
                     $$ = new ast::StmtList();
@@ -369,31 +369,39 @@ stmt_list       : stmt_list  stmt  SEMI {
 // ;
 // non_label_stmt
 stmt            : assign_stmt {
-                    $$ = (ast::Stmt*)$1;
+                    $$ = new ast::StmtList();
+                    $$->push_back((ast::Stmt*)$1);
                 }
                 | proc_stmt {
-                    $$ = (ast::Stmt*)$1;
+                    $$ = new ast::StmtList();
+                    $$->push_back((ast::Stmt*)$1);
                 }
                 | compound_stmt {
-                    $$ = (ast::Stmt*)$1;
+                    $$ = $1;
                 }
                 | if_stmt {
-                    $$ = (ast::Stmt*)$1;
+                    $$ = new ast::StmtList();
+                    $$->push_back((ast::Stmt*)$1);
                 }
                 | repeat_stmt {
-                    $$ = (ast::Stmt*)$1;
+                    $$ = new ast::StmtList();
+                    $$->push_back((ast::Stmt*)$1);
                 }
                 | while_stmt {
-                    $$ = (ast::Stmt*)$1;
+                    $$ = new ast::StmtList();
+                    $$->push_back((ast::Stmt*)$1);
                 }
                 | for_stmt {
-                    $$ = (ast::Stmt*)$1;
+                    $$ = new ast::StmtList();
+                    $$->push_back((ast::Stmt*)$1);
                 }
                 | case_stmt {
-                    $$ = (ast::Stmt*)$1;
+                    $$ = new ast::StmtList();
+                    $$->push_back((ast::Stmt*)$1);
                 }
                 | goto_stmt{
-                    $$ = (ast::Stmt*)$1;
+                    $$ = new ast::StmtList();
+                    $$->push_back((ast::Stmt*)$1);
                 }
 ;
 
@@ -430,10 +438,10 @@ proc_stmt       :  NAME {
                     $$ = new ast::ReadProcCall($3);
                 }
 ;
-if_stmt         : IF  expression  THEN  stmt_list  ELSE stmt_list {
+if_stmt         : IF  expression  THEN  stmt  ELSE stmt {
                     $$ = new ast::IfStmt($2, $4, $6);
                 }
-                | IF  expression  THEN  stmt_list {
+                | IF  expression  THEN  stmt {
                     $$ = new ast::IfStmt($2, $4);
                 }
 ;
@@ -450,11 +458,11 @@ repeat_stmt     : REPEAT  stmt_list  UNTIL  expression {
                 }
 ;
 
-while_stmt      : WHILE  expression  DO stmt_list {
+while_stmt      : WHILE  expression  DO stmt {
                     $$ = new ast::WhileStmt($2, $4);
                 }
 ;
-for_stmt        : FOR  ID  ASSIGN  expression  direction  expression  DO stmt_list {
+for_stmt        : FOR  ID  ASSIGN  expression  direction  expression  DO stmt {
                     $$ = new ast::ForStmt(new ast::Identifier($2), $4, $5, $6, $8);
                 }
 ;
@@ -481,10 +489,10 @@ case_expr_list  : case_expr_list  case_expr  {
                 }
 ;
 
-case_expr       : const_value  COLON  stmt_list  SEMI {
+case_expr       : const_value  COLON  stmt  SEMI {
                     $$ = new ast::CaseExpr($1, $3);
                 }
-                |  ID  COLON  stmt_list  SEMI {
+                |  ID  COLON  stmt  SEMI {
                     $$ = new ast::CaseExpr(new ast::Identifier($1), $3);
                 }
 ;

@@ -205,17 +205,25 @@ public:
 
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
-        for(auto constdecl : *constPart) {
-            children->push_back((BasicAstNode*)constdecl);
+        if(constPart) {
+            for(auto constdecl : *constPart) {
+                children->push_back((BasicAstNode*)constdecl);
+            }
         }
-        for(auto typedecl : *typePart) {
-            children->push_back((BasicAstNode*)typedecl);
+        if(typePart) {
+            for(auto typedecl : *typePart) {
+                children->push_back((BasicAstNode*)typedecl);
+            }
         }
-        for(auto vardecl : *varPart) {
-            children->push_back((BasicAstNode*)vardecl);
+        if(varPart) {
+            for(auto vardecl : *varPart) {
+                children->push_back((BasicAstNode*)vardecl);
+            }
         }
-        for(auto routine : *routinePart) {
-            children->push_back((BasicAstNode*)routine);
+        if(routinePart) {
+            for(auto routine : *routinePart) {
+                children->push_back((BasicAstNode*)routine);
+            }
         }
         return children;
     }
@@ -571,8 +579,10 @@ public:
         for(auto stmt : *thenStmts) {
             children->push_back((BasicAstNode*)stmt);
         }
-        for(auto stmt : *elseStmts) {
-            children->push_back((BasicAstNode*)stmt);
+        if(elseStmts) {
+            for(auto stmt : *elseStmts) {
+                children->push_back((BasicAstNode*)stmt);
+            }
         }
         return children;
     }
@@ -691,7 +701,7 @@ public:
     int label;
     GotoStmt(int label): label(label) {}
     void printAstNode() {
-        cout << "GOTOT: " << label << endl;
+        cout << "GOTO: " << label << endl;
     }
 };
 
@@ -774,8 +784,10 @@ public:
 
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
-        for(auto arg : *args) {
-            children->push_back((BasicAstNode*)arg);
+        if(args) {
+            for(auto arg : *args) {
+                children->push_back((BasicAstNode*)arg);
+            }
         }
         return children;
     }
@@ -820,7 +832,7 @@ public:
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)leftOperand);
-        children->push_back((BasicAstNode*)leftOperand);
+        children->push_back((BasicAstNode*)rightOperand);
         return children;
     }
     void printAstNode() {
@@ -838,6 +850,8 @@ public:
         else if(bOp == BinaryOperator::MODop) cout << "%" << endl;
         else if(bOp == BinaryOperator::ORop) cout << "OR" << endl;
         else if(bOp == BinaryOperator::ANDop) cout << "AND" << endl;
+        // cout << "left:"; leftOperand->printAstNode();
+        // cout << "right:"; rightOperand->printAstNode();
     }
 };
 
@@ -884,7 +898,7 @@ public:
     Identifier* field;
     RecordElementRef(Identifier* recordName, Identifier* field): recordName(recordName), field(field) {}
     childrenList* getChildrenList() {
-        childrenList* children;
+        childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)recordName);
         children->push_back((BasicAstNode*)field);
         return children;
