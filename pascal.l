@@ -4,9 +4,6 @@
 
 int lineno = 0;
 extern YYSTYPE yylval;
-extern "C" {
-    int yylex(void);
-}
 void yyerror(string msg, ...);
 
 %}
@@ -88,8 +85,8 @@ whitespace  [ \t]+
 "REAL"          {yylval.astTypeKind = ast::TypeKind::REALtype; return SYS_TYPE; }
 
 {number} {yylval.astint = atoi(yytext); return INTEGER;}
-\'.\'    {yylval.astchar = yytext[0]; return CHAR;}
-'([^']|'')+'  {yylval.aststring = strdup(yytext + 1); return STRING;}
+\'.\'    {yylval.astchar = yytext[1]; return CHAR;}
+'([^']|'')+'  {yylval.aststring = strdup(yytext); return STRING;}
 [0-9]+"."[0-9]+  {yylval.astreal = atof(yytext); return REAL;}
 [a-zA-Z]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
 {newline}       {lineno++;}
@@ -109,9 +106,4 @@ whitespace  [ \t]+
 
 int yywrap() {
 		return 1;
-}
-
-int get_token() {
-	int token = yylex();
-	return token;
 }

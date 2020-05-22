@@ -8,12 +8,8 @@
 
 using namespace std;
 static ast::BasicAstNode* root;
-// extern "C" {
-//     int yyparse(void);
-//     extern int yylineno;
-// }
 void yyerror(string msg, ...);
-static int yylex(void);
+extern int yylex(void);
 
 %}
 
@@ -560,10 +556,7 @@ term            :  term  MUL  factor {
                 }
 ;
 
-factor          :  ID {
-                    $$ = new ast::Identifier($1);
-                }
-                |  NAME {
+factor          :  NAME {
                     $$ = new ast::Name($1);
                 }
                 |  NAME  LP  args_list  RP  {
@@ -611,9 +604,6 @@ void yyerror(string msg, ...) {
     cout << msg << endl;
 }
 
-static int yylex() {
-	return get_token();
-}
 
 ast::BasicAstNode* parse(void)
 { 
