@@ -77,8 +77,8 @@ Pascal 的 Identifier 是以字母或下划线开头，后接若干字母、数�
 对于Pascal字面量，我们首先根据yytext里面的内容设置对应的yylval，然后返回对应类型的token
 
 ```cpp
-{number} 					{yylval.astint = atoi(yytext); return INTEGER;}
-\'.\'    					{yylval.astchar = yytext[1]; return CHAR;}
+{number} 			{yylval.astint = atoi(yytext); return INTEGER;}
+\'.\'    			{yylval.astchar = yytext[1]; return CHAR;}
 '([^']|'')+'  		{yylval.aststring = strdup(yytext); return STRING;}
 [0-9]+"."[0-9]+  	{yylval.astreal = atof(yytext); return REAL;}
 ```
