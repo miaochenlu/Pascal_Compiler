@@ -54,6 +54,7 @@ class StringType;
 class BooleanType;
 class RangeType;
 class VoidType;
+class UserDefType;
 class ArrayType;
 class RecordType;
 
@@ -509,7 +510,7 @@ public:
 };
 
 //这个可能会有点问题
-class UserDefType: public SimpleType
+class UserDefType: public BasicType
 {
 public: 
     Name* typeName;

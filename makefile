@@ -3,7 +3,7 @@ CFLAGS = -std=c++11 -Wno-deprecated-register -Wno-writable-strings
 OBJS = parser.o scanner.o main.o ast/ast.o
 
 pascal: $(OBJS)
-	g++ -o $@ $(OBJS) $(CFLAGS)
+	g++ -o $@ $^ $(CFLAGS)
 
 ast.o: ast/ast.cpp ast/ast.h
 	g++ -c $(CXXFLAGS) -g -o $@ $< 
@@ -12,10 +12,10 @@ ast.o: ast/ast.cpp ast/ast.h
 	g++ -c $(CXXFLAGS) -g -o $@ $< 
 
 scanner.cpp: pascal.l
-	flex -o scanner.cpp pascal.l
+	flex -o $@ $<
 
 parser.cpp: pascal.y
-	bison -d -o parser.cpp pascal.y
+	bison -d -o $@ $<
 
 parser.hpp: parser.cpp 
 

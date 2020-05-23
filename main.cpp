@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 extern int yyparse();
 extern ast::BasicAstNode* parse(void);
 extern FILE * yyin;
