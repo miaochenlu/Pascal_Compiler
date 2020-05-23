@@ -11,7 +11,7 @@ extern FILE * yyin;
 
 
 int main(int argc, char** argv) {
-    yyin = fopen("test/procTest.pascal", "r");
+    yyin = fopen("../test/typeTest.pascal", "r");
     if (yyin == NULL) {
         printf("File does not exists.\n");
         exit(0);

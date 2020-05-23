@@ -7,7 +7,7 @@ VAR
 BEGIN
     b := 1;
     c := 0;
-    IF a = 1 THEN BEGIN
+    1: IF a = 1 THEN BEGIN
         FOR d:=1 TO 10 DO BEGIN 
             c := c + 1;
             WHILE C <= 5 DO BEGIN 

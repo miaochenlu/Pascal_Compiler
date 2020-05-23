@@ -3,6 +3,9 @@
         "string": "cpp",
         "iostream": "cpp",
         "ostream": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "typeinfo": "cpp",
+        "vector": "cpp",
+        "deque": "cpp"
     }
 }

@@ -128,7 +128,7 @@ Pascal 的 Identifier 是以字母或下划线开头，后接若干字母、数�
 
 根据文法规则，我们设计了语法树结构
 
-<img src="images/image-20200523134622778.png" alt="image-20200523134622778" style="zoom:80%;" />
+<img src="../../miaochenlu.github.io/assets/images/image-20200523210423232.png" alt="image-20200523210423232" style="zoom:80%;" />
 
 
 
@@ -162,7 +162,7 @@ Pascal 的 Identifier 是以字母或下划线开头，后接若干字母、数�
    <tr>
       <td></td>
       <td></td>
-      <td>Stmt</td>
+      <td>BasicStmt</td>
       <td>所有语句的基类</td>
    </tr>
    <tr>
@@ -392,6 +392,18 @@ Pascal 的 Identifier 是以字母或下划线开头，后接若干字母、数�
       <td></td>
       <td>GotoStmt</td>
       <td>goto语句</td>
+   </tr>
+   <tr>
+      <td></td>
+      <td></td>
+      <td>LabelStmt</td>
+      <td>带label语句</td>
+   </tr>
+   <tr>
+      <td></td>
+      <td></td>
+      <td>StmtList</td>
+      <td>语句集合</td>
    </tr>
    <tr>
       <td></td>
@@ -763,7 +775,7 @@ VAR
 BEGIN
     b := 1;
     c := 0;
-    IF a = 1 THEN BEGIN
+    1: IF a = 1 THEN BEGIN
         FOR d:=1 TO 10 DO BEGIN 
             c := c + 1;
             WHILE C <= 5 DO BEGIN 
@@ -821,51 +833,57 @@ Program
 |   |---AssignStmt
 |   |   |---Identifier:c
 |   |   |---IntegerNode: 0
-|   |---IfStmt
-|   |   |---BinaryExpr:=
-|   |   |   |---Name:a
-|   |   |   |---IntegerNode: 1
-|   |   |---ForStmt
-|   |   |   |---Identifier:d
-|   |   |   |---IntegerNode: 1
-|   |   |   |---IntegerNode: 10
-|   |   |   |---AssignStmt
-|   |   |   |   |---Identifier:c
-|   |   |   |   |---BinaryExpr:+
-|   |   |   |   |   |---Name:c
+|   |---LabelStmt: 1
+|   |   |---IfStmt
+|   |   |   |---BinaryExpr:=
+|   |   |   |   |---Name:a
+|   |   |   |   |---IntegerNode: 1
+|   |   |   |---StmtList
+|   |   |   |   |---ForStmt
+|   |   |   |   |   |---Identifier:d
 |   |   |   |   |   |---IntegerNode: 1
-|   |   |   |---WhileStmt
-|   |   |   |   |---BinaryExpr:<=
-|   |   |   |   |   |---Name:C
-|   |   |   |   |   |---IntegerNode: 5
+|   |   |   |   |   |---IntegerNode: 10
+|   |   |   |   |   |---StmtList
+|   |   |   |   |   |   |---AssignStmt
+|   |   |   |   |   |   |   |---Identifier:c
+|   |   |   |   |   |   |   |---BinaryExpr:+
+|   |   |   |   |   |   |   |   |---Name:c
+|   |   |   |   |   |   |   |   |---IntegerNode: 1
+|   |   |   |   |   |   |---WhileStmt
+|   |   |   |   |   |   |   |---BinaryExpr:<=
+|   |   |   |   |   |   |   |   |---Name:C
+|   |   |   |   |   |   |   |   |---IntegerNode: 5
+|   |   |   |   |   |   |   |---StmtList
+|   |   |   |   |   |   |   |   |---AssignStmt
+|   |   |   |   |   |   |   |   |   |---Identifier:d
+|   |   |   |   |   |   |   |   |   |---IntegerNode: 0
+|   |   |   |   |   |   |   |   |---AssignStmt
+|   |   |   |   |   |   |   |   |   |---Identifier:d
+|   |   |   |   |   |   |   |   |   |---IntegerNode: 0
+|   |   |   |   |   |   |---RepeatStmt
+|   |   |   |   |   |   |   |---BinaryExpr:>
+|   |   |   |   |   |   |   |   |---Name:C
+|   |   |   |   |   |   |   |   |---IntegerNode: 5
+|   |   |   |   |   |   |   |---AssignStmt
+|   |   |   |   |   |   |   |   |---Identifier:d
+|   |   |   |   |   |   |   |   |---IntegerNode: 0
+|   |   |   |---StmtList
 |   |   |   |   |---AssignStmt
 |   |   |   |   |   |---Identifier:d
 |   |   |   |   |   |---IntegerNode: 0
-|   |   |   |   |---AssignStmt
-|   |   |   |   |   |---Identifier:d
-|   |   |   |   |   |---IntegerNode: 0
-|   |   |   |---RepeatStmt
-|   |   |   |   |---BinaryExpr:>
-|   |   |   |   |   |---Name:C
-|   |   |   |   |   |---IntegerNode: 5
-|   |   |   |   |---AssignStmt
-|   |   |   |   |   |---Identifier:d
-|   |   |   |   |   |---IntegerNode: 0
-|   |   |---AssignStmt
-|   |   |   |---Identifier:d
-|   |   |   |---IntegerNode: 0
 |   |---CaseStmt
 |   |   |---BinaryExpr:+
 |   |   |   |---Name:d
 |   |   |   |---IntegerNode: 1
 |   |   |---CaseExpr
 |   |   |   |---IntegerNode: 0
-|   |   |   |---AssignStmt
-|   |   |   |   |---Identifier:str
-|   |   |   |   |---StringNode: 'A1'
-|   |   |   |---AssignStmt
-|   |   |   |   |---Identifier:c
-|   |   |   |   |---IntegerNode: 1
+|   |   |   |---StmtList
+|   |   |   |   |---AssignStmt
+|   |   |   |   |   |---Identifier:str
+|   |   |   |   |   |---StringNode: 'A1'
+|   |   |   |   |---AssignStmt
+|   |   |   |   |   |---Identifier:c
+|   |   |   |   |   |---IntegerNode: 1
 |   |   |---CaseExpr
 |   |   |   |---IntegerNode: 1
 |   |   |   |---AssignStmt
