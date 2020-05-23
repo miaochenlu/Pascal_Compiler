@@ -980,7 +980,8 @@ Program
 |   |   |   |   |   |---Real
 |   |   |---VarDecl
 |   |   |   |---Identifier:f
-|   |   |   |---|   |   |---VarDecl
+|   |   |   |---UserDefType: test
+|   |   |---VarDecl
 |   |   |   |---Identifier:h
 |   |   |   |---String
 |   |   |---VarDecl
@@ -995,7 +996,8 @@ Program
 |   |   |   |   |---Integer
 |   |   |---VarDecl
 |   |   |   |---Identifier:k
-|   |   |   |---|   |---AssignStmt
+|   |   |   |---UserDefType: rtype
+|   |---AssignStmt
 |   |   |---Identifier:f
 |   |   |---IntegerNode: 1
 |   |---AssignStmt
