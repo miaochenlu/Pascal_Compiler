@@ -19,8 +19,8 @@ llvm::Function* GenFuncEnv::getFunc(std::string name)
 {
     for(auto it = funcStack.rbegin(); it != funcStack.rend(); it++)
     {
-        std::map<char,int>::iterator fun = it.find(name);
-        if(fun != it.end())
+        std::map<std::string, llvm::Function*>::iterator fun = (*it).find(name);
+        if(fun != (*it).end())
             return fun->second;
     }
     //throw: cannot find

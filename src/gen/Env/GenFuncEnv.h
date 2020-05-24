@@ -5,7 +5,7 @@
 #ifndef PASCAL_COMPILER_GENFUNCENV_H
 #define PASCAL_COMPILER_GENFUNCENV_H
 
-#include <llvm/IR/Function>
+#include <llvm/IR/Function.h>
 
 #include <string>
 #include <vector>

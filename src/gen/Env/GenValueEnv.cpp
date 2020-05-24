@@ -19,8 +19,8 @@ llvm::Value* GenValueEnv::getValue(std::string name)
 {
     for(auto it = valStack.rbegin(); it != valStack.rend(); it++)
     {
-        std::map<char,int>::iterator val = it.find(name);
-        if(val != it.end())
+        std::map<std::string, llvm::Value*>::iterator val = (*it).find(name);
+        if(val != (*it).end())
             return val->second;
     }
     //throw: cannot find
