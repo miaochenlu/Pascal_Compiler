@@ -10,7 +10,7 @@ class BasicAstNode;
 class Identifier;
 class Expression;
 class Name;
-class Stmt;
+class BasicStmt;
 typedef vector<BasicAstNode*> childrenList;
 typedef vector<Identifier*> NameList;
 
@@ -19,7 +19,7 @@ class Program;
 class ProgramHead;
 class Routine;
 class RoutineHead;
-typedef vector<Stmt*> StmtList;
+class StmtList;
 
 /****************program head********************/
 class Parameter;
@@ -55,10 +55,12 @@ class StringType;
 class BooleanType;
 class RangeType;
 class VoidType;
+class UserDefType;
 class ArrayType;
 class RecordType;
 
 /****************** routine body ****************/
+class LabelStmt;
 class AssignStmt;
 class ProcCallStmt;
 class IfStmt;
@@ -90,9 +92,7 @@ class BasicAstNode
 public:  
     BasicAstNode(){};
     ~BasicAstNode(){};
-    virtual void printAstNode() {
-        // cout << "NODE" << endl;
-    }
+    virtual void printAstNode() {}
 
     virtual childrenList* getChildrenList() {
         return new childrenList();
@@ -127,10 +127,33 @@ public:
     }
 };
 
-class Stmt: public BasicAstNode 
+class BasicStmt: public BasicAstNode 
 {
 public:
-    Stmt() {}
+    BasicStmt() {}
+};
+
+class StmtList: public BasicStmt 
+{
+public: 
+    vector<BasicStmt*> stmtList;
+    void stmtPushBack(BasicStmt* stmt) { 
+        stmtList.push_back(stmt);
+    }
+    vector<BasicStmt*>* getStmtList() {
+        return &stmtList;
+    }
+    childrenList* getChildrenList() {
+        childrenList* children = new childrenList();
+        for(auto stmt : stmtList) {
+            children->push_back((BasicAstNode*)stmt);
+        }
+        return children;
+    }
+
+    void printAstNode() {
+        cout << "StmtList" << endl;
+    }
 };
 
 /******************program***********************/
@@ -186,7 +209,7 @@ public:
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)routineHead);
-        for(auto stmt : *routineBody) {
+        for(auto stmt : *(routineBody->getStmtList())) {
             children->push_back((BasicAstNode*)stmt);
         }
         return children;
@@ -208,17 +231,25 @@ public:
 
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
-        for(auto constdecl : *constPart) {
-            children->push_back((BasicAstNode*)constdecl);
+        if(constPart) {
+            for(auto constdecl : *constPart) {
+                children->push_back((BasicAstNode*)constdecl);
+            }
         }
-        for(auto typedecl : *typePart) {
-            children->push_back((BasicAstNode*)typedecl);
+        if(typePart) {
+            for(auto typedecl : *typePart) {
+                children->push_back((BasicAstNode*)typedecl);
+            }
         }
-        for(auto vardecl : *varPart) {
-            children->push_back((BasicAstNode*)vardecl);
+        if(varPart) {
+            for(auto vardecl : *varPart) {
+                children->push_back((BasicAstNode*)vardecl);
+            }
         }
-        for(auto routine : *routinePart) {
-            children->push_back((BasicAstNode*)routine);
+        if(routinePart) {
+            for(auto routine : *routinePart) {
+                children->push_back((BasicAstNode*)routine);
+            }
         }
         return children;
     }
@@ -412,8 +443,9 @@ public:
     }
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
-        for(auto field : *fieldList)
+        for(auto field : *fieldList) {
             children->push_back((BasicAstNode*)field);
+        }
         return children;
     }
     void printAstNode() {
@@ -506,12 +538,15 @@ public:
 };
 
 //这个可能会有点问题
-class UserDefType: public SimpleType
+class UserDefType: public BasicType
 {
 public: 
     Name* typeName;
     UserDefType(Name* typeName): typeName(typeName) { 
         type = TypeKind::USERDEFtype; 
+    }
+    void printAstNode() {
+        cout << "UserDefType: " << typeName->name << endl;
     }
 };
 
@@ -540,14 +575,36 @@ enum class Direction {
     To, DownTo
 };
 
-class AssignStmt: public Stmt
+class LabelStmt: public BasicStmt
+{
+public:  
+    int label;
+    BasicStmt* stmt;
+    bool hasLabel;
+    LabelStmt(int label, BasicStmt* stmt): label(label), stmt(stmt) {
+        hasLabel = true;
+    }
+
+    childrenList* getChildrenList() {
+        childrenList* children = new childrenList();
+        children->push_back((BasicAstNode*)stmt);
+        return children;
+    }
+
+    void printAstNode() {
+        cout << "LabelStmt: " << label << endl;
+    }
+
+};
+
+class AssignStmt: public BasicStmt
 {
 public:
     Expression* name;   //ID, arrayref, recordref都继承了expression
     Expression* value;
     AssignStmt(Expression* name, Expression* value): name(name), value(value) {}
 
-     childrenList* getChildrenList() {
+    childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)name);
         children->push_back((BasicAstNode*)value);
@@ -559,26 +616,24 @@ public:
     void codegen();
 };
 
-class IfStmt: public Stmt
+class IfStmt: public BasicStmt
 {
 public: 
     Expression* cond;
-    StmtList* thenStmts;
-    StmtList* elseStmts;
+    BasicStmt* thenStmt;
+    BasicStmt* elseStmt;
     
     //with else clause
-    IfStmt(Expression* cond, StmtList* thenStmts, StmtList* elseStmts): cond(cond), thenStmts(thenStmts), elseStmts(elseStmts) {}
+    IfStmt(Expression* cond, BasicStmt* thenStmt, BasicStmt* elseStmt): cond(cond), thenStmt(thenStmt), elseStmt(elseStmt) {}
     //miss else clause
-    IfStmt(Expression* cond, StmtList* thenStmts): cond(cond), thenStmts(thenStmts) {}
+    IfStmt(Expression* cond, BasicStmt* thenStmt): cond(cond), thenStmt(thenStmt) {}
 
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)cond);
-        for(auto stmt : *thenStmts) {
-            children->push_back((BasicAstNode*)stmt);
-        }
-        for(auto stmt : *elseStmts) {
-            children->push_back((BasicAstNode*)stmt);
+        children->push_back((BasicAstNode*)thenStmt);
+        if(elseStmt) {
+            children->push_back((BasicAstNode*)elseStmt);
         }
         return children;
     }
@@ -589,7 +644,7 @@ public:
 
 };
 
-class RepeatStmt: public Stmt
+class RepeatStmt: public BasicStmt
 {
 public:
     Expression* cond;
@@ -598,7 +653,7 @@ public:
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)cond);
-        for(auto stmt : *loopStmts) {
+        for(auto stmt : *(loopStmts->getStmtList())) {
             children->push_back((BasicAstNode*)stmt);
         }
         return children;
@@ -609,18 +664,16 @@ public:
     void codegen();
 };
 
-class WhileStmt: public Stmt
+class WhileStmt: public BasicStmt
 {
 public:
     Expression* cond;
-    StmtList* loopStmts;
-    WhileStmt(Expression* cond, StmtList* loopStmts): cond(cond), loopStmts(loopStmts) {}
+    BasicStmt* loopStmt;
+    WhileStmt(Expression* cond, BasicStmt* loopStmt): cond(cond), loopStmt(loopStmt) {}
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)cond);
-        for(auto stmt : *loopStmts) {
-            children->push_back((BasicAstNode*)stmt);
-        }
+        children->push_back((BasicAstNode*)loopStmt);
         return children;
     }
     void printAstNode() {
@@ -629,25 +682,23 @@ public:
     void codegen();
 };
 
-class ForStmt: public Stmt
+class ForStmt: public BasicStmt
 {
 public:  
     Identifier* name;
     Expression* start;
     Direction direction;
     Expression* end;
-    StmtList* loopStmts;
-    ForStmt(Identifier* name, Expression* start, Direction direction, Expression* end, StmtList* loopStmts): 
-        name(name), start(start), direction(direction), end(end), loopStmts(loopStmts) {}
+    BasicStmt* loopStmt;
+    ForStmt(Identifier* name, Expression* start, Direction direction, Expression* end, BasicStmt* loopStmt): 
+        name(name), start(start), direction(direction), end(end), loopStmt(loopStmt) {}
 
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)name);
         children->push_back((BasicAstNode*)start);
         children->push_back((BasicAstNode*)end);
-        for(auto stmt : *loopStmts) {
-            children->push_back((BasicAstNode*)stmt);
-        }
+        children->push_back((BasicAstNode*)loopStmt);
         return children;
     }
     void printAstNode() {
@@ -656,7 +707,7 @@ public:
     void codegen();
 };
 
-class CaseStmt: public Stmt
+class CaseStmt: public BasicStmt
 {
 public:
     Expression* exp;
@@ -677,18 +728,16 @@ public:
     void codegen();
 };
 
-class CaseExpr: public Stmt
+class CaseExpr: public BasicStmt
 {
 public:
     Expression* cond;
-    StmtList*   exeStmts;
-    CaseExpr(Expression* cond, StmtList* exeStmts): cond(cond), exeStmts(exeStmts) {}
+    BasicStmt*   exeStmt;
+    CaseExpr(Expression* cond, BasicStmt* exeStmt): cond(cond), exeStmt(exeStmt) {}
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)cond);
-        for(auto stmt : *exeStmts) {
-            children->push_back((BasicAstNode*)stmt);
-        }
+        children->push_back((BasicAstNode*)exeStmt);
         return children;
     }
     void printAstNode() {
@@ -697,13 +746,13 @@ public:
     void codegen();
 };
 
-class GotoStmt: public Stmt
+class GotoStmt: public BasicStmt
 {
 public: 
     int label;
     GotoStmt(int label): label(label) {}
     void printAstNode() {
-        cout << "GOTOT: " << label << endl;
+        cout << "GOTO: " << label << endl;
     }
     void codegen();
 };
@@ -717,7 +766,7 @@ enum class SYSFUNCT {
     PRED, SQR, SQRT, SUCC,
 };
 
-class ProcCallStmt: public Stmt
+class ProcCallStmt: public BasicStmt
 {
 public:
     ProcCallStmt() {}
@@ -789,8 +838,10 @@ public:
 
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
-        for(auto arg : *args) {
-            children->push_back((BasicAstNode*)arg);
+        if(args) {
+            for(auto arg : *args) {
+                children->push_back((BasicAstNode*)arg);
+            }
         }
         return children;
     }
@@ -837,7 +888,7 @@ public:
     childrenList* getChildrenList() {
         childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)leftOperand);
-        children->push_back((BasicAstNode*)leftOperand);
+        children->push_back((BasicAstNode*)rightOperand);
         return children;
     }
     void printAstNode() {
@@ -904,7 +955,7 @@ public:
     Identifier* field;
     RecordElementRef(Identifier* recordName, Identifier* field): recordName(recordName), field(field) {}
     childrenList* getChildrenList() {
-        childrenList* children;
+        childrenList* children = new childrenList();
         children->push_back((BasicAstNode*)recordName);
         children->push_back((BasicAstNode*)field);
         return children;

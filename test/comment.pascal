@@ -1,13 +1,13 @@
 PROGRAM ex;
     CONST s = 'abcdefg';
 VAR
-    i : INTEGER;
+    {i : INTEGER;
     r: REAL;
-    c: CHAR;
+    c: CHAR;}
     b: BOOLEAN;
 BEGIN
-    i := 1234;
+    {i := 1234;
     r := 1234.5678;
-    c := '#';
+    c := '#';}
     b := true;
 END.

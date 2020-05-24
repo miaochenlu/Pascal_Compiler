@@ -8,6 +8,7 @@ void yyerror(string msg, ...);
 
 %}
 %option yylineno
+%option   caseless
 
 digit       [0-9]
 number      {digit}+
@@ -17,6 +18,7 @@ whitespace  [ \t]+
 
 
 %%
+
 "."             {return DOT;}
 ".."            {return DOTDOT;}
 ";"             {return SEMI;}
@@ -37,6 +39,8 @@ whitespace  [ \t]+
 "*"             {return MUL;}
 "/"             {return DIV;}
 "DIV"           {return DIV;}
+"%"             {return MOD;}
+"MOD"           {return MOD;}
 "OR"            {return OR;}
 "AND"           {return AND;}
 "NOT"           {return NOT;}
@@ -65,8 +69,8 @@ whitespace  [ \t]+
 "CASE"          {return CASE;}
 "GOTO"          {return GOTO;}
 "READ"          {return READ;}
-"FALSE"         {yylval.astbool = true; return BOOLEAN;}
-"TRUE"          {yylval.astbool = false; return BOOLEAN;}
+"FALSE"         {yylval.astbool = false; return BOOLEAN;}
+"TRUE"          {yylval.astbool = true; return BOOLEAN;}
 "MAXINT"        {return SYS_CON;}
 "ABS"           {yylval.astSYSFUNCT = ast::SYSFUNCT::ABS; return SYS_FUNCT;}
 "CHR"           {yylval.astSYSFUNCT = ast::SYSFUNCT::CHR; return SYS_FUNCT;}
@@ -83,15 +87,16 @@ whitespace  [ \t]+
 "CHAR"          {yylval.astTypeKind = ast::TypeKind::CHARtype; return SYS_TYPE; }
 "INTEGER"       {yylval.astTypeKind = ast::TypeKind::INTtype; return SYS_TYPE; }
 "REAL"          {yylval.astTypeKind = ast::TypeKind::REALtype; return SYS_TYPE; }
+"STRING"        {yylval.astTypeKind = ast::TypeKind::STRINGtype; return SYS_TYPE; }
 
 {number} {yylval.astint = atoi(yytext); return INTEGER;}
 \'.\'    {yylval.astchar = yytext[1]; return CHAR;}
 '([^']|'')+'  {yylval.aststring = strdup(yytext); return STRING;}
 [0-9]+"."[0-9]+  {yylval.astreal = atof(yytext); return REAL;}
-[a-zA-Z]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
+[a-zA-Z_]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
 {newline}       {lineno++;}
 {whitespace}    {}
-"{"             {  
+"{"             {   
                     char c;
                     do { 
                         c = yyinput();
@@ -99,7 +104,7 @@ whitespace  [ \t]+
                         if (c == '\n') lineno++;
                     } while (c != '}');
                 }
-.               { printf("ERROR: Invalid character\n"); cout << yytext << "???" << endl;} 
+.               { cout << "ERROR: Invalid character: " <<  yytext << endl;} 
 
 
 %%
