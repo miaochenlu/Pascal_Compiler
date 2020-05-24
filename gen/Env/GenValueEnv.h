@@ -17,6 +17,7 @@ public:
     void pushLayer();
     llvm::Value* getValue(std::string name);
     bool setValue(std::string name, llvm::Value *value);
+    bool isGlobal();
 
 private:
     std::vector <std::map<std::string, llvm::Value*>> valStack;

@@ -1,5 +1,6 @@
 #include<iostream>
 #include<vector>
+#include<llvm/IR/Value>
 using namespace std;
 int get_token(void);
 
@@ -93,7 +94,7 @@ public:
         // cout << "NODE" << endl;
     }
 
-    virtual childrenList* getChildrenList() { 
+    virtual childrenList* getChildrenList() {
         return new childrenList();
     }
 }; 
@@ -149,6 +150,7 @@ public:
     void printAstNode() {
         cout << "Program" << endl;
     }
+    llvm::Function * codegen();
 };
 
 class ProgramHead: public BasicAstNode 
@@ -172,6 +174,7 @@ public:
     void printAstNode() {
         cout << "ProgramHead" << endl;
     }
+    llvm::Function * codegen();
 };
 
 class Routine: public BasicAstNode 
@@ -240,6 +243,7 @@ public:
     void printAstNode() {
         cout << "Parameter" << endl;
     }
+    llvm::Value * codegen();
 };
 
 /****************** const ***********************/
@@ -264,6 +268,7 @@ public:
     void printAstNode() {
         cout << "ConstDecl" << endl;
     }
+    llvm::Value * codegen();
 };
 
 class BasicConst: public Expression
@@ -527,6 +532,7 @@ public:
     void printAstNode() {
         cout << "VarDecl" << endl;
     }
+    void * codegen();
 };
 
 /***************** routine body ****************/
@@ -550,7 +556,7 @@ public:
     void printAstNode() {
         cout << "AssignStmt" << endl;
     }
-
+    void codegen();
 };
 
 class IfStmt: public Stmt
@@ -579,6 +585,7 @@ public:
     void printAstNode() {
         cout << "IfStmt" << endl;
     }
+    void codegen();
 
 };
 
@@ -599,6 +606,7 @@ public:
     void printAstNode() {
         cout << "RepeatStmt" << endl;
     }
+    void codegen();
 };
 
 class WhileStmt: public Stmt
@@ -618,6 +626,7 @@ public:
     void printAstNode() {
         cout << "WhileStmt" << endl;
     }
+    void codegen();
 };
 
 class ForStmt: public Stmt
@@ -644,6 +653,7 @@ public:
     void printAstNode() {
         cout << "ForStmt" << endl;
     }
+    void codegen();
 };
 
 class CaseStmt: public Stmt
@@ -664,6 +674,7 @@ public:
         cout << "CaseStmt" << endl;
     }
 
+    void codegen();
 };
 
 class CaseExpr: public Stmt
@@ -683,6 +694,7 @@ public:
     void printAstNode() {
         cout << "CaseExpr" << endl;
     }
+    void codegen();
 };
 
 class GotoStmt: public Stmt
@@ -693,6 +705,7 @@ public:
     void printAstNode() {
         cout << "GOTOT: " << label << endl;
     }
+    void codegen();
 };
 
 enum class SYSPROC {
@@ -732,6 +745,7 @@ public:
         if(procName == SYSPROC::WRITE) cout << "WRITE" << endl;
         else if(procName == SYSPROC::WRITELN) cout << "WRITELN" << endl;
     }
+    void codegen();
 };
 
 class SysFuncCall: public ProcCallStmt, public Expression
@@ -758,8 +772,9 @@ public:
         else if(functName == SYSFUNCT::SQR) cout << "SQR" << endl;
         else if(functName == SYSFUNCT::SQRT) cout << "SQRT" << endl;
         else if(functName == SYSFUNCT::SUCC) cout << "SUCC" << endl;
-
     }
+    void codegen();
+
 };
 
 class UserDefProcCall: public ProcCallStmt, public Expression
@@ -782,6 +797,7 @@ public:
     void printAstNode() {
         cout << "UserDefProcCall: " <<  procName->name << endl;
     }
+    void codegen();
 
 };
 
@@ -799,6 +815,7 @@ public:
     void printAstNode() {
         cout << "ReadProcCall" << endl;
     }
+    void codegen();
 };
 
 /******************** expr **********************/
@@ -839,6 +856,7 @@ public:
         else if(bOp == BinaryOperator::ORop) cout << "OR" << endl;
         else if(bOp == BinaryOperator::ANDop) cout << "AND" << endl;
     }
+    llvm::Value codegen();
 };
 
 class UnaryExpr: public Expression
@@ -857,6 +875,7 @@ public:
         if(uOp == UnaryOperator::NEGop) cout << "-" << endl;
         else if(uOp == UnaryOperator::NOTop) cout << "NOT" << endl;
     }
+    llvm::Value codegen();
 };
 
 
@@ -875,6 +894,7 @@ public:
     void printAstNode() {
         cout << "ArrayElementRef" << endl;
     }
+    llvm::Value codegen();
 };
 
 class RecordElementRef: public Expression
@@ -892,6 +912,7 @@ public:
     void printAstNode() {
         cout << "RecordElementRef" << endl;
     }
+    llvm::Value codegen();
 };
 
 }

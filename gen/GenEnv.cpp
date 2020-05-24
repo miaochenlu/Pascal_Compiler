@@ -3,3 +3,9 @@
 //
 
 #include "GenEnv.h"
+
+llvm::LLVMContext llvmContext;
+llvm::Module llvmModule("Module", llvmContext);
+llvm::IRBuilder<> irBuilder(llvmContext);
+
+GenEnv genEnv;

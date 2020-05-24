@@ -11,4 +11,19 @@ void astTraversal(ast::BasicAstNode* root, int blank) {
         astTraversal(child, blank + 1);
     }
 }
+
+void VarDecl::codegen() {
+
+    llvm::Type* llvmType = getLLVMType()
+    if (genEnv.valueEnv.isGlobal())
+    {
+
+    }
+    else
+    {
+
+    }
+
+}
+
 }

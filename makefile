@@ -6,9 +6,9 @@ pascal: $(OBJS)
 	g++ -o $@ $(OBJS) $(CFLAGS)
 
 ast.o: ast/ast.cpp ast/ast.h
-	g++ -c $(CXXFLAGS) -g -o $@ $< 
+	g++ -c $(CXXFLAGS) -g -o $@ $<
 
-%.o: %.cpp 
+%.o: %.cpp
 	g++ -c $(CXXFLAGS) -g -o $@ $< 
 
 scanner.cpp: pascal.l

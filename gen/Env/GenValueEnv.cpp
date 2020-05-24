@@ -34,3 +34,7 @@ bool GenValueEnv::setValue(std::string name, llvm::Value *value)
     }
     else return false;
 }
+
+bool GenValueEnv::isGlobal() {
+    return valStack.size() == 1;
+}
