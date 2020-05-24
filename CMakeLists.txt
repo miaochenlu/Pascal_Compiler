@@ -6,7 +6,6 @@ set(CMAKE_CXX_COMPILER "/usr/bin/c++")
 set(CMAKE_CXX_FLAGS "-Wno-narrowing")
 set(CMAKE_EXE_LINKER_FLAGS "-lcurses")
 
-set(LLVM_DIR /home/lianjiayi/llvm)
 find_package( LLVM REQUIRED CONFIG)
 
 if (NOT LLVM_FOUND)
