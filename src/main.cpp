@@ -11,7 +11,7 @@ extern FILE * yyin;
 
 
 int main(int argc, char** argv) {
-    yyin = fopen(argv[0], "r");
+    yyin = fopen(argv[1], "r");
     if (yyin == NULL) {
         printf("File does not exists.\n");
         exit(0);
