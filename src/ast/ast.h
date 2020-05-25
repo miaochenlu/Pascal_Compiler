@@ -1,3 +1,6 @@
+#ifndef _AST_H_
+#define _AST_H_
+
 #include<iostream>
 #include<vector>
 #include <string>
@@ -182,7 +185,9 @@ namespace ast {
 	public:
 		ProgramHead* programHead;
 		Routine* routine;
-		Program(ProgramHead* programHead, Routine* routine) : programHead(programHead), routine(routine) {}
+		Program(ProgramHead* programHead, Routine* routine) : programHead(programHead), routine(routine) {
+			nodeType = "Program";
+		}
 
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -203,7 +208,7 @@ namespace ast {
 		BasicType*  returnType;
 		ProgramHead(Identifier* name, ParamList* parameters, BasicType* returnType) :
 			name(name), parameters(parameters), returnType(returnType) {
-			nodeType = "Program";
+			nodeType = "ProgramHead";
 		}
 
 		childrenList* getChildrenList() {
@@ -330,7 +335,7 @@ namespace ast {
 	public:
 		TypeKind type = TypeKind::ERRORtype;
 		BasicConst() {
-			subType = "const";
+			nodeType = "BasicConst";
 		}
 	};
 
@@ -340,6 +345,7 @@ namespace ast {
 		int integerVal;
 		IntegerNode(int integerVal) : integerVal(integerVal) {
 			type = TypeKind::INTtype;
+			subType = "Integer";
 		}
 		void printAstNode() {
 			cout << "IntegerNode: " << integerVal << endl;
@@ -352,6 +358,7 @@ namespace ast {
 		double realVal;
 		RealNode(double realVal) : realVal(realVal) {
 			type = TypeKind::REALtype;
+			subType = "Real";
 		}
 		void printAstNode() {
 			cout << "ReadNode: " << realVal << endl;
@@ -364,6 +371,7 @@ namespace ast {
 		char charVal;
 		CharNode(char charVal) : charVal(charVal) {
 			type = TypeKind::CHARtype;
+			subType = "Char";
 		}
 		void printAstNode() {
 			cout << "CharNode: " << charVal << endl;
@@ -376,6 +384,7 @@ namespace ast {
 		string stringVal;
 		StringNode(string stringVal) : stringVal(stringVal) {
 			type = TypeKind::STRINGtype;
+			subType = "String";
 		}
 		void printAstNode() {
 			cout << "StringNode: " << stringVal << endl;
@@ -388,6 +397,7 @@ namespace ast {
 		bool boolVal;
 		BooleanNode(bool boolVal) : boolVal(boolVal) {
 			type = TypeKind::BOOLEANtype;
+			subType = "Boolean";
 		}
 		void printAstNode() {
 			cout << "BooleanNode: " << boolVal << endl;
@@ -401,6 +411,7 @@ namespace ast {
 		MaxIntNode() {
 			maxintVal = 32767;
 			type = TypeKind::INTtype;
+			subType = "MaxInt";
 		}
 		void printAstNode() {
 			cout << "MaxIntNode: " << maxintVal << endl;
@@ -435,7 +446,7 @@ namespace ast {
 	public:
 		TypeKind type = TypeKind::ERRORtype;
 		BasicType() {
-			nodeType = "Type";
+			nodeType = "BasicType";
 		}
 	};
 
@@ -452,6 +463,7 @@ namespace ast {
 		BasicType* elementType;
 		ArrayType(BasicType* range, BasicType* elementType) : range(range), elementType(elementType) {
 			type = TypeKind::ARRAYtype;
+			subType = "Array";
 		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -470,6 +482,7 @@ namespace ast {
 		VarDeclList* fieldList;
 		RecordType(VarDeclList* fieldList) : fieldList(fieldList) {
 			type = TypeKind::RECORDtype;
+			subType = "Record";
 		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -486,7 +499,7 @@ namespace ast {
 	class BooleanType : public SimpleType
 	{
 	public:
-		BooleanType() { type = TypeKind::BOOLEANtype; nodeType = "Boolean"; }
+		BooleanType() { type = TypeKind::BOOLEANtype; subType = "Boolean"; }
 		void printAstNode() {
 			cout << "Boolean" << endl;
 		}
@@ -495,7 +508,7 @@ namespace ast {
 	class CharType : public SimpleType
 	{
 	public:
-		CharType() { type = TypeKind::CHARtype; nodeType = "Char"; }
+		CharType() { type = TypeKind::CHARtype; subType = "Char"; }
 		void printAstNode() {
 			cout << "Char" << endl;
 		}
@@ -504,7 +517,7 @@ namespace ast {
 	class IntegerType : public SimpleType
 	{
 	public:
-		IntegerType() { type = TypeKind::INTtype; nodeType = "Integer"; }
+		IntegerType() { type = TypeKind::INTtype; subType = "Integer"; }
 		void printAstNode() {
 			cout << "Integer" << endl;
 		}
@@ -513,7 +526,7 @@ namespace ast {
 	class RealType : public SimpleType
 	{
 	public:
-		RealType() { type = TypeKind::REALtype; nodeType = "Real"; }
+		RealType() { type = TypeKind::REALtype; subType = "Real"; }
 		void printAstNode() {
 			cout << "Real" << endl;
 		}
@@ -522,7 +535,7 @@ namespace ast {
 	class StringType : public SimpleType
 	{
 	public:
-		StringType() { type = TypeKind::STRINGtype; nodeType = "String"; }
+		StringType() { type = TypeKind::STRINGtype; subType = "String"; }
 		void printAstNode() {
 			cout << "String" << endl;
 		}
@@ -537,9 +550,11 @@ namespace ast {
 		int type;
 		RangeType(Name* lowerBName, Name* upperBName) : lowerBName(lowerBName), upperBName(upperBName) {
 			type = ValOrName::name;
+			subType == "Range";
 		}
 		RangeType(Expression* lowerB, Expression* upperB) : lowerB(lowerB), upperB(upperB) {
 			type = ValOrName::val;
+			subType == "Range";
 		}
 
 		childrenList* getChildrenList() {
@@ -562,7 +577,7 @@ namespace ast {
 	class VoidType : public SimpleType
 	{
 	public:
-		VoidType() { type = TypeKind::VOIDtype; }
+		VoidType() { type = TypeKind::VOIDtype; subType = "Void"; }
 		void printAstNode() {
 			cout << "VOID" << endl;
 		}
@@ -575,6 +590,7 @@ namespace ast {
 		Name* typeName;
 		UserDefType(Name* typeName) : typeName(typeName) {
 			type = TypeKind::USERDEFtype;
+			subType = "UserDef";
 		}
 		void printAstNode() {
 			cout << "UserDefType: " << typeName->name << endl;
@@ -588,7 +604,10 @@ namespace ast {
 	public:
 		Identifier* name;
 		BasicType*  type;
-		VarDecl(Identifier* name, BasicType* type) : name(name), type(type) {}
+		VarDecl(Identifier* name, BasicType* type) : name(name), type(type) { 
+			nodeType = "Decl"; 
+			subType = "var";
+		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)name);
@@ -982,3 +1001,5 @@ namespace ast {
 	};
 
 }
+
+#endif

@@ -1,4 +1,4 @@
-#include "pch.h"
+//#include "pch.h"
 #include"ast.h"
 using namespace std;
 namespace ast {
