@@ -83,19 +83,20 @@ static void insertNode(ast::BasicAstNode *node)
 					declType = child->subType;
 				}
 			}
+			st_insert(declName, declLineNo, 0, "Const", declType);
 		}
-		else if (node->subType == "type") {
-			for (auto child : *children) {
-				if (child->nodeType == "Name") {
-					declName = child->id;
-					declLineNo = child->lineNo;
-					child->scope = sc_top();
-				}
-				else if (child->nodeType == "BasicType") {
-					declType = child->subType;
-				}
-			}
-		}
+		//else if (node->subType == "type") {
+		//	for (auto child : *children) {
+		//		if (child->nodeType == "Name") {
+		//			declName = child->id;
+		//			declLineNo = child->lineNo;
+		//			child->scope = sc_top();
+		//		}
+		//		else if (child->nodeType == "BasicType") {
+		//			declType = child->subType;
+		//		}
+		//	}
+		//}
 		else if (node->subType == "var") {
 			for (auto child : *children) {
 				if (child->nodeType == "Identifier") {
@@ -107,8 +108,9 @@ static void insertNode(ast::BasicAstNode *node)
 					declType = child->subType;
 				}
 			}
+			st_insert(declName, declLineNo, 0, "Variable", declType);
 		}
-		st_insert(declName, declLineNo, 0, "Variable", declType);
+		
 	}
 }
 
