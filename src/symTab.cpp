@@ -113,7 +113,22 @@ void st_print()
 							break;
 						}
 					}
-					cout << "\t" << "<Array: range [" << begin << ":" << end << "], type " << type << " >" ;
+					cout << '\t' << "<Array: range [" << begin << ":" << end << "], type " << type << " >" ;
+				}
+				else if (iden.dataType == "Record"){
+					cout << '\t' << "<Record: ";
+					for (auto record : item->recordList) {
+						if (record.recordName == iden.id) {
+							//cout << "--1" << endl;
+							map<string, string>::iterator it;
+							it = record.recordMember.begin();
+							while (it != record.recordMember.end()) {
+								cout << it->first << " : " << it->second << ", ";
+								it++;
+							}
+						}
+					}
+					cout << ">";
 				}
 				cout << endl;
 			}

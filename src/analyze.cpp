@@ -62,6 +62,16 @@ static void insertNode(ast::BasicAstNode *node)
 					arrayRec newArray = arrayRec(progName, progArrayBegin, progArrayEnd, progArrayType);
 					sc_top()->arrayList.push_back(newArray);
 				}
+				else if (progDataType == "Record") {
+					map<string, string> recMem;
+					ast::childrenList* gchildren = child->getChildrenList();
+					for (auto gchild : *gchildren) {
+						string id = (*(gchild->getChildrenList()))[0]->id;
+						string type = (*(gchild->getChildrenList()))[1]->subType;
+						recMem.insert(pair<string, string>(id, type));
+					}
+					recordRec newRecord = recordRec(progName, recMem);
+				}
 			}
 		}
 		st_insert(progName, progLineNo, 0, "Function", progDataType);
@@ -83,6 +93,16 @@ static void insertNode(ast::BasicAstNode *node)
 							paraArrayType = (*(gchild->getChildrenList()))[1]->subType;
 							arrayRec newArray = arrayRec(paraName, paraArrayBegin, paraArrayEnd, paraArrayType);
 							sc_top()->arrayList.push_back(newArray);
+						}
+						else if (paraType == "Record") {
+							map<string, string> recMem;
+							ast::childrenList* ggchildren = gchild->getChildrenList();
+							for (auto ggchild : *ggchildren) {
+								string id = (*(ggchild->getChildrenList()))[0]->id;
+								string type = (*(ggchild->getChildrenList()))[1]->subType;
+								recMem.insert(pair<string, string>(id, type));
+							}
+							recordRec newRecord = recordRec(paraName, recMem);
 						}
 					}
 				}
@@ -127,6 +147,17 @@ static void insertNode(ast::BasicAstNode *node)
 						arrayRec newArray = arrayRec(declName, arrayBegin, arrayEnd, arrayType);
 						sc_top()->arrayList.push_back(newArray);
 					}
+					else if (declType == "Record") {
+						map<string, string> recMem;
+						ast::childrenList* gchildren = child->getChildrenList();
+						for (auto gchild : *gchildren) {
+							string id = (*(gchild->getChildrenList()))[0]->id;
+							string type = (*(gchild->getChildrenList()))[1]->subType;
+							recMem.insert(pair<string, string>(id, type));
+						}
+						recordRec newRecord = recordRec(declName, recMem);
+						sc_top()->recordList.push_back(newRecord);
+					}
 				}
 			}
 			sc_top()->userDefType.insert(pair<string, string>(declName, declType));
@@ -148,6 +179,16 @@ static void insertNode(ast::BasicAstNode *node)
 						arrayRec newArray = arrayRec(declName, arrayBegin, arrayEnd, arrayType);
 						sc_top()->arrayList.push_back(newArray);
 					}
+					else if (declType == "Record") {
+						map<string, string> recMem;
+						ast::childrenList* gchildren = child->getChildrenList();
+						for (auto gchild : *gchildren) {
+							string id = (*(gchild->getChildrenList()))[0]->id;
+							string type = (*(gchild->getChildrenList()))[1]->subType;
+							recMem.insert(pair<string, string>(id, type));
+						}
+						recordRec newRecord = recordRec(declName, recMem);
+					}
 					//cout << sc_top()->scopeName << endl;
 					if (sc_top()->userDefType[declType] != "") {
 						//cout << sc_top()->userDefType[declType] << endl;
@@ -157,6 +198,16 @@ static void insertNode(ast::BasicAstNode *node)
 								if (array.arrayName == declType) {
 									arrayRec newArray = arrayRec(declName, array);
 									sc_top()->arrayList.push_back(newArray);
+								}
+							}
+						}
+						else if (sc_top()->userDefType[declType] == "Record") {
+							//cout << declType << endl;
+							for (auto record : sc_top()->recordList) {
+								if (record.recordName == declType) {
+									//cout << "---2" << endl;
+									recordRec newRecord = recordRec(declName, record);
+									sc_top()->recordList.push_back(newRecord);
 								}
 							}
 						}
