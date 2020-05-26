@@ -122,8 +122,15 @@ void st_print()
 							//cout << "--1" << endl;
 							map<string, string>::iterator it;
 							it = record.recordMember.begin();
+							int isBegin = 1;
 							while (it != record.recordMember.end()) {
-								cout << it->first << " : " << it->second << ", ";
+								if (isBegin) {
+									cout << it->first << " " << it->second;
+									isBegin = 0;
+								}
+								else {
+									cout << ", " << it->first << " " << it->second;
+								}
 								it++;
 							}
 						}
