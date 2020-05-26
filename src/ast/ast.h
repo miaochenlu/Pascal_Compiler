@@ -100,8 +100,10 @@ namespace ast {
 		Scope scope;
 		string nodeType;
 		string subType;
+		//string userType;
 		string id;
 		int lineNo;
+		int intVal;
 		BasicAstNode() {
 			this->lineNo = lineno;
 		}
@@ -345,6 +347,7 @@ namespace ast {
 		int integerVal;
 		IntegerNode(int integerVal) : integerVal(integerVal) {
 			type = TypeKind::INTtype;
+			intVal = integerVal;
 			subType = "Integer";
 		}
 		void printAstNode() {
@@ -590,7 +593,8 @@ namespace ast {
 		Name* typeName;
 		UserDefType(Name* typeName) : typeName(typeName) {
 			type = TypeKind::USERDEFtype;
-			subType = "UserDef";
+			//subType = "UserDef";
+			subType = typeName->name;
 		}
 		void printAstNode() {
 			cout << "UserDefType: " << typeName->name << endl;
@@ -632,6 +636,7 @@ namespace ast {
 		bool hasLabel;
 		LabelStmt(int label, BasicStmt* stmt) : label(label), stmt(stmt) {
 			hasLabel = true;
+			subType = "Label";
 		}
 
 		childrenList* getChildrenList() {
@@ -651,7 +656,7 @@ namespace ast {
 	public:
 		Expression* name;   //ID, arrayref, recordref都继承了expression
 		Expression* value;
-		AssignStmt(Expression* name, Expression* value) : name(name), value(value) {}
+		AssignStmt(Expression* name, Expression* value) : name(name), value(value) { subType = "Assign"; }
 
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -673,7 +678,7 @@ namespace ast {
 		BasicStmt* elseStmt;
 
 		//with else clause
-		IfStmt(Expression* cond, BasicStmt* thenStmt, BasicStmt* elseStmt) : cond(cond), thenStmt(thenStmt), elseStmt(elseStmt) {}
+		IfStmt(Expression* cond, BasicStmt* thenStmt, BasicStmt* elseStmt) : cond(cond), thenStmt(thenStmt), elseStmt(elseStmt) { subType = "If"; }
 		//miss else clause
 		IfStmt(Expression* cond, BasicStmt* thenStmt) : cond(cond), thenStmt(thenStmt) {}
 
@@ -697,7 +702,7 @@ namespace ast {
 	public:
 		Expression* cond;
 		StmtList* loopStmts;
-		RepeatStmt(Expression* cond, StmtList* loopStmts) : cond(cond), loopStmts(loopStmts) {}
+		RepeatStmt(Expression* cond, StmtList* loopStmts) : cond(cond), loopStmts(loopStmts) { subType = "Repeat"; }
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)cond);
@@ -716,7 +721,7 @@ namespace ast {
 	public:
 		Expression* cond;
 		BasicStmt* loopStmt;
-		WhileStmt(Expression* cond, BasicStmt* loopStmt) : cond(cond), loopStmt(loopStmt) {}
+		WhileStmt(Expression* cond, BasicStmt* loopStmt) : cond(cond), loopStmt(loopStmt) { subType = "While"; }
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)cond);
@@ -737,7 +742,7 @@ namespace ast {
 		Expression* end;
 		BasicStmt* loopStmt;
 		ForStmt(Identifier* name, Expression* start, Direction direction, Expression* end, BasicStmt* loopStmt) :
-			name(name), start(start), direction(direction), end(end), loopStmt(loopStmt) {}
+			name(name), start(start), direction(direction), end(end), loopStmt(loopStmt) { subType = "For";	}
 
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -757,7 +762,7 @@ namespace ast {
 	public:
 		Expression* exp;
 		CaseExprList* caseList;
-		CaseStmt(Expression* exp, CaseExprList* caseList) : exp(exp), caseList(caseList) {}
+		CaseStmt(Expression* exp, CaseExprList* caseList) : exp(exp), caseList(caseList) { subType = "Case"; }
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)exp);
@@ -793,7 +798,7 @@ namespace ast {
 	{
 	public:
 		int label;
-		GotoStmt(int label) : label(label) {}
+		GotoStmt(int label) : label(label) { subType = "Goto"; }
 		void printAstNode() {
 			cout << "GOTO: " << label << endl;
 		}
@@ -820,9 +825,9 @@ namespace ast {
 		SYSPROC procName;
 		ArgList* args;
 		//有参数
-		SysProcCall(SYSPROC procName, ArgList* args) : procName(procName), args(args) {}
+		SysProcCall(SYSPROC procName, ArgList* args) : procName(procName), args(args) { subType = "SysProcCall"; }
 		//无参数
-		SysProcCall(SYSPROC procName) : procName(procName) {}
+		SysProcCall(SYSPROC procName) : procName(procName) { subType = "SysProcCall"; }
 
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -895,7 +900,7 @@ namespace ast {
 	{
 	public:
 		Expression* readElement;
-		ReadProcCall(Expression* readElement) : readElement(readElement) {}
+		ReadProcCall(Expression* readElement) : readElement(readElement) { subType = "ReadProcCall"; }
 
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -922,7 +927,10 @@ namespace ast {
 	public:
 		BinaryOperator bOp;
 		Expression* leftOperand, *rightOperand;
-		BinaryExpr(Expression* leftOperand, BinaryOperator bOp, Expression* rightOperand) : leftOperand(leftOperand), bOp(bOp), rightOperand(rightOperand) {}
+		BinaryExpr(Expression* leftOperand, BinaryOperator bOp, Expression* rightOperand) : leftOperand(leftOperand), bOp(bOp), rightOperand(rightOperand) {
+			nodeType = "Expr";
+			subType = "Binary";
+		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)leftOperand);
@@ -952,7 +960,10 @@ namespace ast {
 	public:
 		UnaryOperator uOp;
 		Expression* operand;
-		UnaryExpr(UnaryOperator uOp, Expression* operand) : uOp(uOp), operand(operand) {}
+		UnaryExpr(UnaryOperator uOp, Expression* operand) : uOp(uOp), operand(operand) {
+			nodeType = "Expr";
+			subType = "Unary";
+		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)operand);
@@ -971,7 +982,10 @@ namespace ast {
 	public:
 		Identifier* arrayName;
 		Expression* index;
-		ArrayElementRef(Identifier* arrayName, Expression* index) : arrayName(arrayName), index(index) {}
+		ArrayElementRef(Identifier* arrayName, Expression* index) : arrayName(arrayName), index(index) {
+			nodeType = "Expr";
+			subType = "ArrayElementRef";
+		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)arrayName);
@@ -988,7 +1002,10 @@ namespace ast {
 	public:
 		Identifier* recordName;
 		Identifier* field;
-		RecordElementRef(Identifier* recordName, Identifier* field) : recordName(recordName), field(field) {}
+		RecordElementRef(Identifier* recordName, Identifier* field) : recordName(recordName), field(field) {
+			nodeType = "Expr";
+			subType = "RecordElementRef";
+		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)recordName);

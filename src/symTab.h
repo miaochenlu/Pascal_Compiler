@@ -8,19 +8,44 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <map>
 using namespace std;
 
 #define TABLE_SIZE 571
 #define SHIFT 4
+
+class arrayRec {
+public:
+	string arrayName;
+	int arrayBegin;
+	int arrayEnd;
+	string arrayType;
+	arrayRec(string _arrayName, int _arrayBegin, int _arrayEnd, string _arrayType) {
+		arrayName = _arrayName;
+		arrayBegin = _arrayBegin;
+		arrayEnd = _arrayEnd;
+		arrayType = _arrayType;
+	}
+	arrayRec(string newName, arrayRec rec) {
+		arrayName = newName;
+		arrayBegin = rec.arrayBegin;
+		arrayEnd = rec.arrayEnd;
+		arrayType = rec.arrayType;
+	}
+};
 
 class BucketListRec {
 public:
 	string id;
 	vector<int> lines;
 	int memloc;
-	string recType; // function, variable
+	string recType; // function, variable, const
 	string dataType; // void, integer, char, string..
 	BucketListRec *next; //TODO
+	int arrayBegin;
+	int arrayEnd;
+	string arrayType;
+	map<string, string> recordMember;
 
 	BucketListRec(string _id, int _lineno, int _memloc, string _recType, string _dataType) {
 		id = _id; 
@@ -28,6 +53,14 @@ public:
 		lines.push_back(_lineno);
 		recType = _recType;
 		dataType = _dataType;
+		//if (dataType == "Array") {
+		//	arrayBegin = _arrayBegin;
+		//	arrayEnd = _arrayEnd;
+		//	arrayType = _arrayType;
+		//}
+		//if (dataType == "Record") {
+		//	recordMember = _recordMember;
+		//}
 	}
 };
 typedef vector<BucketListRec> BucketList;
@@ -38,6 +71,8 @@ public:
 	int depth;
 	ScopeRec *parentScope;
 	BucketList hashTable[TABLE_SIZE];
+	map<string, string> userDefType;
+	vector<arrayRec> arrayList;
 
 	ScopeRec(string _scopeName) { 
         scopeName = _scopeName; 
@@ -49,6 +84,7 @@ static int hash(string str);
 Scope sc_create(string scopeName);
 void sc_pop();
 Scope sc_top();
+void sc_push(string name);
 
 void st_insert(string id, int lineNo, int loc, string recType, string dataType);
 int st_lookup(string id);

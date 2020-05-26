@@ -38,6 +38,15 @@ void sc_pop()
 	current_depth--;
 }
 
+void sc_push(string name)
+{
+	for (auto scope : scopes) {
+		if (scope->scopeName == name) {
+			scopeStack.push_back(scope);
+		}
+	}
+}
+
 Scope sc_top()
 {
 	return scopeStack[current_depth - 1];
@@ -91,6 +100,20 @@ void st_print()
 				cout << iden.id << '\t' << iden.memloc << '\t' << iden.recType << '\t' << iden.dataType << '\t';
 				for (auto lineNo : iden.lines) {
 					cout << '\t' << lineNo << " ";
+				}
+				
+				if (iden.dataType == "Array") {
+					int begin, end;
+					string type;
+					for (auto array : item->arrayList) {
+						if (array.arrayName == iden.id) {
+							begin = array.arrayBegin;
+							end = array.arrayEnd;
+							type = array.arrayType;
+							break;
+						}
+					}
+					cout << "\t" << "<Array: range [" << begin << ":" << end << "], type " << type << " >" ;
 				}
 				cout << endl;
 			}

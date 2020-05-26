@@ -5,18 +5,25 @@
 
 void buildSymTable(ast::BasicAstNode *Tree)
 {
-	//initSymTable();
 	Scope global = sc_create("global");
 	Tree->scope = global;
 	traverse(Tree, insertNode, popScope);
 	sc_pop();
 	st_print();
+	//cout << sc_top()->scopeName << endl;
+	//map<string, string>::iterator it;
+	//it = userDefType.begin();
+	//while (it != userDefType.end()) {
+	//	cout << it->first << " : " << it->second << endl;
+	//	it++;
+	//}
 }
 
-//void initSymTable()
-//{
-//	global = sc_create("global");
-//}
+void typeCheck(ast::BasicAstNode *Tree)
+{
+	traverse(Tree, pushScope, checkNode);
+	
+}
 
 static void traverse(ast::BasicAstNode * node, void(*preProc) (ast::BasicAstNode *), void(*postProc) (ast::BasicAstNode *)) {
 	ast::childrenList* children = node->getChildrenList();
@@ -37,8 +44,9 @@ static void insertNode(ast::BasicAstNode *node)
 	//Scope currentScope = sc_top();
 	if(node->nodeType == "ProgramHead") { // program head
 		ast::childrenList* children = node->getChildrenList();
-		string progName, progDataType, paraName, paraType;
-		int progLineNo, paraLineNo;
+		string progName, progDataType, paraName, paraType, progArrayType, paraArrayType;
+		int progLineNo, paraLineNo, progArrayBegin, progArrayEnd, paraArrayBegin, paraArrayEnd;
+		map<string, string> progRecordMember, paraRecordMember; // TODO
 		for (auto child : *children) {
 			if (child->nodeType == "Identifier") {
 				progName = child->id;
@@ -47,6 +55,13 @@ static void insertNode(ast::BasicAstNode *node)
 			}
 			else if (child->nodeType == "BasicType") {
 				progDataType = child->subType;
+				if (progDataType == "Array") {
+					progArrayBegin = (*((*(child->getChildrenList()))[0]->getChildrenList()))[0]->intVal;
+					progArrayEnd = (*((*(child->getChildrenList()))[0]->getChildrenList()))[1]->intVal;
+					progArrayType = (*(child->getChildrenList()))[1]->subType;
+					arrayRec newArray = arrayRec(progName, progArrayBegin, progArrayEnd, progArrayType);
+					sc_top()->arrayList.push_back(newArray);
+				}
 			}
 		}
 		st_insert(progName, progLineNo, 0, "Function", progDataType);
@@ -62,6 +77,13 @@ static void insertNode(ast::BasicAstNode *node)
 					}
 					else { // type
 						paraType = gchild->subType;
+						if (progDataType == "Array") {
+							paraArrayBegin = (*((*(gchild->getChildrenList()))[0]->getChildrenList()))[0]->intVal;
+							paraArrayEnd = (*((*(gchild->getChildrenList()))[0]->getChildrenList()))[1]->intVal;
+							paraArrayType = (*(gchild->getChildrenList()))[1]->subType;
+							arrayRec newArray = arrayRec(paraName, paraArrayBegin, paraArrayEnd, paraArrayType);
+							sc_top()->arrayList.push_back(newArray);
+						}
 					}
 				}
 				st_insert(paraName, paraLineNo, 0, "Variable", paraType);
@@ -69,8 +91,9 @@ static void insertNode(ast::BasicAstNode *node)
 		}
 	}
 	else if (node->nodeType == "Decl") { //TODO: record, array
-		string declName, declType;
-		int declLineNo;
+		string declName, declType, arrayType;
+		int declLineNo, arrayBegin, arrayEnd;
+		map<string, string> recordMember;
 		ast::childrenList* children = node->getChildrenList();
 		if (node->subType == "const") {
 			for (auto child : *children) {
@@ -81,22 +104,34 @@ static void insertNode(ast::BasicAstNode *node)
 				}
 				else if (child->nodeType == "BasicConst") {
 					declType = child->subType;
+					if (sc_top()->userDefType[declType] != "") {
+						declType = sc_top()->userDefType[declType];
+					}
 				}
 			}
 			st_insert(declName, declLineNo, 0, "Const", declType);
 		}
-		//else if (node->subType == "type") {
-		//	for (auto child : *children) {
-		//		if (child->nodeType == "Name") {
-		//			declName = child->id;
-		//			declLineNo = child->lineNo;
-		//			child->scope = sc_top();
-		//		}
-		//		else if (child->nodeType == "BasicType") {
-		//			declType = child->subType;
-		//		}
-		//	}
-		//}
+		else if (node->subType == "type") {
+			for (auto child : *children) {
+				if (child->nodeType == "Name") {
+					declName = child->id;
+					declLineNo = child->lineNo;
+					child->scope = sc_top();
+				}
+				else if (child->nodeType == "BasicType") {
+					declType = child->subType;
+					if (declType == "Array") {
+						arrayBegin = (*((*(child->getChildrenList()))[0]->getChildrenList()))[0]->intVal;
+						arrayEnd = (*((*(child->getChildrenList()))[0]->getChildrenList()))[1]->intVal;
+						arrayType = (*(child->getChildrenList()))[1]->subType;
+						arrayRec newArray = arrayRec(declName, arrayBegin, arrayEnd, arrayType);
+						sc_top()->arrayList.push_back(newArray);
+					}
+				}
+			}
+			sc_top()->userDefType.insert(pair<string, string>(declName, declType));
+			//cout << declName << " : " << declType << " - " << sc_top()->scopeName << endl;
+		}
 		else if (node->subType == "var") {
 			for (auto child : *children) {
 				if (child->nodeType == "Identifier") {
@@ -106,12 +141,38 @@ static void insertNode(ast::BasicAstNode *node)
 				}
 				else if (child->nodeType == "BasicType") {
 					declType = child->subType;
+					if (declType == "Array") {
+						arrayBegin = (*((*(child->getChildrenList()))[0]->getChildrenList()))[0]->intVal;
+						arrayEnd = (*((*(child->getChildrenList()))[0]->getChildrenList()))[1]->intVal;
+						arrayType = (*(child->getChildrenList()))[1]->subType;
+						arrayRec newArray = arrayRec(declName, arrayBegin, arrayEnd, arrayType);
+						sc_top()->arrayList.push_back(newArray);
+					}
+					//cout << sc_top()->scopeName << endl;
+					if (sc_top()->userDefType[declType] != "") {
+						//cout << sc_top()->userDefType[declType] << endl;
+						//declType = sc_top()->userDefType[declType];
+						if (sc_top()->userDefType[declType] == "Array") {
+							for (auto array : sc_top()->arrayList) {
+								if (array.arrayName == declType) {
+									arrayRec newArray = arrayRec(declName, array);
+									sc_top()->arrayList.push_back(newArray);
+								}
+							}
+						}
+						declType = sc_top()->userDefType[declType];
+					}
 				}
 			}
 			st_insert(declName, declLineNo, 0, "Variable", declType);
 		}
 		
 	}
+}
+
+static void checkNode(ast::BasicAstNode *node)
+{
+
 }
 
 static void popScope(ast::BasicAstNode *node)
@@ -121,8 +182,20 @@ static void popScope(ast::BasicAstNode *node)
 	}
 }
 
-void typeCheck(ast::BasicAstNode *Tree)
+static void pushScope(ast::BasicAstNode *node)
 {
-    
+	if (node->nodeType == "Program") {
+		ast::childrenList* children = node->getChildrenList();
+		string progName;
+		for (auto child : *children) {
+			if (child->nodeType == "Identifier") {
+				progName = child->id;
+				break;
+			}
+		}
+
+		//sc_push(node->)
+	}
 }
+
 
