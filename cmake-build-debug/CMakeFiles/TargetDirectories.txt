@@ -1,0 +1,6 @@
+/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles/intrinsics_gen.dir
+/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/CMakeFiles/rebuild_cache.dir
+/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/CMakeFiles/Pascal_Compiler.dir
+/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/CMakeFiles/edit_cache.dir

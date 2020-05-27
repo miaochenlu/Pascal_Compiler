@@ -16,7 +16,6 @@ BEGIN
     B := A % B;
     D := A OR B;
     D := A AND B;
-    D := NOT A;
     E := A = B;
     E := A > B;
     E := A >= B;

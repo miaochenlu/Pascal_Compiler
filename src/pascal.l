@@ -2,13 +2,21 @@
 #include "ast/ast.h"
 #include "parser.hpp"
 
-int lineno = 0;
 extern YYSTYPE yylval;
 void yyerror(string msg, ...);
+int linenumber = 1;
+void setUpperCase(char* s) {
+    int i = 0;
+    while(s[i] != 0) {
+        if(s[i] >= 'a' && s[i] <= 'z') {
+            s[i] = 'A' - 'a' + s[i];
+        }
+        i++;
+    }
+}
 
 %}
-%option yylineno
-%option   caseless
+%option yylineno caseless
 
 digit       [0-9]
 number      {digit}+
@@ -93,18 +101,18 @@ whitespace  [ \t]+
 \'.\'    {yylval.astchar = yytext[1]; return CHAR;}
 '([^']|'')+'  {yylval.aststring = strdup(yytext); return STRING;}
 [0-9]+"."[0-9]+  {yylval.astreal = atof(yytext); return REAL;}
-[a-zA-Z_]([_a-zA-Z0-9])*     {yylval.aststring = strdup(yytext); return ID;}
-{newline}       {lineno++;}
+[a-zA-Z_]([_a-zA-Z0-9])*     {setUpperCase(yytext); yylval.aststring = strdup(yytext); return ID;}
+{newline}       {linenumber++;}
 {whitespace}    {}
-"{"             {   
+"{"             {
                     char c;
-                    do { 
+                    do {
                         c = yyinput();
                         if (c == EOF) break;
-                        if (c == '\n') lineno++;
+                        if (c == '\n') linenumber++;
                     } while (c != '}');
                 }
-.               { cout << "ERROR: Invalid character: " <<  yytext << endl;} 
+.               { cout << "ERROR: Invalid character: " <<  yytext << endl;}
 
 
 %%

@@ -2,7 +2,42 @@
 // Created by lianjiayi on 20-5-22.
 //
 
+#include <gen/GenEnv.h>
 #include "GenFuncEnv.h"
+
+void GenFuncEnv::setABS(){
+    std::vector<llvm::Type*> argType = {llvm::Type::getInt32Ty(llvmContext)};
+    llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvmContext), argType, false);
+    llvm::Function *func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "abs", &llvmModule);
+    func->setCallingConv(llvm::CallingConv::C);
+    (funcStack.back())["ABS"] = func;
+}
+
+void GenFuncEnv::setSQRT(){
+    std::vector<llvm::Type*> argType = {llvm::Type::getDoubleTy(llvmContext)};
+    llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getDoubleTy(llvmContext), argType, false);
+    llvm::Function *func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "sqrt", &llvmModule);
+    func->setCallingConv(llvm::CallingConv::C);
+    (funcStack.back())["SQRT"] = func;
+}
+
+void GenFuncEnv::setWRITE() {
+    std::vector<llvm::Type *> argType = {llvm::Type::getInt8PtrTy(llvmContext)};
+    llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvmContext), argType, false);
+    llvm::Function *func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "printf", &llvmModule);
+    func->setCallingConv(llvm::CallingConv::C);
+    (funcStack.back())["WRITE"] = func;
+}
+
+
+
+void GenFuncEnv::setSysCall() {
+    setABS();
+    setWRITE();
+    setSQRT();
+
+
+}
 
 void GenFuncEnv::popLayer()
 {

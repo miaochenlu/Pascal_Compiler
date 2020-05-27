@@ -3,21 +3,22 @@ CONST
     a = 1;
 VAR
     b, c, d : INTEGER;
+    str : STRING;
 
 BEGIN
     b := 1;
     c := 0;
     1: IF a = 1 THEN BEGIN
-        FOR d:=1 TO 10 DO BEGIN 
+        FOR d:= 1 TO 10 DO BEGIN 
             c := c + 1;
-            WHILE C <= 5 DO BEGIN 
+            WHILE c <= 5 DO BEGIN 
                 d := 0;
                 d := 0;
             END;
 
             REPEAT 
                 d := 0;
-            UNTIL C > 5;
+            UNTIL c > 5;
         END;
     END  
     ELSE 

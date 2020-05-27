@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="Pascal_Compiler"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\lib\;CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\;CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\cmake\;CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\lib\;CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\lib\cmake\;CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\lib\cmake\llvm\;CMake Files\src\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="intrinsics_gen">
+				<Option working_dir="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 intrinsics_gen"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Pascal_Compiler">
+				<Option output="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Pascal_Compiler" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/llvm-6.0/include"/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/."/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src"/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/ast"/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen"/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 Pascal_Compiler"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Pascal_Compiler/fast">
+				<Option output="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Pascal_Compiler" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/llvm-6.0/include"/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/."/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src"/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/ast"/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen"/>
+					<Add directory="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 Pascal_Compiler/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.cpp.rule">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.hpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/scanner.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/scanner.cpp.rule">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/ast/ast.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/ast/ast.h">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env/GenFuncEnv.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env/GenFuncEnv.h">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env/GenLabelEnv.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env/GenLabelEnv.h">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env/GenTypeEnv.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env/GenTypeEnv.h">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env/GenValueEnv.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/Env/GenValueEnv.h">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/GenEnv.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/GenEnv.h">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/llvm/GenLLVMConstant.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/llvm/GenLLVMConstant.h">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/llvm/GenLLVMType.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/llvm/GenLLVMType.h">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/main.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/../../../../../usr/lib/llvm-6.0/cmake/LLVMConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\cmake\"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/../../../../../usr/lib/llvm-6.0/cmake/LLVMConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\cmake\"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/../../../../../usr/lib/llvm-6.0/lib/cmake/llvm/LLVM-Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\lib\cmake\llvm\"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/../../../../../usr/lib/llvm-6.0/lib/cmake/llvm/LLVMExports-relwithdebinfo.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\lib\cmake\llvm\"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/../../../../../usr/lib/llvm-6.0/lib/cmake/llvm/LLVMExports.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\llvm-6.0\lib\cmake\llvm\"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

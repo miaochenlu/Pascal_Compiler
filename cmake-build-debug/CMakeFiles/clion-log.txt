@@ -1,0 +1,4 @@
+/opt/clion-2019.1.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/lianjiayi/Documents/ccproject/Pascal_Compiler
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug

@@ -1,6 +1,12 @@
 #include<iostream>
 #include<vector>
 #include<llvm/IR/Value.h>
+#include <llvm/Support/Casting.h>
+#include <llvm/Support/raw_ostream.h>
+
+#include "gen/llvm/GenLLVMType.h"
+#include "gen/llvm/GenLLVMConstant.h"
+
 using namespace std;
 int get_token(void);
 
@@ -93,6 +99,7 @@ public:
     BasicAstNode(){};
     ~BasicAstNode(){};
     virtual void printAstNode() {}
+    virtual llvm::Value* codeGen() {}
 
     virtual childrenList* getChildrenList() {
         return new childrenList();
@@ -115,6 +122,8 @@ public:
     void printAstNode() {
         cout << "Identifier:" << name << endl;
     }
+
+    llvm::Value *codeGen();
 };
 
 class Name: public Expression
@@ -125,6 +134,8 @@ public:
     void printAstNode() {
         cout << "Name:" << name << endl;
     }
+
+    llvm::Value *codeGen();
 };
 
 class BasicStmt: public BasicAstNode 
@@ -154,6 +165,8 @@ public:
     void printAstNode() {
         cout << "StmtList" << endl;
     }
+
+    llvm::Value* codeGen();
 };
 
 /******************program***********************/
@@ -173,7 +186,7 @@ public:
     void printAstNode() {
         cout << "Program" << endl;
     }
-    llvm::Function * codegen();
+    llvm::Value* codeGen();
 };
 
 class ProgramHead: public BasicAstNode 
@@ -197,7 +210,8 @@ public:
     void printAstNode() {
         cout << "ProgramHead" << endl;
     }
-    llvm::Function * codegen();
+
+    llvm::Value* codeGen();
 };
 
 class Routine: public BasicAstNode 
@@ -217,6 +231,8 @@ public:
     void printAstNode() {
         cout << "Routine" << endl;
     }
+
+    llvm::Value* codeGen();
 };
 
 class RoutineHead: public BasicAstNode 
@@ -256,6 +272,8 @@ public:
     void printAstNode() {
         cout << "RoutineHead" << endl;
     }
+
+    llvm::Value* codeGen();
 };
 
 /****************program head********************/
@@ -274,7 +292,6 @@ public:
     void printAstNode() {
         cout << "Parameter" << endl;
     }
-    llvm::Value * codegen();
 };
 
 /****************** const ***********************/
@@ -299,7 +316,8 @@ public:
     void printAstNode() {
         cout << "ConstDecl" << endl;
     }
-    llvm::Value * codegen();
+
+    llvm::Value* codeGen();
 };
 
 class BasicConst: public Expression
@@ -319,6 +337,9 @@ public:
     void printAstNode() {
         cout << "IntegerNode: " << integerVal << endl;
     }
+    llvm::Value *codeGen() override{
+        return gen::getLLVMConstINT(integerVal);
+    }
 };
 
 class RealNode: public BasicConst
@@ -330,6 +351,9 @@ public:
     }
     void printAstNode() {
         cout << "ReadNode: " << realVal << endl;
+    }
+    llvm::Value *codeGen() override {
+        return gen::getLLVMConstREAL(realVal);
     }
 };
 
@@ -343,6 +367,9 @@ public:
     void printAstNode() {
         cout << "CharNode: " << charVal << endl;
     }
+    llvm::Value *codeGen() override{
+        return gen::getLLVMConstCHAR(charVal);
+    }
 };
 
 class StringNode: public BasicConst
@@ -354,6 +381,9 @@ public:
     }
     void printAstNode() {
         cout << "StringNode: " << stringVal << endl;
+    }
+    llvm::Value *codeGen() override{
+        return gen::getLLVMConstSTRING(stringVal);
     }
 };
 
@@ -367,6 +397,9 @@ public:
     void printAstNode() {
         cout << "BooleanNode: " << boolVal << endl;
     }
+    llvm::Value *codeGen() override{
+        return gen::getLLVMConstBOOL(boolVal);
+    }
 };
 
 class MaxIntNode: public BasicConst
@@ -379,6 +412,9 @@ public:
     }
     void printAstNode() {
         cout << "MaxIntNode: " << maxintVal << endl;
+    }
+    llvm::Value *codeGen() override{
+        return gen::getLLVMConstINT(maxintVal);
     }
 };
 
@@ -400,6 +436,8 @@ public:
     void printAstNode() {
         cout << "TypeDecl" << endl;
     }
+
+    llvm::Value* codeGen();
 };
 
 class BasicType: public BasicAstNode
@@ -567,7 +605,8 @@ public:
     void printAstNode() {
         cout << "VarDecl" << endl;
     }
-    void * codegen();
+
+    llvm::Value* codeGen();
 };
 
 /***************** routine body ****************/
@@ -595,6 +634,7 @@ public:
         cout << "LabelStmt: " << label << endl;
     }
 
+    llvm::Value* codeGen();
 };
 
 class AssignStmt: public BasicStmt
@@ -613,7 +653,7 @@ public:
     void printAstNode() {
         cout << "AssignStmt" << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 };
 
 class IfStmt: public BasicStmt
@@ -640,7 +680,7 @@ public:
     void printAstNode() {
         cout << "IfStmt" << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 
 };
 
@@ -661,7 +701,7 @@ public:
     void printAstNode() {
         cout << "RepeatStmt" << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 };
 
 class WhileStmt: public BasicStmt
@@ -679,7 +719,7 @@ public:
     void printAstNode() {
         cout << "WhileStmt" << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 };
 
 class ForStmt: public BasicStmt
@@ -704,7 +744,7 @@ public:
     void printAstNode() {
         cout << "ForStmt" << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 };
 
 class CaseStmt: public BasicStmt
@@ -725,7 +765,7 @@ public:
         cout << "CaseStmt" << endl;
     }
 
-    void codegen();
+    llvm::Value *codeGen();
 };
 
 class CaseExpr: public BasicStmt
@@ -743,7 +783,6 @@ public:
     void printAstNode() {
         cout << "CaseExpr" << endl;
     }
-    void codegen();
 };
 
 class GotoStmt: public BasicStmt
@@ -754,7 +793,7 @@ public:
     void printAstNode() {
         cout << "GOTO: " << label << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 };
 
 enum class SYSPROC {
@@ -794,7 +833,7 @@ public:
         if(procName == SYSPROC::WRITE) cout << "WRITE" << endl;
         else if(procName == SYSPROC::WRITELN) cout << "WRITELN" << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 };
 
 class SysFuncCall: public ProcCallStmt, public Expression
@@ -822,7 +861,7 @@ public:
         else if(functName == SYSFUNCT::SQRT) cout << "SQRT" << endl;
         else if(functName == SYSFUNCT::SUCC) cout << "SUCC" << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 
 };
 
@@ -848,7 +887,7 @@ public:
     void printAstNode() {
         cout << "UserDefProcCall: " <<  procName->name << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 
 };
 
@@ -866,7 +905,7 @@ public:
     void printAstNode() {
         cout << "ReadProcCall" << endl;
     }
-    void codegen();
+    llvm::Value* codeGen();
 };
 
 /******************** expr **********************/
@@ -907,7 +946,8 @@ public:
         else if(bOp == BinaryOperator::ORop) cout << "OR" << endl;
         else if(bOp == BinaryOperator::ANDop) cout << "AND" << endl;
     }
-    llvm::Value codegen();
+
+    llvm::Value *codeGen();
 };
 
 class UnaryExpr: public Expression
@@ -926,7 +966,8 @@ public:
         if(uOp == UnaryOperator::NEGop) cout << "-" << endl;
         else if(uOp == UnaryOperator::NOTop) cout << "NOT" << endl;
     }
-    llvm::Value codegen();
+
+    llvm::Value *codeGen();
 };
 
 
@@ -945,7 +986,8 @@ public:
     void printAstNode() {
         cout << "ArrayElementRef" << endl;
     }
-    llvm::Value codegen();
+
+    llvm::Value *codeGen();
 };
 
 class RecordElementRef: public Expression
@@ -963,7 +1005,8 @@ public:
     void printAstNode() {
         cout << "RecordElementRef" << endl;
     }
-    llvm::Value codegen();
+
+    llvm::Value *codeGen();
 };
 
 }

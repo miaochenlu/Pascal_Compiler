@@ -26,6 +26,14 @@ add_executable(Pascal_Compiler
         gen/Env/GenFuncEnv.h
         gen/Env/GenValueEnv.cpp
         gen/Env/GenValueEnv.h
+        gen/Env/GenTypeEnv.cpp
+        gen/Env/GenTypeEnv.h
+        gen/Env/GenLabelEnv.cpp
+        gen/Env/GenLabelEnv.h
+        gen/llvm/GenLLVMType.cpp
+        gen/llvm/GenLLVMType.h
+        gen/llvm/GenLLVMConstant.cpp
+        gen/llvm/GenLLVMConstant.h
         gen/GenEnv.cpp
         gen/GenEnv.h
         main.cpp

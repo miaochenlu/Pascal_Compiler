@@ -14,6 +14,7 @@
 class GenFuncEnv
 {
 public:
+    void setSysCall();
     void popLayer();
     void pushLayer();
     llvm::Function* getFunc(std::string name);
@@ -21,6 +22,10 @@ public:
 
 private:
     std::vector <std::map<std::string, llvm::Function*>> funcStack;
+
+    void setABS();
+    void setSQRT();
+    void setWRITE();
 };
 
 
