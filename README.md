@@ -128,7 +128,7 @@ Pascal 的 Identifier 是以字母或下划线开头，后接若干字母、数�
 
 根据文法规则，我们设计了语法树结构
 
-<img src="../../miaochenlu.github.io/assets/images/image-20200523210423232.png" alt="image-20200523210423232" style="zoom:80%;" />
+![](images/image-20200523210423232.png)
 
 
 
