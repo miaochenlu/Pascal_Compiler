@@ -1,7 +1,6 @@
 #ifndef _SYMTAB_H_
 #define _SYMTAB_H_
 
-#include "pch.h"
 
 #include <cstdio>
 #include <cstdlib>

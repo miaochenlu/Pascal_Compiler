@@ -125,6 +125,33 @@ Pascal_Compiler/fast:
 	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(MAKE) -f src/CMakeFiles/Pascal_Compiler.dir/build.make src/CMakeFiles/Pascal_Compiler.dir/build
 .PHONY : Pascal_Compiler/fast
 
+analyze.o: analyze.cpp.o
+
+.PHONY : analyze.o
+
+# target to build an object file
+analyze.cpp.o:
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(MAKE) -f src/CMakeFiles/Pascal_Compiler.dir/build.make src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.o
+.PHONY : analyze.cpp.o
+
+analyze.i: analyze.cpp.i
+
+.PHONY : analyze.i
+
+# target to preprocess a source file
+analyze.cpp.i:
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(MAKE) -f src/CMakeFiles/Pascal_Compiler.dir/build.make src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.i
+.PHONY : analyze.cpp.i
+
+analyze.s: analyze.cpp.s
+
+.PHONY : analyze.s
+
+# target to generate assembly for a file
+analyze.cpp.s:
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(MAKE) -f src/CMakeFiles/Pascal_Compiler.dir/build.make src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.s
+.PHONY : analyze.cpp.s
+
 ast/ast.o: ast/ast.cpp.o
 
 .PHONY : ast/ast.o
@@ -422,6 +449,33 @@ scanner.cpp.s:
 	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(MAKE) -f src/CMakeFiles/Pascal_Compiler.dir/build.make src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.s
 .PHONY : scanner.cpp.s
 
+symTab.o: symTab.cpp.o
+
+.PHONY : symTab.o
+
+# target to build an object file
+symTab.cpp.o:
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(MAKE) -f src/CMakeFiles/Pascal_Compiler.dir/build.make src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.o
+.PHONY : symTab.cpp.o
+
+symTab.i: symTab.cpp.i
+
+.PHONY : symTab.i
+
+# target to preprocess a source file
+symTab.cpp.i:
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(MAKE) -f src/CMakeFiles/Pascal_Compiler.dir/build.make src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.i
+.PHONY : symTab.cpp.i
+
+symTab.s: symTab.cpp.s
+
+.PHONY : symTab.s
+
+# target to generate assembly for a file
+symTab.cpp.s:
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(MAKE) -f src/CMakeFiles/Pascal_Compiler.dir/build.make src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.s
+.PHONY : symTab.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -431,6 +485,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... Pascal_Compiler"
 	@echo "... edit_cache"
+	@echo "... analyze.o"
+	@echo "... analyze.i"
+	@echo "... analyze.s"
 	@echo "... ast/ast.o"
 	@echo "... ast/ast.i"
 	@echo "... ast/ast.s"
@@ -464,6 +521,9 @@ help:
 	@echo "... scanner.o"
 	@echo "... scanner.i"
 	@echo "... scanner.s"
+	@echo "... symTab.o"
+	@echo "... symTab.i"
+	@echo "... symTab.s"
 .PHONY : help
 
 

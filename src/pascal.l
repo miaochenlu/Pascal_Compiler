@@ -4,7 +4,7 @@
 
 extern YYSTYPE yylval;
 void yyerror(string msg, ...);
-int linenumber = 1;
+int lineno = 1;
 void setUpperCase(char* s) {
     int i = 0;
     while(s[i] != 0) {
@@ -102,14 +102,14 @@ whitespace  [ \t]+
 '([^']|'')+'  {yylval.aststring = strdup(yytext); return STRING;}
 [0-9]+"."[0-9]+  {yylval.astreal = atof(yytext); return REAL;}
 [a-zA-Z_]([_a-zA-Z0-9])*     {setUpperCase(yytext); yylval.aststring = strdup(yytext); return ID;}
-{newline}       {linenumber++;}
+{newline}       {lineno++;}
 {whitespace}    {}
 "{"             {
                     char c;
                     do {
                         c = yyinput();
                         if (c == EOF) break;
-                        if (c == '\n') linenumber++;
+                        if (c == '\n') lineno++;
                     } while (c != '}');
                 }
 .               { cout << "ERROR: Invalid character: " <<  yytext << endl;}

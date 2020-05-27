@@ -11,7 +11,7 @@ STMTTEST:
   %B = alloca i32
   %C = alloca i32
   %D = alloca i32
-  %STR = alloca [100 x i8]
+  %STR = alloca [255 x i8]
   store i32 1, i32* %B
   store i32 0, i32* %C
   br label %"1"
@@ -63,43 +63,43 @@ repeatContinue:                                   ; preds = %repeatLoop
   %10 = icmp eq i32 %9, 10
   br i1 %10, label %ForContinue, label %ForLoop
 
-CaseContinue:                                     ; preds = %Casecase5, %Casecond6, %Casecase3, %Casecase1, %Casecase
-  br label %"1"
+Casecond:                                         ; No predecessors!
+  %11 = icmp eq i32 %1, 0
+  br i1 %11, label %Casecase, label %Casecond1
 
 Casecase:                                         ; preds = %Casecond
-  %11 = load [5 x i8], [5 x i8]* @0
-  store [5 x i8] %11, [100 x i8]* %STR
+  %12 = load [5 x i8], [5 x i8]* @0
+  store [5 x i8] %12, [255 x i8]* %STR
   store i32 1, i32* %C
   br label %CaseContinue
 
-Casecond:                                         ; No predecessors!
-  %12 = icmp eq i32 %1, 0
-  br i1 %12, label %Casecase, label %Casecond2
+Casecond1:                                        ; preds = %Casecond
+  %13 = icmp eq i32 %1, 1
+  br i1 %13, label %Casecase2, label %Casecond3
 
-Casecase1:                                        ; preds = %Casecond2
-  %13 = load [5 x i8], [5 x i8]* @1
-  store [5 x i8] %13, [100 x i8]* %STR
+Casecase2:                                        ; preds = %Casecond1
+  %14 = load [5 x i8], [5 x i8]* @1
+  store [5 x i8] %14, [255 x i8]* %STR
   br label %CaseContinue
 
-Casecond2:                                        ; preds = %Casecond
-  %14 = icmp eq i32 %1, 1
-  br i1 %14, label %Casecase1, label %Casecond4
+Casecond3:                                        ; preds = %Casecond1
+  %15 = icmp eq i32 %1, 2
+  br i1 %15, label %Casecase4, label %Casecond5
 
-Casecase3:                                        ; preds = %Casecond4
-  %15 = load [5 x i8], [5 x i8]* @2
-  store [5 x i8] %15, [100 x i8]* %STR
+Casecase4:                                        ; preds = %Casecond3
+  %16 = load [5 x i8], [5 x i8]* @2
+  store [5 x i8] %16, [255 x i8]* %STR
   br label %CaseContinue
 
-Casecond4:                                        ; preds = %Casecond2
-  %16 = icmp eq i32 %1, 2
-  br i1 %16, label %Casecase3, label %Casecond6
+Casecond5:                                        ; preds = %Casecond3
+  %17 = icmp eq i32 %1, 3
+  br i1 %17, label %Casecase6, label %CaseContinue
 
-Casecase5:                                        ; preds = %Casecond6
-  %17 = load [5 x i8], [5 x i8]* @3
-  store [5 x i8] %17, [100 x i8]* %STR
+Casecase6:                                        ; preds = %Casecond5
+  %18 = load [5 x i8], [5 x i8]* @3
+  store [5 x i8] %18, [255 x i8]* %STR
   br label %CaseContinue
 
-Casecond6:                                        ; preds = %Casecond4
-  %18 = icmp eq i32 %1, 3
-  br i1 %18, label %Casecase5, label %CaseContinue
+CaseContinue:                                     ; preds = %Casecase6, %Casecond5, %Casecase4, %Casecase2, %Casecase
+  br label %"1"
 }

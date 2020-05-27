@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_SRC_PARSER_HPP_INCLUDED
-# define YY_YY_SRC_PARSER_HPP_INCLUDED
+#ifndef YY_YY_HOME_LIANJIAYI_DOCUMENTS_CCPROJECT_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED
+# define YY_YY_HOME_LIANJIAYI_DOCUMENTS_CCPROJECT_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -111,7 +111,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 16 "src/pascal.y" /* yacc.c:1909  */
+#line 16 "/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/pascal.y" /* yacc.c:1909  */
 
     char                    astchar;
     char*                   aststring;
@@ -153,7 +153,7 @@ union YYSTYPE
     ast::CaseExprList*      astCaseExprList;
     ast::ArgList*           astArgList;
 
-#line 157 "src/parser.hpp" /* yacc.c:1909  */
+#line 157 "/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -166,4 +166,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_SRC_PARSER_HPP_INCLUDED  */
+#endif /* !YY_YY_HOME_LIANJIAYI_DOCUMENTS_CCPROJECT_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED  */

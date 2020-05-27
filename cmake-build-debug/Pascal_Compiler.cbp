@@ -106,19 +106,10 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.cpp">
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/analyze.cpp">
 			<Option target="Pascal_Compiler"/>
 		</Unit>
-		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.cpp.rule">
-			<Option target="Pascal_Compiler"/>
-		</Unit>
-		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.hpp">
-			<Option target="Pascal_Compiler"/>
-		</Unit>
-		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/scanner.cpp">
-			<Option target="Pascal_Compiler"/>
-		</Unit>
-		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/scanner.cpp.rule">
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/analyze.h">
 			<Option target="Pascal_Compiler"/>
 		</Unit>
 		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/ast/ast.cpp">
@@ -170,6 +161,27 @@
 			<Option target="Pascal_Compiler"/>
 		</Unit>
 		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/main.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.cpp.rule">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.hpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/scanner.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/scanner.cpp.rule">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/symTab.cpp">
+			<Option target="Pascal_Compiler"/>
+		</Unit>
+		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/symTab.h">
 			<Option target="Pascal_Compiler"/>
 		</Unit>
 		<Unit filename="/home/lianjiayi/Documents/ccproject/Pascal_Compiler/CMakeLists.txt">

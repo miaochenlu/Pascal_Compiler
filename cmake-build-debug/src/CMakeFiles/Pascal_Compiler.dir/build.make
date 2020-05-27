@@ -57,17 +57,17 @@ include src/CMakeFiles/Pascal_Compiler.dir/progress.make
 # Include the compile flags for this target's objects.
 include src/CMakeFiles/Pascal_Compiler.dir/flags.make
 
-src/parser.cpp: ../src/pascal.y
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating parser.cpp, parser.hpp"
-	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && bison -d -o parser.cpp /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/pascal.y
+../src/parser.cpp: ../src/pascal.y
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating ../../src/parser.cpp, ../../src/parser.hpp"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && bison -d -o /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.cpp /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/pascal.y
 
-src/parser.hpp: src/parser.cpp
-	@$(CMAKE_COMMAND) -E touch_nocreate src/parser.hpp
+../src/parser.hpp: ../src/parser.cpp
+	@$(CMAKE_COMMAND) -E touch_nocreate ../src/parser.hpp
 
-src/scanner.cpp: ../src/pascal.l
-src/scanner.cpp: src/parser.hpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating scanner.cpp"
-	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && flex -o scanner.cpp /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/pascal.l
+../src/scanner.cpp: ../src/pascal.l
+../src/scanner.cpp: ../src/parser.hpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating ../../src/scanner.cpp"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && flex -o /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/scanner.cpp /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/pascal.l
 
 src/CMakeFiles/Pascal_Compiler.dir/ast/ast.cpp.o: src/CMakeFiles/Pascal_Compiler.dir/flags.make
 src/CMakeFiles/Pascal_Compiler.dir/ast/ast.cpp.o: ../src/ast/ast.cpp
@@ -173,9 +173,35 @@ src/CMakeFiles/Pascal_Compiler.dir/gen/GenEnv.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Pascal_Compiler.dir/gen/GenEnv.cpp.s"
 	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/gen/GenEnv.cpp -o CMakeFiles/Pascal_Compiler.dir/gen/GenEnv.cpp.s
 
+src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.o: src/CMakeFiles/Pascal_Compiler.dir/flags.make
+src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.o: ../src/analyze.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.o"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Pascal_Compiler.dir/analyze.cpp.o -c /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/analyze.cpp
+
+src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Pascal_Compiler.dir/analyze.cpp.i"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/analyze.cpp > CMakeFiles/Pascal_Compiler.dir/analyze.cpp.i
+
+src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Pascal_Compiler.dir/analyze.cpp.s"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/analyze.cpp -o CMakeFiles/Pascal_Compiler.dir/analyze.cpp.s
+
+src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.o: src/CMakeFiles/Pascal_Compiler.dir/flags.make
+src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.o: ../src/symTab.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.o"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Pascal_Compiler.dir/symTab.cpp.o -c /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/symTab.cpp
+
+src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Pascal_Compiler.dir/symTab.cpp.i"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/symTab.cpp > CMakeFiles/Pascal_Compiler.dir/symTab.cpp.i
+
+src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Pascal_Compiler.dir/symTab.cpp.s"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/symTab.cpp -o CMakeFiles/Pascal_Compiler.dir/symTab.cpp.s
+
 src/CMakeFiles/Pascal_Compiler.dir/main.cpp.o: src/CMakeFiles/Pascal_Compiler.dir/flags.make
 src/CMakeFiles/Pascal_Compiler.dir/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object src/CMakeFiles/Pascal_Compiler.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object src/CMakeFiles/Pascal_Compiler.dir/main.cpp.o"
 	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Pascal_Compiler.dir/main.cpp.o -c /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/main.cpp
 
 src/CMakeFiles/Pascal_Compiler.dir/main.cpp.i: cmake_force
@@ -187,30 +213,30 @@ src/CMakeFiles/Pascal_Compiler.dir/main.cpp.s: cmake_force
 	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/main.cpp -o CMakeFiles/Pascal_Compiler.dir/main.cpp.s
 
 src/CMakeFiles/Pascal_Compiler.dir/parser.cpp.o: src/CMakeFiles/Pascal_Compiler.dir/flags.make
-src/CMakeFiles/Pascal_Compiler.dir/parser.cpp.o: src/parser.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object src/CMakeFiles/Pascal_Compiler.dir/parser.cpp.o"
-	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Pascal_Compiler.dir/parser.cpp.o -c /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.cpp
+src/CMakeFiles/Pascal_Compiler.dir/parser.cpp.o: ../src/parser.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object src/CMakeFiles/Pascal_Compiler.dir/parser.cpp.o"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Pascal_Compiler.dir/parser.cpp.o -c /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.cpp
 
 src/CMakeFiles/Pascal_Compiler.dir/parser.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Pascal_Compiler.dir/parser.cpp.i"
-	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.cpp > CMakeFiles/Pascal_Compiler.dir/parser.cpp.i
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.cpp > CMakeFiles/Pascal_Compiler.dir/parser.cpp.i
 
 src/CMakeFiles/Pascal_Compiler.dir/parser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Pascal_Compiler.dir/parser.cpp.s"
-	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/parser.cpp -o CMakeFiles/Pascal_Compiler.dir/parser.cpp.s
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.cpp -o CMakeFiles/Pascal_Compiler.dir/parser.cpp.s
 
 src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o: src/CMakeFiles/Pascal_Compiler.dir/flags.make
-src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o: src/scanner.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o"
-	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o -c /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/scanner.cpp
+src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o: ../src/scanner.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o"
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o -c /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/scanner.cpp
 
 src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Pascal_Compiler.dir/scanner.cpp.i"
-	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/scanner.cpp > CMakeFiles/Pascal_Compiler.dir/scanner.cpp.i
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/scanner.cpp > CMakeFiles/Pascal_Compiler.dir/scanner.cpp.i
 
 src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Pascal_Compiler.dir/scanner.cpp.s"
-	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/scanner.cpp -o CMakeFiles/Pascal_Compiler.dir/scanner.cpp.s
+	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/scanner.cpp -o CMakeFiles/Pascal_Compiler.dir/scanner.cpp.s
 
 # Object files for target Pascal_Compiler
 Pascal_Compiler_OBJECTS = \
@@ -222,6 +248,8 @@ Pascal_Compiler_OBJECTS = \
 "CMakeFiles/Pascal_Compiler.dir/gen/llvm/GenLLVMType.cpp.o" \
 "CMakeFiles/Pascal_Compiler.dir/gen/llvm/GenLLVMConstant.cpp.o" \
 "CMakeFiles/Pascal_Compiler.dir/gen/GenEnv.cpp.o" \
+"CMakeFiles/Pascal_Compiler.dir/analyze.cpp.o" \
+"CMakeFiles/Pascal_Compiler.dir/symTab.cpp.o" \
 "CMakeFiles/Pascal_Compiler.dir/main.cpp.o" \
 "CMakeFiles/Pascal_Compiler.dir/parser.cpp.o" \
 "CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o"
@@ -237,12 +265,14 @@ src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/gen/Env/GenLabelEnv.cpp.
 src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/gen/llvm/GenLLVMType.cpp.o
 src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/gen/llvm/GenLLVMConstant.cpp.o
 src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/gen/GenEnv.cpp.o
+src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/analyze.cpp.o
+src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/symTab.cpp.o
 src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/main.cpp.o
 src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/parser.cpp.o
 src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/scanner.cpp.o
 src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/build.make
 src/Pascal_Compiler: src/CMakeFiles/Pascal_Compiler.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable Pascal_Compiler"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable Pascal_Compiler"
 	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Pascal_Compiler.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -254,9 +284,9 @@ src/CMakeFiles/Pascal_Compiler.dir/clean:
 	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src && $(CMAKE_COMMAND) -P CMakeFiles/Pascal_Compiler.dir/cmake_clean.cmake
 .PHONY : src/CMakeFiles/Pascal_Compiler.dir/clean
 
-src/CMakeFiles/Pascal_Compiler.dir/depend: src/parser.cpp
-src/CMakeFiles/Pascal_Compiler.dir/depend: src/parser.hpp
-src/CMakeFiles/Pascal_Compiler.dir/depend: src/scanner.cpp
+src/CMakeFiles/Pascal_Compiler.dir/depend: ../src/parser.cpp
+src/CMakeFiles/Pascal_Compiler.dir/depend: ../src/parser.hpp
+src/CMakeFiles/Pascal_Compiler.dir/depend: ../src/scanner.cpp
 	cd /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lianjiayi/Documents/ccproject/Pascal_Compiler /home/lianjiayi/Documents/ccproject/Pascal_Compiler/src /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src /home/lianjiayi/Documents/ccproject/Pascal_Compiler/cmake-build-debug/src/CMakeFiles/Pascal_Compiler.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : src/CMakeFiles/Pascal_Compiler.dir/depend
 

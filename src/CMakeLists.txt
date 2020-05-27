@@ -6,13 +6,13 @@ include_directories(gen/Env)
 
 
 add_custom_command(
-        OUTPUT scanner.cpp
-        COMMAND flex -o scanner.cpp ${CMAKE_CURRENT_LIST_DIR}/pascal.l
-        DEPENDS ${CMAKE_CURRENT_LIST_DIR}/pascal.l parser.hpp
+        OUTPUT ${CMAKE_CURRENT_LIST_DIR}/scanner.cpp
+        COMMAND flex -o ${CMAKE_CURRENT_LIST_DIR}/scanner.cpp ${CMAKE_CURRENT_LIST_DIR}/pascal.l
+        DEPENDS ${CMAKE_CURRENT_LIST_DIR}/pascal.l ${CMAKE_CURRENT_LIST_DIR}/parser.hpp
 )
 add_custom_command(
-        OUTPUT parser.cpp parser.hpp
-        COMMAND bison -d -o parser.cpp ${CMAKE_CURRENT_LIST_DIR}/pascal.y
+        OUTPUT ${CMAKE_CURRENT_LIST_DIR}/parser.cpp ${CMAKE_CURRENT_LIST_DIR}/parser.hpp
+        COMMAND bison -d -o ${CMAKE_CURRENT_LIST_DIR}/parser.cpp ${CMAKE_CURRENT_LIST_DIR}/pascal.y
         DEPENDS ${CMAKE_CURRENT_LIST_DIR}/pascal.y
 )
 
@@ -36,6 +36,10 @@ add_executable(Pascal_Compiler
         gen/llvm/GenLLVMConstant.h
         gen/GenEnv.cpp
         gen/GenEnv.h
+        analyze.cpp
+        analyze.h
+        symTab.cpp
+        symTab.h
         main.cpp
         parser.cpp
         parser.hpp

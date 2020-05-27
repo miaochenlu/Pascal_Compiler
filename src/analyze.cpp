@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "analyze.h"
 
 //Scope global;
