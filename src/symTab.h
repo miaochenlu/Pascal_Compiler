@@ -104,4 +104,12 @@ void st_insert(string id, int lineNo, int loc, string recType, string dataType);
 int st_lookup(string id);
 void st_print();
 
+namespace sym {
+    int getArrayBegin(string id);
+    int getRecordNo(string id, string memberid);
+    string getIDType(string id);
+    string getArrayType(string id);
+    string getRecordElementType(string id, string memberid);
+}
+
 #endif

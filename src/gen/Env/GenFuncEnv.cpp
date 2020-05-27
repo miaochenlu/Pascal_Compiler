@@ -23,7 +23,7 @@ void GenFuncEnv::setSQRT(){
 
 void GenFuncEnv::setWRITE() {
     std::vector<llvm::Type *> argType = {llvm::Type::getInt8PtrTy(llvmContext)};
-    llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvmContext), argType, false);
+    llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvmContext), argType, true);
     llvm::Function *func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "printf", &llvmModule);
     func->setCallingConv(llvm::CallingConv::C);
     (funcStack.back())["WRITE"] = func;

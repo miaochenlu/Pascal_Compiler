@@ -45,9 +45,20 @@ namespace ast {
     llvm::Value* Program::codeGen() {
         genEnv.pushLayer();
         programHead->codeGen();
-
         routine->codeGen();
+        if(!(programHead->returnType->type == TypeKind::VOIDtype)) {
+            llvm::Value *llvmRet = genEnv.getValueEnv().getValue(programHead->name->name);
+            if(llvmRet != nullptr)
+                irBuilder.CreateRet(llvmRet);
+            else
+                irBuilder.CreateRet(gen::getLLVMConstINT(0));
+        }
+        else irBuilder.CreateRetVoid();
+
+
         genEnv.popLayer();
+
+
 
         return nullptr;
     }
@@ -59,11 +70,22 @@ namespace ast {
         for (auto para : *parameters) {
             parameterVector.emplace_back(gen::getLLVMType(para->type));
         }
-        llvm::FunctionType *funcType = llvm::FunctionType::get(retype, parameterVector, false);
-        llvm::Function *func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, name->name,
-                                                      &llvmModule);
-        genEnv.getFuncEnv().setFunc(name->name, func);
+        llvm::Function *func = nullptr;
+        if(genEnv.isGlobal())
+        {
+            llvm::FunctionType *funcType = llvm::FunctionType::get(retype, parameterVector, false);
+            func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "main",
+                                                          &llvmModule);
+            genEnv.getFuncEnv().setFunc("main", func);
+        }
+        else {
+            llvm::FunctionType *funcType = llvm::FunctionType::get(retype, parameterVector, false);
+            func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, name->name,
+                                                          &llvmModule);
+            genEnv.getFuncEnv().setFunc(name->name, func);
+        }
         llvm::BasicBlock *routineBlock = llvm::BasicBlock::Create(llvmContext, name->name, func);
+        irBuilder.CreateBr(routineBlock);
         irBuilder.SetInsertPoint(routineBlock);
         return nullptr;
     }
@@ -131,10 +153,10 @@ namespace ast {
 
     llvm::Value* ast::BinaryExpr::codeGen() {
         llvm::Value* lval = leftOperand->codeGen();
-        if(!llvm::dyn_cast<llvm::Constant>(lval))
+        if(!llvm::isa<llvm::Constant>(lval))
             lval=irBuilder.CreateLoad(lval);
         llvm::Value* rval = rightOperand->codeGen();
-        if(!llvm::dyn_cast<llvm::Constant>(rval))
+        if(!llvm::isa<llvm::Constant>(rval))
             rval=irBuilder.CreateLoad(rval);
         if (lval->getType()->isDoubleTy() || rval->getType()->isDoubleTy()) {
             switch (bOp) {
@@ -187,6 +209,8 @@ namespace ast {
                 case BinaryOperator ::ANDop:
                     return irBuilder.CreateAnd(lval, rval);
                 case BinaryOperator ::PLUSop:
+                    cout <<llvm::isa<llvm::Constant>(lval) << llvm::isa<llvm::Constant>(rval)<<endl;
+                    PrintType(rval->getType());
                     return irBuilder.CreateAdd(lval, rval);
                 case BinaryOperator ::MINUSop:
                     return irBuilder.CreateSub(lval, rval);
@@ -204,7 +228,7 @@ namespace ast {
 
     llvm::Value* ast::UnaryExpr::codeGen() {
         llvm::Value* val = operand->codeGen();
-        if(!llvm::dyn_cast<llvm::Constant>(val))
+        if(!llvm::isa<llvm::Constant>(val))
             val=irBuilder.CreateLoad(val);
         switch (uOp) {
             case UnaryOperator::NEGop:
@@ -214,7 +238,6 @@ namespace ast {
             case UnaryOperator::POSop:
                 return val;
         }
-        std::cout << ((ast::Identifier *) operand)->name <<"__"<<endl;
     }
 
 
@@ -274,6 +297,7 @@ namespace ast {
         llvm::BasicBlock *loopBlock = llvm::BasicBlock::Create(llvmContext, "repeatLoop", llvmFunc);
         llvm::BasicBlock *continueBlock = llvm::BasicBlock::Create(llvmContext, "repeatContinue", llvmFunc);
 
+        irBuilder.CreateBr(loopBlock);
         irBuilder.SetInsertPoint(loopBlock);
         loopStmts->codeGen();
         llvm::Value *llvmCond = cond->codeGen();
@@ -289,6 +313,7 @@ namespace ast {
         llvm::BasicBlock *loopBlock = llvm::BasicBlock::Create(llvmContext, "WhileLoop", llvmFunc);
         llvm::BasicBlock *continueBlock = llvm::BasicBlock::Create(llvmContext, "WhileContinue", llvmFunc);
 
+        irBuilder.CreateBr(beginBlock);
         irBuilder.SetInsertPoint(beginBlock);
         llvm::Value *llvmCond = cond->codeGen();
         irBuilder.CreateCondBr(llvmCond, loopBlock, continueBlock);
@@ -310,21 +335,25 @@ namespace ast {
         llvm::Value* llvmStart = start->codeGen();
         irBuilder.CreateStore(llvmStart, id);
 
+        irBuilder.CreateBr(loopBlock);
         irBuilder.SetInsertPoint(loopBlock);
         loopStmt->codeGen();
 
-        llvm::Value *temp;
+        llvm::Value *temp = nullptr;
+        PrintType(id->getType());
+        llvm::Value *loadid = irBuilder.CreateLoad(id);
+        PrintType(loadid->getType());
         switch (direction) {
             case Direction::To:
-                temp = irBuilder.CreateAdd(id, gen::getLLVMConstINT(1));
+                temp = irBuilder.CreateAdd(loadid, gen::getLLVMConstINT(1));
                 break;
             case Direction ::DownTo:
-                temp = irBuilder.CreateSub(id, gen::getLLVMConstINT(1));
+                temp = irBuilder.CreateSub(loadid, gen::getLLVMConstINT(1));
                 break;
         }
         irBuilder.CreateStore(temp, id);
         llvm::Value* llvmEnd = end->codeGen();
-        llvm::Value* loadid = irBuilder.CreateLoad(id);
+        loadid = irBuilder.CreateLoad(id);
         llvm::Value* llvmCond = irBuilder.CreateICmpEQ(loadid, llvmEnd);
         irBuilder.CreateCondBr(llvmCond, continueBlock, loopBlock);
         irBuilder.SetInsertPoint(continueBlock);
@@ -344,6 +373,7 @@ namespace ast {
         }
         llvm::BasicBlock *continueBlock = llvm::BasicBlock::Create(llvmContext, "CaseContinue", llvmFunc);
         int i = 0;
+        irBuilder.CreateBr(condBlocks[0]);
         for(auto caseexpr: *caseList)
         {
             irBuilder.SetInsertPoint(condBlocks[i]);
@@ -361,19 +391,120 @@ namespace ast {
     }
 
     llvm::Value* ast::GotoStmt::codeGen() {
+        llvm::Function *llvmFunc = irBuilder.GetInsertBlock()->getParent();
         llvm::BasicBlock* gotoBlock = genEnv.getLabelEnv().getLabel(label);
         irBuilder.CreateBr(gotoBlock);
+        llvm::BasicBlock* gotoContinue = llvm::BasicBlock::Create(llvmContext, "gotocontinue", llvmFunc);
+        irBuilder.SetInsertPoint(gotoContinue);
+
         return nullptr;
     }
 
     llvm::Value* ast::SysProcCall::codeGen() {
 
+        std::string printString;
+        std::vector<llvm::Value*> argVector;
+        for(auto arg : *args) {
+            llvm::Value *llvmArg = arg->codeGen();
 
+
+            if (arg->nodeType == "BasicConst") {
+                if(((BasicConst*)arg)->type == TypeKind::INTtype) printString+="%d ";
+                else if(((BasicConst*)arg)->type == TypeKind::REALtype) printString+="%lf ";
+                else if(((BasicConst*)arg)->type == TypeKind::CHARtype) printString+="%c ";
+                else if(((BasicConst*)arg)->type == TypeKind::BOOLEANtype) printString+="%d ";
+                else if(((BasicConst*)arg)->type == TypeKind::STRINGtype) printString+="%s ";
+                argVector.emplace_back(llvmArg);
+            }
+            else if(llvm::isa<llvm::Constant>(llvmArg)) {
+                if(llvmArg->getType()->isIntegerTy()) printString+="%d ";
+                else if(llvmArg->getType()->isDoubleTy()) printString+="%lf ";
+                argVector.emplace_back(llvmArg);
+            }
+            else if(arg->nodeType == "Name") {
+                string type = sym::getIDType(((Name*)arg)->name);
+                if(type == "Integer") printString+="%d ";
+                else if (type == "Char")printString+="%c ";
+                else if (type == "Real")printString+="%lf ";
+                else if (type == "String")printString+="%s ";
+                else if (type == "Boolean")printString+="%d ";
+                argVector.emplace_back(irBuilder.CreateLoad(llvmArg));
+            }
+            else if(arg->subType == "ArrayElementRef") {
+                string type = sym::getArrayType(((ArrayElementRef*)arg)->arrayName->name);
+                if(type == "Integer") printString+="%d ";
+                else if (type == "Char")printString+="%c ";
+                else if (type == "Real")printString+="%lf ";
+                else if (type == "String")printString+="%s ";
+                else if (type == "Boolean")printString+="%d ";
+                argVector.emplace_back(irBuilder.CreateLoad(llvmArg));
+            }
+            else if(arg->subType == "RecordElementRef") {
+                string type = sym::getRecordElementType(((RecordElementRef*)arg)->recordName->name, ((RecordElementRef*)arg)->field->name);
+                if(type == "Integer") printString+="%d ";
+                else if (type == "Char")printString+="%c ";
+                else if (type == "Real")printString+="%lf ";
+                else if (type == "String")printString+="%s ";
+                else if (type == "Boolean")printString+="%d ";
+                argVector.emplace_back(irBuilder.CreateLoad(llvmArg));
+            }
+            else {
+                if(llvmArg->getType()==llvm::Type::getInt32Ty(llvmContext))  printString+="%d ";
+                if(llvmArg->getType()==llvm::Type::getInt8Ty(llvmContext))  printString+="%d ";
+                else if(llvmArg->getType()->isDoubleTy())  printString+="%lf ";
+                else printString+="%d ";
+                argVector.emplace_back(irBuilder.CreateLoad(llvmArg));
+            }
+
+        }
+
+        if(procName == SYSPROC::WRITELN) printString+="\n";
+        argVector.insert(argVector.begin(), irBuilder.CreateGlobalStringPtr(printString, "printstring"));
+
+        irBuilder.CreateCall(genEnv.getFuncEnv().getFunc("WRITE"), argVector, "write");
         return nullptr;
     }
 
     llvm::Value* ast::SysFuncCall::codeGen() {
-        return nullptr;
+        std::vector<llvm::Value *> argVector;
+        for (auto arg: *args) {
+            llvm::Value* llvmArg = arg->codeGen();
+            if(!llvm::isa<llvm::Constant>(llvmArg))
+                llvmArg=irBuilder.CreateLoad(llvmArg);
+            argVector.emplace_back(llvmArg);
+        }
+        switch (functName) {
+            case SYSFUNCT ::ABS:
+                return irBuilder.CreateCall(genEnv.getFuncEnv().getFunc("ABS"), argVector, "abs");
+            case SYSFUNCT ::CHR:
+                return irBuilder.CreateIntCast(argVector[0], llvm::Type::getInt8Ty(llvmContext), true);
+            case SYSFUNCT ::ODD:
+                return irBuilder.CreateICmpEQ(irBuilder.CreateSRem(argVector[0], gen::getLLVMConstINT(2)), gen::getLLVMConstINT(1));
+            case SYSFUNCT ::ORD:
+                return irBuilder.CreateIntCast(argVector[0], llvm::Type::getInt32Ty(llvmContext), true);
+            case SYSFUNCT ::PRED:
+                if(argVector[0]->getType()==llvm::Type::getInt32Ty(llvmContext))
+                    return irBuilder.CreateSub(argVector[0], gen::getLLVMConstINT(1));
+                else if(argVector[0]->getType()==llvm::Type::getInt8Ty(llvmContext))
+                    return irBuilder.CreateSub(argVector[0], gen::getLLVMConstCHAR(1));
+                else return nullptr;
+            case SYSFUNCT ::SQR:
+                if(argVector[0]->getType()->isDoubleTy())
+                    return irBuilder.CreateFMul(argVector[0], argVector[0]);
+                else
+                    return irBuilder.CreateMul(argVector[0], argVector[0]);
+            case SYSFUNCT ::SQRT:
+                if(argVector[0]->getType()->isIntegerTy())
+                    argVector[0] = irBuilder.CreateSIToFP(argVector[0], llvm::Type::getDoubleTy(llvmContext));
+                return irBuilder.CreateCall(genEnv.getFuncEnv().getFunc("SQRT"), argVector, "sqrt");
+            case SYSFUNCT ::SUCC:
+                if(argVector[0]->getType()==llvm::Type::getInt32Ty(llvmContext))
+                    return irBuilder.CreateAdd(argVector[0], gen::getLLVMConstINT(1));
+                else if(argVector[0]->getType()==llvm::Type::getInt8Ty(llvmContext))
+                    return irBuilder.CreateAdd(argVector[0], gen::getLLVMConstCHAR(1));
+                else return nullptr;
+        }
+
     }
 
 
@@ -393,12 +524,25 @@ namespace ast {
     }
 
     llvm::Value *ast::ArrayElementRef::codeGen() {
-        return nullptr;
+
+        llvm::Value* llvmArrayName = arrayName->codeGen();
+        llvm::Value* llvmIndex = index->codeGen();
+        int lowBound = sym::getArrayBegin(arrayName->name);
+        llvm::Value* llvmLowBound = gen::getLLVMConstINT(lowBound);
+        llvm::Value* indexReal = irBuilder.CreateSub(llvmIndex, llvmLowBound);
+        std::vector<llvm::Value* >array;
+        array.emplace_back(gen::getLLVMConstINT(0));
+        array.emplace_back(indexReal);
+        return irBuilder.CreateGEP(llvmArrayName, array, "arrayElementRef");
     }
 
     llvm::Value *ast::RecordElementRef::codeGen() {
-
-
+        llvm::Value* llvmRecordName = recordName->codeGen();
+        int index = sym::getRecordNo(recordName->name, field->name);
+        std::vector<llvm::Value* >array;
+        array.emplace_back(gen::getLLVMConstINT(0));
+        array.emplace_back(gen::getLLVMConstINT(index));
+        return irBuilder.CreateGEP(llvmRecordName, array, "RecordElementRef");
     }
 
 

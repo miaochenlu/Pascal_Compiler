@@ -17,12 +17,10 @@ public:
     GenEnv();
     void pushLayer();
     void popLayer();
-    /*
     bool isGlobal()
     {
         return !((bool)isGlobalFlag);
     }
-    */
     GenFuncEnv & getFuncEnv(){
         return funcEnv;
     }
@@ -41,6 +39,7 @@ private:
     GenTypeEnv typeEnv;
     GenValueEnv valueEnv;
     GenLabelEnv labelEnv;
+    int isGlobalFlag;
 
 };
 

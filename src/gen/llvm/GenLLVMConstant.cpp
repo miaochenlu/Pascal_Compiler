@@ -44,6 +44,8 @@ namespace gen
     }
 
     llvm::Value*getLLVMConstSTRING(std::string value) {
+        while(value.length() < 254) value+=" " ;
+        if(value.length()>254) value=value.substr(0,253);
         return irBuilder.CreateLoad(irBuilder.CreateGlobalString(value));
     }
 }

@@ -95,7 +95,7 @@ void st_print()
 				continue;
 			}
 			for (auto iden : item->hashTable[i]) {
-				
+
 				cout << iden.id << '\t' << iden.memloc << '\t' << iden.recType << '\t' << iden.dataType << '\t';
 				for (auto lineNo : iden.lines) {
 					cout << '\t' << lineNo << " ";
@@ -141,4 +141,73 @@ void st_print()
 		}
 	}
 	cout << "====================================================================" << endl;
+}
+string sym::getIDType(string id){
+    int hashValue = hashFunc(id);
+    Scope currentScope = sc_top();
+    while (currentScope) {
+        for (auto item : currentScope->hashTable[hashValue]) {
+            cout<<item.id<<endl;
+            if (item.id == id) {
+                return item.dataType;
+            }
+        }
+        currentScope = currentScope->parentScope;
+    }
+    return "";
+}
+string sym::getArrayType(string id){
+    for(auto item: scopes) {
+        for (auto array : item->arrayList) {
+            if (array.arrayName == id) {
+                return array.arrayType;
+            }
+        }
+    }
+    return "";
+}
+
+string sym::getRecordElementType(string id, string memberid){
+    for(auto item: scopes) {
+        for (auto record : item->recordList) {
+            if (record.recordName == id) {
+                map<string, string>::iterator it;
+                it = record.recordMember.begin();
+                while (it != record.recordMember.end()) {
+                    if(it->first == memberid) return it->second;
+                    it++;
+                }
+            }
+        }
+    }
+    return "";
+}
+
+int sym::getArrayBegin(string id) {
+     for(auto item: scopes) {
+         for (auto array : item->arrayList) {
+             if (array.arrayName == id) {
+                 return array.arrayBegin;
+             }
+         }
+     }
+     return -1;
+}
+
+int sym::getRecordNo(string id, string memberid) {
+    for(auto item: scopes) {
+        for (auto record : item->recordList) {
+            if (record.recordName == id) {
+                map<string, string>::iterator it;
+                it = record.recordMember.begin();
+                int no = 0;
+                while (it != record.recordMember.end()) {
+                    if(it->first == memberid) return no;
+                    no++;
+                    it++;
+                }
+            }
+        }
+    }
+    return -1;
 }

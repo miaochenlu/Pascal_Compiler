@@ -7,7 +7,7 @@ void buildSymTable(ast::BasicAstNode *Tree)
 	Scope global = sc_create("global");
 	Tree->scope = global;
 	traverse(Tree, insertNode, popScope);
-	sc_pop();
+	//sc_pop();
 	st_print();
 	//cout << sc_top()->scopeName << endl;
 	//map<string, string>::iterator it;
@@ -21,7 +21,6 @@ void buildSymTable(ast::BasicAstNode *Tree)
 void typeCheck(ast::BasicAstNode *Tree)
 {
 	traverse(Tree, pushScope, checkNode);
-	
 }
 
 static void traverse(ast::BasicAstNode * node, void(*preProc) (ast::BasicAstNode *), void(*postProc) (ast::BasicAstNode *)) {
@@ -243,7 +242,6 @@ static void pushScope(ast::BasicAstNode *node)
 				break;
 			}
 		}
-
 		//sc_push(node->)
 	}
 }
