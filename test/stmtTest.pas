@@ -11,29 +11,21 @@ BEGIN
     1: IF a = 1 THEN BEGIN
         FOR d:= 1 TO 10 DO BEGIN 
             c := c + 1;
-            WHILE c <= 5 DO BEGIN 
-                d := 0;
-                d := 0;
-            END;
-
-            REPEAT 
-                d := 0;
-            UNTIL c > 5;
         END;
     END  
     ELSE 
     BEGIN 
         d := 0;
     END;
+	WRITE(d);
     
-    CASE d + 1 OF 
+    CASE b + 1 OF 
 		0: BEGIN str := 'A1'; c := 1; END;
 		1: str := 'B2';
 		2: str := 'C3';
 		3: str := 'D4';
 	END;
 
-    GOTO 1;
-    WRITE(d);
-    WRITELN(d);
+    WRITE(c);
+    WRITELN(str);
 END.

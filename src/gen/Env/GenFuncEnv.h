@@ -24,8 +24,10 @@ private:
     std::vector <std::map<std::string, llvm::Function*>> funcStack;
 
     void setABS();
+    void setABSREAL();
     void setSQRT();
     void setWRITE();
+    void setREAD();
 };
 
 

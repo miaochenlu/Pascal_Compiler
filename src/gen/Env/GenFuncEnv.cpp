@@ -13,6 +13,13 @@ void GenFuncEnv::setABS(){
     (funcStack.back())["ABS"] = func;
 }
 
+void GenFuncEnv::setABSREAL(){
+    std::vector<llvm::Type*> argType = {llvm::Type::getDoubleTy(llvmContext)};
+    llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getDoubleTy(llvmContext), argType, false);
+    llvm::Function *func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "fabs", &llvmModule);
+    func->setCallingConv(llvm::CallingConv::C);
+    (funcStack.back())["ABSREAL"] = func;
+}
 void GenFuncEnv::setSQRT(){
     std::vector<llvm::Type*> argType = {llvm::Type::getDoubleTy(llvmContext)};
     llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getDoubleTy(llvmContext), argType, false);
@@ -29,14 +36,21 @@ void GenFuncEnv::setWRITE() {
     (funcStack.back())["WRITE"] = func;
 }
 
+void GenFuncEnv::setREAD() {
+    std::vector<llvm::Type *> argType = {llvm::Type::getInt8PtrTy(llvmContext)};
+    llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvmContext), argType, true);
+    llvm::Function *func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "scanf", &llvmModule);
+    func->setCallingConv(llvm::CallingConv::C);
+    (funcStack.back())["READ"] = func;
+}
 
 
 void GenFuncEnv::setSysCall() {
     setABS();
+    setABSREAL();
     setWRITE();
+    setREAD();
     setSQRT();
-
-
 }
 
 void GenFuncEnv::popLayer()

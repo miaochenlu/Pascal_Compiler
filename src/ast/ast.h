@@ -826,7 +826,7 @@ namespace ast {
 	public:
 		Expression* cond;
 		BasicStmt*   exeStmt;
-		CaseExpr(Expression* cond, BasicStmt* exeStmt) : cond(cond), exeStmt(exeStmt) {}
+		CaseExpr(Expression* cond, BasicStmt* exeStmt) : cond(cond), exeStmt(exeStmt) {subType = "CaseStmt";}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)cond);

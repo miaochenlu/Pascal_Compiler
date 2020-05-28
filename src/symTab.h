@@ -88,7 +88,7 @@ public:
 	vector<arrayRec> arrayList;
 	vector<recordRec> recordList;
 
-	ScopeRec(string _scopeName) { 
+	ScopeRec(string _scopeName) {
         scopeName = _scopeName; 
     }
 };
@@ -105,11 +105,12 @@ int st_lookup(string id);
 void st_print();
 
 namespace sym {
-    int getArrayBegin(string id);
-    int getRecordNo(string id, string memberid);
-    string getIDType(string id);
-    string getArrayType(string id);
-    string getRecordElementType(string id, string memberid);
+    int getArrayBegin(string id, string scope);
+    int getRecordNo(string id, string memberid, string scope);
+    string getIDType(string id, string scope);
+    bool getIDIsConst(string id, string scope);
+    string getArrayType(string id, string scope);
+    string getRecordElementType(string id, string memberid, string scope);
 }
 
 #endif
