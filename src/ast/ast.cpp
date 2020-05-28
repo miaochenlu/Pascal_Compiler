@@ -1,4 +1,3 @@
-//#include "pch.h"
 #include"ast.h"
 using namespace std;
 namespace ast {
