@@ -511,7 +511,6 @@ namespace ast {
 
                 }
                 else {
-                    PrintType(llvmArg->getType());
                     if (llvmArg->getType() == llvm::Type::getInt32Ty(llvmContext)) printString += "%d ";
                     else if (llvmArg->getType() == llvm::Type::getInt8Ty(llvmContext)) printString += "%c ";
                     else if (llvmArg->getType()->isDoubleTy()) printString += "%lf ";
@@ -537,40 +536,32 @@ namespace ast {
         }
         switch (functName) {
             case SYSFUNCT ::ABS:
-                cout << "abs" <<endl;
                 if(argVector[0]->getType()->isDoubleTy())
                     return irBuilder.CreateCall(genEnv.getFuncEnv().getFunc("ABSREAL"), argVector, "abs");
                 else
                     return irBuilder.CreateCall(genEnv.getFuncEnv().getFunc("ABS"), argVector, "abs");
             case SYSFUNCT ::CHR:
-                cout << "chr" <<endl;
                 return irBuilder.CreateIntCast(argVector[0], llvm::Type::getInt8Ty(llvmContext), true);
             case SYSFUNCT ::ODD:
-                cout << "odd" <<endl;
                 return irBuilder.CreateICmpEQ(irBuilder.CreateSRem(argVector[0], gen::getLLVMConstINT(2)), gen::getLLVMConstINT(1));
             case SYSFUNCT ::ORD:
-                cout << "ord" <<endl;
                 return irBuilder.CreateIntCast(argVector[0], llvm::Type::getInt32Ty(llvmContext), true);
             case SYSFUNCT ::PRED:
-                cout << "pred" <<endl;
                 if(argVector[0]->getType()==llvm::Type::getInt32Ty(llvmContext))
                     return irBuilder.CreateSub(argVector[0], gen::getLLVMConstINT(1));
                 else if(argVector[0]->getType()==llvm::Type::getInt8Ty(llvmContext))
                     return irBuilder.CreateSub(argVector[0], gen::getLLVMConstCHAR(1));
                 else return nullptr;
             case SYSFUNCT ::SQR:
-                cout << "sqr" <<endl;
                 if(argVector[0]->getType()->isDoubleTy())
                     return irBuilder.CreateFMul(argVector[0], argVector[0]);
                 else
                     return irBuilder.CreateMul(argVector[0], argVector[0]);
             case SYSFUNCT ::SQRT:
-                cout << "sqrt" <<endl;
                 if(argVector[0]->getType()->isIntegerTy())
                     argVector[0] = irBuilder.CreateSIToFP(argVector[0], llvm::Type::getDoubleTy(llvmContext));
                 return irBuilder.CreateCall(genEnv.getFuncEnv().getFunc("SQRT"), argVector, "sqrt");
             case SYSFUNCT ::SUCC:
-                cout << "succ" <<endl;
                 if(argVector[0]->getType()==llvm::Type::getInt32Ty(llvmContext))
                     return irBuilder.CreateAdd(argVector[0], gen::getLLVMConstINT(1));
                 else if(argVector[0]->getType()==llvm::Type::getInt8Ty(llvmContext))
