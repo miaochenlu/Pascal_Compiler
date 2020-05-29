@@ -112,7 +112,7 @@ whitespace  [ \t]+
                         if (c == '\n') lineno++;
                     } while (c != '}');
                 }
-.               { cout << "ERROR: Invalid character: " <<  yytext << endl;}
+.               { cout << "ERROR: Line " << lineno << "Invalid character: " <<  yytext << endl;}
 
 
 %%

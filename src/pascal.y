@@ -10,6 +10,7 @@ using namespace std;
 static ast::BasicAstNode* root;
 void yyerror(string msg, ...);
 extern int yylex(void);
+extern int lineno;
 
 %}
 
@@ -597,10 +598,19 @@ args_list       : args_list  COMMA  expression  {
 ;
 
 %%
-
+void FreeNode(ast::BasicAstNode* root) {
+    ast::childrenList* children= root->getChildrenList();
+    delete root;
+    if(children->size()) {
+        for(auto child: *children) {
+            if(child != NULL) FreeNode(child);
+        }
+    }
+}
 
 void yyerror(string msg, ...) {
-    cout << msg << endl;
+    cout << "ERROR: Line " << lineno << " " << msg << endl;
+    FreeNode(root);
 }
 
 

@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.6.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,8 +31,12 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_HOME_LIANJIAYI_DOCUMENTS_CCPROJECT_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED
-# define YY_YY_HOME_LIANJIAYI_DOCUMENTS_CCPROJECT_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
+
+#ifndef YY_YY_USERS_JONES_DESKTOP_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED
+# define YY_YY_USERS_JONES_DESKTOP_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -40,78 +45,82 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ID = 258,
-    INTEGER = 259,
-    REAL = 260,
-    CHAR = 261,
-    STRING = 262,
-    BOOLEAN = 263,
-    SYS_PROC = 264,
-    SYS_TYPE = 265,
-    SYS_FUNCT = 266,
-    SYS_CON = 267,
-    DOT = 268,
-    DOTDOT = 269,
-    SEMI = 270,
-    COMMA = 271,
-    COLON = 272,
-    LP = 273,
-    RP = 274,
-    LB = 275,
-    RB = 276,
-    EQUAL = 277,
-    UNEQUAL = 278,
-    GE = 279,
-    GT = 280,
-    LE = 281,
-    LT = 282,
-    PLUS = 283,
-    MINUS = 284,
-    MUL = 285,
-    DIV = 286,
-    MOD = 287,
-    OR = 288,
-    AND = 289,
-    NOT = 290,
-    PROGRAM = 291,
-    PROCEDURE = 292,
-    FUNCTION = 293,
-    CONST = 294,
-    TYPE = 295,
-    VAR = 296,
-    RECORD = 297,
-    ARRAY = 298,
-    BEG = 299,
-    END = 300,
-    ASSIGN = 301,
-    IF = 302,
-    THEN = 303,
-    ELSE = 304,
-    REPEAT = 305,
-    UNTIL = 306,
-    WHILE = 307,
-    DO = 308,
-    FOR = 309,
-    TO = 310,
-    DOWNTO = 311,
-    CASE = 312,
-    OF = 313,
-    GOTO = 314,
-    READ = 315
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    ID = 258,                      /* ID  */
+    INTEGER = 259,                 /* INTEGER  */
+    REAL = 260,                    /* REAL  */
+    CHAR = 261,                    /* CHAR  */
+    STRING = 262,                  /* STRING  */
+    BOOLEAN = 263,                 /* BOOLEAN  */
+    SYS_PROC = 264,                /* SYS_PROC  */
+    SYS_TYPE = 265,                /* SYS_TYPE  */
+    SYS_FUNCT = 266,               /* SYS_FUNCT  */
+    SYS_CON = 267,                 /* SYS_CON  */
+    DOT = 268,                     /* DOT  */
+    DOTDOT = 269,                  /* DOTDOT  */
+    SEMI = 270,                    /* SEMI  */
+    COMMA = 271,                   /* COMMA  */
+    COLON = 272,                   /* COLON  */
+    LP = 273,                      /* LP  */
+    RP = 274,                      /* RP  */
+    LB = 275,                      /* LB  */
+    RB = 276,                      /* RB  */
+    EQUAL = 277,                   /* EQUAL  */
+    UNEQUAL = 278,                 /* UNEQUAL  */
+    GE = 279,                      /* GE  */
+    GT = 280,                      /* GT  */
+    LE = 281,                      /* LE  */
+    LT = 282,                      /* LT  */
+    PLUS = 283,                    /* PLUS  */
+    MINUS = 284,                   /* MINUS  */
+    MUL = 285,                     /* MUL  */
+    DIV = 286,                     /* DIV  */
+    MOD = 287,                     /* MOD  */
+    OR = 288,                      /* OR  */
+    AND = 289,                     /* AND  */
+    NOT = 290,                     /* NOT  */
+    PROGRAM = 291,                 /* PROGRAM  */
+    PROCEDURE = 292,               /* PROCEDURE  */
+    FUNCTION = 293,                /* FUNCTION  */
+    CONST = 294,                   /* CONST  */
+    TYPE = 295,                    /* TYPE  */
+    VAR = 296,                     /* VAR  */
+    RECORD = 297,                  /* RECORD  */
+    ARRAY = 298,                   /* ARRAY  */
+    BEG = 299,                     /* BEG  */
+    END = 300,                     /* END  */
+    ASSIGN = 301,                  /* ASSIGN  */
+    IF = 302,                      /* IF  */
+    THEN = 303,                    /* THEN  */
+    ELSE = 304,                    /* ELSE  */
+    REPEAT = 305,                  /* REPEAT  */
+    UNTIL = 306,                   /* UNTIL  */
+    WHILE = 307,                   /* WHILE  */
+    DO = 308,                      /* DO  */
+    FOR = 309,                     /* FOR  */
+    TO = 310,                      /* TO  */
+    DOWNTO = 311,                  /* DOWNTO  */
+    CASE = 312,                    /* CASE  */
+    OF = 313,                      /* OF  */
+    GOTO = 314,                    /* GOTO  */
+    READ = 315                     /* READ  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
 union YYSTYPE
 {
-#line 16 "/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/pascal.y" /* yacc.c:1909  */
+#line 17 "/Users/jones/desktop/Pascal_Compiler/src/pascal.y"
 
     char                    astchar;
     char*                   aststring;
@@ -153,9 +162,9 @@ union YYSTYPE
     ast::CaseExprList*      astCaseExprList;
     ast::ArgList*           astArgList;
 
-#line 157 "/home/lianjiayi/Documents/ccproject/Pascal_Compiler/src/parser.hpp" /* yacc.c:1909  */
-};
+#line 166 "/Users/jones/desktop/Pascal_Compiler/src/parser.hpp"
 
+};
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -166,4 +175,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_HOME_LIANJIAYI_DOCUMENTS_CCPROJECT_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED  */
+#endif /* !YY_YY_USERS_JONES_DESKTOP_PASCAL_COMPILER_SRC_PARSER_HPP_INCLUDED  */
