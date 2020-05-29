@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "symTab.h"
 using namespace std;
 
@@ -38,6 +39,13 @@ Scope sc_create(string scopeName)
 	return newScope;
 }
 
+Scope sc_create(string scopeName, Scope oriScope)
+{
+	Scope newScope = new ScopeRec(scopeName, oriScope);
+	scopes.push_back(newScope);
+	return newScope;
+}
+
 void sc_pop()
 {
 	scopeStack.pop_back();
@@ -55,6 +63,16 @@ void sc_push(string name)
 	}
 }
 
+Scope sc_find(string name) 
+{
+	for (auto scope : scopes) {
+		if (scope->scopeName == name) {
+			return scope;
+		}
+	}
+	return sc_find("global");
+}
+
 Scope sc_top()
 {
 	return scopeStack[current_depth - 1];
@@ -66,6 +84,10 @@ void st_insert(string id, int lineNo, int size, string recType, string dataType)
 	int hashValue = hashFunc(id);
 	int found = 0;
 	BucketList currentTable = currentScope->hashTable[hashValue];
+	//if (st_lookup(id) != "") {
+	//	cout << "Error in line[" << lineNo << "]: Variable '" << id << "' is already defined." << endl;
+	//	exit(-1);
+	//}
 	for (auto item : currentTable) {
 		if (item.id == id) {
 			item.lines.push_back(lineNo);
@@ -77,6 +99,10 @@ void st_insert(string id, int lineNo, int size, string recType, string dataType)
 		BucketListRec newRec = BucketListRec(id, lineNo, memloc[current_depth-1], recType, dataType);
 		memloc[current_depth - 1] += size;
 		currentScope->hashTable[hashValue].push_back(newRec);
+	}
+	else {
+		//cout << "Error in line[" << lineNo << "]: Variable '" << id << "' is already defined." << endl;
+		//exit(-1);
 	}
 }
 
@@ -124,28 +150,28 @@ void st_print()
 					}
 					cout << '\t' << "<Array: range [" << begin << ":" << end << "], type " << type << " >" ;
 				}
-				else if (iden.dataType == "Record"){
-					cout << '\t' << "<Record: ";
-					for (auto record : item->recordList) {
-						if (record.recordName == iden.id) {
-							//cout << "--1" << endl;
-							map<string, string>::iterator it;
-							it = record.recordMember.begin();
-							int isBegin = 1;
-							while (it != record.recordMember.end()) {
-								if (isBegin) {
-									cout << it->first << " " << it->second;
-									isBegin = 0;
-								}
-								else {
-									cout << ", " << it->first << " " << it->second;
-								}
-								it++;
-							}
-						}
-					}
-					cout << ">";
-				}
+				//else if (iden.dataType == "Record"){
+				//	cout << '\t' << "<Record: ";
+				//	for (auto record : item->recordList) {
+				//		if (record.recordName == iden.id) {
+				//			//cout << "--1" << endl;
+				//			map<string, string>::iterator it;
+				//			it = record.recordMember.begin();
+				//			int isBegin = 1;
+				//			while (it != record.recordMember.end()) {
+				//				if (isBegin) {
+				//					cout << it->first << " " << it->second;
+				//					isBegin = 0;
+				//				}
+				//				else {
+				//					cout << ", " << it->first << " " << it->second;
+				//				}
+				//				it++;
+				//			}
+				//		}
+				//	}
+				//	cout << ">";
+				//}
 				cout << endl;
 			}
 		}

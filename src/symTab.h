@@ -1,6 +1,8 @@
 #ifndef _SYMTAB_H_
 #define _SYMTAB_H_
 
+#include "pch.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -54,10 +56,6 @@ public:
 	string recType; // function, variable, const
 	string dataType; // void, integer, char, string..
 	BucketListRec *next; //TODO
-	//int arrayBegin;
-	//int arrayEnd;
-	//string arrayType;
-	//map<string, string> recordMember;
 
 	BucketListRec(string _id, int _lineno, int _memloc, string _recType, string _dataType) {
 		id = _id; 
@@ -65,14 +63,6 @@ public:
 		lines.push_back(_lineno);
 		recType = _recType;
 		dataType = _dataType;
-		//if (dataType == "Array") {
-		//	arrayBegin = _arrayBegin;
-		//	arrayEnd = _arrayEnd;
-		//	arrayType = _arrayType;
-		//}
-		//if (dataType == "Record") {
-		//	recordMember = _recordMember;
-		//}
 	}
 };
 typedef vector<BucketListRec> BucketList;
@@ -90,14 +80,26 @@ public:
 	ScopeRec(string _scopeName) { 
         scopeName = _scopeName; 
     }
+	ScopeRec(string _scopeName, ScopeRec* oriScope) {
+		scopeName = _scopeName;
+		depth = oriScope->depth;
+		parentScope = oriScope->parentScope;
+		for (int i = 0; i < TABLE_SIZE; i++) {
+			hashTable[i] = oriScope->hashTable[i];
+		}
+		userDefType = oriScope->userDefType;
+		arrayList = oriScope->arrayList;
+	}
 };
 typedef ScopeRec* Scope;
 
 static int hash(string str);
 Scope sc_create(string scopeName);
+Scope sc_create(string scopeName, Scope oriScope);
 void sc_pop();
 Scope sc_top();
 void sc_push(string name);
+Scope sc_find(string name);
 
 void st_insert(string id, int lineNo, int loc, string recType, string dataType);
 string st_lookup(string id);

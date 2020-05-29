@@ -1,6 +1,8 @@
 #ifndef _ANALYZE_H_
 #define _ANALYZE_H_
 
+#include "pch.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>

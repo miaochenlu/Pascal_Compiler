@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include <iostream>
 #include "ast/ast.h"
 #include "parser.hpp"
@@ -19,6 +21,7 @@ int main(int argc, char** argv) {
 	}
 	ast::BasicAstNode* tree = parse();
 	ast::astTraversal(tree, 0);
+	cout << endl;
 
 	buildSymTable(tree);
 	typeCheck(tree);

@@ -1,3 +1,7 @@
+---
+typora-root-url: ./
+---
+
 # Pascal_Compiler
 
 ## 1. Scanner
@@ -1189,9 +1193,62 @@ Program
 
 符号表是语义分析中较为重要的数据结构，存储了整个程序中各个区域的所有符号信息，在符号表中维护了符号名、符号类型、数据类型、内存虚拟地址、行号等信息。符号表将在类型检查、目标代码生成等过程中用作类型查找、分配变量内存空间等。
 
+在本项目中，以哈希表来维护符号表的结构，定义哈希表的大小为571，用571个桶来组成。其中使用分离链表的方式来处理哈希表冲突，即每个桶都是一个线性的链表，新的项将会被链接在对应的桶中链表的末尾。
+
 #### 3.1.1 数据结构
 
-由于Pascal中存在
+##### Class BucketListRec
+
+BucketListRec用于维护哈希表中的记录。
+
+##### Class recordRec
+
+由于Pascal中的函数和变量存在作用域限制，并且Pascal语言具有能够嵌套定义函数的功能，我们在符号表的基础上定义了表示作用域的类ScopeRec，在每个作用域内维护一张符号表，而每张符号表之间也继承了作用域之间的拓扑关系。
+
+作用域类的结构定义如下所示：
+
+```c++
+class ScopeRec {
+public:
+	string scopeName;
+	int depth;
+	ScopeRec *parentScope;
+	BucketList hashTable[TABLE_SIZE];
+	map<string, string> userDefType;
+	vector<arrayRec> arrayList;
+	vector<recordRec> recordList;
+
+	ScopeRec(string _scopeName) { 
+        scopeName = _scopeName; 
+    }
+};
+```
+
+每个属性的含义如下：
+
+- `scopeName`：作用域名称
+
+  全局的作用域`scopeName`是global，以函数为单位的作用域`scopeName`一般是函数名称
+
+- `depth`：作用域深度
+
+  定义全局作用域（global）的深度为0，在此基础上每嵌套一层depth增加1
+
+- `parentScope`：父作用域的指针
+
+  指向上一层作用域，用于查找上一层作用域定义的变量
+
+- `hashTable`：该作用域内维护的符号表
+
+- `userDefType`：用于存储`Type`中用户定义的数据类型
+
+- `arrayList`：用于存储当前作用域中的所有`Array`类型的变量
+
+- `recordList`：用于存储当前作用域中的所有`Record`类型的变量
+
+##### 
+
+
 
 
 
@@ -1203,11 +1260,9 @@ Program
 
 为了实现 AST 到中间代码的转换，需要维护一个运行环境，维护当前的变量，函数等信息。
 
-
-
 ### 4.1 LLVM
 
-LLVM 的核心设计了一个叫 **LLVM IR** 的中间代码， 并以 **库(Library)** 的方式提供一系列接口， 提供生成、操作IR，生成目标平台代码等功能。
+LLVM 设计了 **LLVM IR** 的中间代码， 并以**库(Library)** 的方式提供一系列接口， 提供生成、操作IR，生成目标平台代码等功能。
 
 ![WeChat Screenshot_20200520130516](images/WeChat Screenshot_20200520130516.png)
 
@@ -1225,31 +1280,31 @@ LLVM 程序由 Module 组成，每个程序模块都是输入程序的翻译单�
 
 #### 4.1.2 Function
 
-LLVM 中的函数指针主要有两个部分：函数类型和函数体
+LLVM 中的函数指针主要有两个部分：函数类型和函数体。
 
-函数类型主要表示函数的输入和输出，可以使用 FunctionType 类型
+函数类型由函数的输入和输出组成，其中输入是一个由 llvm::Type组成的容器，而输出是一个 llvm::Type，可以使用 FunctionType 类型。
 
-函数体由 BasicBlock 构成，通过 Builder往 BasicBlock 中加入 IR
+函数体由 BasicBlock 构成，通过 IRBuilder 往 BasicBlock 中加入指令。
 
 #### 4.1.3 BasicBlock
 
-IR是一种抽象的汇编语言，它使用有条件和无条件的跳转（称为分支）来表示控制流。分支之间的依次运行的代码序列称为 BasicBlock，或简称为块。
+IR 是一种抽象的汇编语言，它使用有条件和无条件的跳转（称为分支）来表示控制流。分支之间的依次运行的代码序列称为 BasicBlock，或简称为块。
+
+llvm 要求所有的 BasicBlock 最后一条语句为跳转语句或结束语句。
 
 #### 4.1.4 IRBuilder
 
-用于创建指令并将其附加到块末尾的便捷接口，其中提供了多种不同的指令
+用于创建指令并将其附加到块末尾的便捷接口，其中提供了多种不同的指令。
 
 #### 4.1.5 Value
 
-value 类用来 LLVM 中的表示具有类型的值。在表达式代码生成时通过传递 value 表示变量。
+value 类用来 LLVM 中的表示具有类型的值。在表达式代码生成时通过传递 value 表示变量。通过 IRBuilder::CreateAlloca 可以在环境中创建一个局部变量，此时返回的是一个指向变量的指针变量，需要用 CreateLoad 获得变量的值，用 CreateStore 向变量赋值。
 
 
 
 ### 4.2 环境维护
 
-/gen/...
-
-代码生成中的环境维护主要分为几个方面：
+代码生成中的环境维护主要分为几个方面：变量信息环境，函数信息环境，类型信息环境和标签信息环境。环境均通过一个由 map 构成的堆栈组成，在 map 中形成名字与 llvm 中变量的对应关系。
 
 实现中通过在函数定义和函数调用等不同部分间接地实现 access link 和 control link 
 
@@ -1269,7 +1324,77 @@ value 类用来 LLVM 中的表示具有类型的值。在表达式代码生成�
 
 出现函数调用时，搜索函数信息的栈，通过得到的 llvm::Function 指针调用函数。
 
-直接通过 llvm 中的调用操作即可转换为中间代码。函数调用一般都用过命令跳转实现，即没有内联函数。通过 LLVM 可以完成调用完函数后返回原 Basiclock，从而无需实现 control link。
+直接通过 llvm 中的调用操作即可转换为中间代码。函数调用一般都用过命令跳转实现。通过 LLVM 可以完成调用完函数后返回原 Basiclock，从而无需实现 control link。
 
-在搜索函数时，若栈中无法得到，则会搜索系统函数。
 
+
+#### 4.2.3 类型信息维护
+
+类型栈主要保存用户定义的结构体与定义的类型别名。保存定义的名称与 llvm::Type 的映射。
+
+对于 Recoed 的结构体
+
+
+
+## 6. 构建与运行
+
+### 6.1 构建工程
+
+工程使用 cmake 构建
+
+#### 6.1.1 依赖
+
++ cmake >= 3.10
++ g++： C++14标准
++ llvm 10.0.0
++ flex
++ bison
+
+#### 6.1.2 构建命令
+
+在工程目录下
+
+```bash
+mkdir ./build
+cd ./build
+cmake ..
+make
+```
+
+`./build/src` 目录下的 Pascal_Compiler 即为目标编译器。
+
+### 6.2 编译器使用
+
+运行 Pascal_Compiler 即可看到使用说明。编译器支持输出 `.ll` 的 llvm 中间代码文件，`.s` 汇编代码文件， `.o` 的 obj文件 以及可执行文件 (默认)。
+
+![WeChat Screenshot_20200529105550](./images/WeChat Screenshot_20200529105550.png)
+
+####  6.2.1 生成树 & 符号表显示
+
+程序编译过程中会输出生成树与符号表。
+
+生成树：
+
+![WeChat Screenshot_20200529120519](./images/WeChat Screenshot_20200529120519.png)
+
+符号表：
+
+![WeChat Screenshot_20200529120539](./images/WeChat Screenshot_20200529120539.png)
+
+#### 6.2.2 生成 llvm 中间代码
+
+在编译中加入 `-l` 参数即可生成 llvm 中间代码
+
+![WeChat Screenshot_20200529121043](/images/WeChat Screenshot_20200529121043.png)
+
+#### 6.2.3 生成汇编代码
+
+在编译中加入 `-s` 参数即可生成汇编代码
+
+![WeChat Screenshot_20200529121344](/images/WeChat Screenshot_20200529121344.png)
+
+#### 6.2.4 生成可执行文件
+
+默认参数会生成可执行文件，直接运行。
+
+![1590725921(1)](/images/1590725921(1).png)
