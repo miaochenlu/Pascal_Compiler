@@ -1,8 +1,6 @@
 #ifndef _SYMTAB_H_
 #define _SYMTAB_H_
 
-#include "pch.h"
-
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -34,20 +32,6 @@ public:
 	}
 };
 
-class recordRec {
-public:
-	string recordName;
-	map<string, string> recordMember; //name, type
-	recordRec(string _recordName, map<string, string> _recordMember) {
-		recordName = _recordName;
-		recordMember = _recordMember;
-	}
-	recordRec(string newName, recordRec rec) {
-		recordName = newName;
-		recordMember = rec.recordMember;
-	}
-};
-
 class BucketListRec {
 public:
 	string id;
@@ -55,7 +39,6 @@ public:
 	int memloc;
 	string recType; // function, variable, const
 	string dataType; // void, integer, char, string..
-	BucketListRec *next; //TODO
 
 	BucketListRec(string _id, int _lineno, int _memloc, string _recType, string _dataType) {
 		id = _id; 
@@ -75,7 +58,6 @@ public:
 	BucketList hashTable[TABLE_SIZE];
 	map<string, string> userDefType;
 	vector<arrayRec> arrayList;
-	vector<recordRec> recordList;
 
 	ScopeRec(string _scopeName) { 
         scopeName = _scopeName; 

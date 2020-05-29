@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "symTab.h"
 using namespace std;
 
@@ -13,7 +12,6 @@ static int hashFunc(string str)
     for(int i=0; i<str.length(); i++){
         value = ( (value << SHIFT) + str[i] ) % TABLE_SIZE;
     }
-	//cout << value << endl;
     return value;
 }
 
@@ -58,7 +56,6 @@ void sc_push(string name)
 		if (scope->scopeName == name) {
 			scopeStack.push_back(scope);
 			current_depth++;
-			//cout << "SCPUSH: " << sc_top()->scopeName << endl;
 		}
 	}
 }
@@ -84,10 +81,6 @@ void st_insert(string id, int lineNo, int size, string recType, string dataType)
 	int hashValue = hashFunc(id);
 	int found = 0;
 	BucketList currentTable = currentScope->hashTable[hashValue];
-	//if (st_lookup(id) != "") {
-	//	cout << "Error in line[" << lineNo << "]: Variable '" << id << "' is already defined." << endl;
-	//	exit(-1);
-	//}
 	for (auto item : currentTable) {
 		if (item.id == id) {
 			item.lines.push_back(lineNo);
@@ -101,8 +94,8 @@ void st_insert(string id, int lineNo, int size, string recType, string dataType)
 		currentScope->hashTable[hashValue].push_back(newRec);
 	}
 	else {
-		//cout << "Error in line[" << lineNo << "]: Variable '" << id << "' is already defined." << endl;
-		//exit(-1);
+		cout << "Error in line[" << lineNo << "]: Variable '" << id << "' is already defined." << endl;
+		exit(-1);
 	}
 }
 
@@ -150,28 +143,6 @@ void st_print()
 					}
 					cout << '\t' << "<Array: range [" << begin << ":" << end << "], type " << type << " >" ;
 				}
-				//else if (iden.dataType == "Record"){
-				//	cout << '\t' << "<Record: ";
-				//	for (auto record : item->recordList) {
-				//		if (record.recordName == iden.id) {
-				//			//cout << "--1" << endl;
-				//			map<string, string>::iterator it;
-				//			it = record.recordMember.begin();
-				//			int isBegin = 1;
-				//			while (it != record.recordMember.end()) {
-				//				if (isBegin) {
-				//					cout << it->first << " " << it->second;
-				//					isBegin = 0;
-				//				}
-				//				else {
-				//					cout << ", " << it->first << " " << it->second;
-				//				}
-				//				it++;
-				//			}
-				//		}
-				//	}
-				//	cout << ">";
-				//}
 				cout << endl;
 			}
 		}
