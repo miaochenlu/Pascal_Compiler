@@ -433,6 +433,7 @@ Pascal 的 Identifier 是以字母或下划线开头，后接若干字母、数�
 
 
 
+
 ### 2.3 Parser实现
 
 
@@ -1247,6 +1248,12 @@ llvm 要求所有的 BasicBlock 最后一条语句为跳转语句或结束语句
 
 value 类用来 LLVM 中的表示具有类型的值。在表达式代码生成时通过传递 value 表示变量。通过 IRBuilder::CreateAlloca 可以在环境中创建一个局部变量，此时返回的是一个指向变量的指针变量，需要用 CreateLoad 获得变量的值，用 CreateStore 向变量赋值。
 
+#### # Name 和 Identity
+
+抽象语法树中的变量名节点，在语法分析是分成了两种 ： Name 和 Identity，从而区分开了变量的性质。
+
+如赋值语句中，赋值左端为 identity， 而右端出现的变量名为 name。WRITE 函数的参数为name类型，READ 函数的参数为 identity类型。 对 name 类型的代码生成，会在得到指针变量后直接进行 Load 操作，而对 identity 则不会。
+
 
 
 ### 4.2 环境维护
@@ -1263,23 +1270,216 @@ value 类用来 LLVM 中的表示具有类型的值。在表达式代码生成�
 
 对于全局变量，则是用 llvm::Module 中的全局变量定义。
 
-
-
 #### 4.2.2 函数信息维护
 
-函数信息维护与变量信息相似。
+函数信息维护与变量信息相似。在初始化是，会将系统函数需要调用的函数压入栈中。
 
-出现函数调用时，搜索函数信息的栈，通过得到的 llvm::Function 指针调用函数。
+出现函数调用时，搜索函数信息的栈，通过函数名得到的 llvm::Function 指针调用函数。
 
 直接通过 llvm 中的调用操作即可转换为中间代码。函数调用一般都用过命令跳转实现。通过 LLVM 可以完成调用完函数后返回原 Basiclock，从而无需实现 control link。
-
-
 
 #### 4.2.3 类型信息维护
 
 类型栈主要保存用户定义的结构体与定义的类型别名。保存定义的名称与 llvm::Type 的映射。
 
-对于 Recoed 的结构体
+对于 Record 的结构体，创建 llvm::StructType 类型保存。
+
+#### 4.2.4 标签信息维护
+
+标签信息主要用于 goto 语句，只有 label 语句中的标签名是用户定义的，会被加入到标签栈中，
+
+
+
+
+
+### 4.3 llvm 变量生成
+
+#### 4.3.1 类型生成
+
+LLVM 提供了不同位数的 int 整数类型，double 浮点数类型，void 类型，数组类型与结构类型等。
+
+程序中使用 32位 int 类型表示 INTEGER，用 8位 int 类型表示 CHAR，用 1位 int 类型表示 BOOLEN。STRING 则用由 255 个8位 int 类型组成的 array 表示。
+
+| TYPE in Pascal | TYPE in LLVMIR                               |
+| -------------- | -------------------------------------------- |
+| BOOLEN         | getInt1Ty                                    |
+| INT            | getInt32Ty                                   |
+| REAL           | getDoubleTy                                  |
+| VOID           | getVoidTy                                    |
+| CHAR           | getInt8Ty                                    |
+| STRING         | ArrayType::get(getInt8Ty(llvmContext), 255); |
+| ARRAY          | ArrayType                                    |
+| RECORD         | StructType                                   |
+
+#### 4.3.2 常量生成
+
+LLVM 提供了获得不同常量的接口，得到的 Value 属于 Constant 类型，可以用来进行常量优化。同时，对于全为 Constant 类型的表达式运算，LLVM会自动进行运算优化，保存最终结果。
+
+对于 STRING 类型的常量，则建立一个全局String变量再进行加载。
+
+| 常量类型 | LLVM类型                     | 位数 |
+| -------- | ---------------------------- | ---- |
+| INT      | ConstantInt                  | 32   |
+| CHAR     | ConstantInt                  | 8    |
+| BOOL     | ConstantInt                  | 1    |
+| REAL     | ConstantFP                   | 64   |
+| STRING   | irBuilder.CreateGlobalString | ×8   |
+
+### 4.4 代码生成
+
+#### 4.4.1 数组/结构体元素代码生成
+
+LLVM中所有的变量创建均返回指针。当用创建的数组/结构体类型创建变量时，llvm会建立一个含多个指针的变量。
+
+每个指针的大小都是相同的，因此无需管结构体中不同变量的所需空间的大小，只需知道它是结构体/数组中的第几个元素，即可用 CreateGEP 函数得到相应的Value。
+
+```c++
+    llvm::Value *ast::RecordElementRef::codeGen() {
+        llvm::Value* llvmRecordName = recordName->codeGen();
+        llvm::Function *nowFunc = irBuilder.GetInsertBlock()->getParent();
+        int index = sym::getRecordNo(recordName->name, field->name, nowFunc->getName());
+        std::vector<llvm::Value* >array;
+        array.emplace_back(gen::getLLVMConstINT(0));
+        array.emplace_back(gen::getLLVMConstINT(index));
+        return irBuilder.CreateGEP(llvmRecordName, array, "RecordElementRef");
+    }
+```
+
+#### 4.4.2 表达式生成
+
+irBuilder 的函数接口会返回表达式结果的 Value，因此只需要递归的获取参数的 Value 指针，调用函数接口即可。如整数加法为：
+
+```c++
+llvm::Value* lval = leftOperand->codeGen();
+llvm::Value* rval = rightOperand->codeGen();
+irBuilder.CreateAdd(lval, rval, "iadd");
+```
+
+对于双目运算，当其中一个变量为实数类型时，会进行实数运算。由于 LLVM是强类型的，在进行运算前需要将整数类型转化为实数：
+
+```c++
+if (lval->getType()->isDoubleTy() || rval->getType()->isDoubleTy()) {
+    if(lval->getType()->isIntegerTy())
+        lval = irBuilder.CreateSIToFP(lval, llvm::Type::getDoubleTy(llvmContext));
+    if(rval->getType()->isIntegerTy())
+        rval = irBuilder.CreateSIToFP(rval, llvm::Type::getDoubleTy(llvmContext));
+
+    switch (bOp) {
+        case BinaryOperator::GEop:
+            return irBuilder.CreateFCmpOGE(lval, rval, "fge");
+        case ...
+    }
+}
+```
+
+#### 4.4.3 Statement 语句生成
+
+Statement 语句的代码生成主要为 BasicBlock 之间的跳转。
+
+以 While语句为例，分为条件块和循环体块，以及结束 While循环之后的 continueBasicBlock。
+
+1. LLVM 要求所有块最后一句均为跳转语句或结束语句，因此在进入条件块时先加入无条件跳转到条件块的语句。
+2. 进入条件块生成条件中包含的语句，创建条件调整语句，满足条件是进入循环块，否则进入 continueBlock。
+3. 将代码生成移到循环快中进行循环体中语句的代码生成，无条件跳转至条件块
+4. 将代码生成的插入点移到 continueBlock
+
+```c++
+llvm::Value* ast::WhileStmt::codeGen() {
+    llvm::Function *llvmFunc = irBuilder.GetInsertBlock()->getParent();
+    llvm::BasicBlock *beginBlock = llvm::BasicBlock::Create(llvmContext, "whileBegin", llvmFunc);
+    llvm::BasicBlock *loopBlock = llvm::BasicBlock::Create(llvmContext, "WhileLoop", llvmFunc);
+    llvm::BasicBlock *continueBlock = llvm::BasicBlock::Create(llvmContext, "WhileContinue", llvmFunc);
+
+    irBuilder.CreateBr(beginBlock);
+    irBuilder.SetInsertPoint(beginBlock);
+    llvm::Value *llvmCond = cond->codeGen();
+    irBuilder.CreateCondBr(llvmCond, loopBlock, continueBlock);
+    irBuilder.SetInsertPoint(loopBlock);
+    loopStmt->codeGen();
+    irBuilder.CreateBr(beginBlock);
+    irBuilder.SetInsertPoint(continueBlock);
+
+    return nullptr;
+}
+```
+
+其余语句与之相似。
+
+对于函数调用语句，只需从函数栈中找到调用的函数，将参数传如即可，函数调用的返回值会通过函数接口返回。
+
+```c++
+llvm::Function *func = genEnv.getFuncEnv().getFunc(procName->name);
+std::vector<llvm::Value*> llvmarg;
+if(args) 
+    for (auto arg: *args) 
+        llvmarg.emplace_back(arg->codeGen());
+return irBuilder.CreateCall(func, llvmarg);
+```
+
+#### 4.4.4 函数定义代码生成
+
+函数定义通过创建新的函数完成，需要提供函数的参数类型列表与返回值。
+
+Pascal语言规定函数中函数名可以作为一个变量使用。函数名所表示的变量几位函数的返回值。因此，也需要将函数名加入变量栈中。
+
+此外，需要将参数作为一个变量加入当前的变量栈中。并将传入的参数存储到参数变量中。
+
+```c++
+llvm::FunctionType *funcType = llvm::FunctionType::get(retype, parameterVector, false);
+func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, name->name,&llvmModule);
+genEnv.getFuncEnv().setFunc(name->name, func);
+
+for (auto para : *parameters) {
+      llvm::Type *paraType = gen::getLLVMType(para->type);
+      llvm::Value *val = irBuilder.CreateAlloca(paraType, nullptr, para->name->name);
+      genEnv.getValueEnv().setValue(para->name->name, val);
+}
+auto arg_it = func->arg_begin();
+for (auto para : *parameters) {
+    arg_it->setName(para->name->name);
+    irBuilder.CreateStore(arg_it, genEnv.getValueEnv().getValue(para->name->name));
+    arg_it++;
+}
+```
+
+#### 4.4.5 系统函数生成
+
+Pascal 提供了一些系统函数，程序中通过直接转化为代码/调用c语言中的函数实现。
+
++  CHR/ORD 函数，由于 CHAR 和 INTEGER类型都是使用 int保存，可以使用提供的 `CreateIntCast` 函数改变 int 类型的位数实现。
++ PRED / SUSS 函数，则将 CHAR 或 INTEGER 均视为 int 类型，进行加1或减1操作即可。
++ SQR函数 则是调用乘法运算
++ ODD函数，通过整数除法除以 2 之后与 1 进行比较。
++ ABS 函数 和 SQRT 函数，WRITE / WRITELN 函数，READ 函数则通过调用 c语言中的函数实现。
+
+```c++
+void GenFuncEnv::setWRITE() {
+    std::vector<llvm::Type *> argType = {llvm::Type::getInt8PtrTy(llvmContext)};
+    llvm::FunctionType *funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvmContext), argType, true);
+    llvm::Function *func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "printf", &llvmModule);
+    func->setCallingConv(llvm::CallingConv::C);
+    (funcStack.back())["WRITE"] = func;
+}
+```
+
+其中对 WRITE / WRITELN 函数，READ 函数，会先对传入参数进行分析，在参数前加入格式化字符串。如
+
+```c++
+if(readElement->nodeType == "Name") {
+	llvm::Function *nowFunc = irBuilder.GetInsertBlock()->getParent();
+	string type = sym::getIDType(((Name*)readElement)->name, nowFunc->getName());
+	if(type == "Integer") printString+="%d";
+	else if (type == "Char")printString+="%c";
+	else if (type == "Real")printString+="%lf";
+	else if (type == "String")printString+="%s";
+	else if (type == "Boolean")printString+="%d";
+	argVector.emplace_back(genEnv.getValueEnv().getValue(((Name*)readElement)->name));
+}
+```
+
+
+
+
 
 
 
