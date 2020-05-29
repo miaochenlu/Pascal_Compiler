@@ -108,7 +108,7 @@ namespace ast {
 		Scope scope;
 		string nodeType;
 		string subType;
-		//string userType;
+		string exprType;
 		string id;
 		int lineNo;
 		int intVal;
@@ -366,6 +366,7 @@ namespace ast {
 			type = TypeKind::INTtype;
 			intVal = integerVal;
 			subType = "Integer";
+			exprType = "Integer";
 		}
 		void printAstNode() {
 			cout << "IntegerNode: " << integerVal << endl;
@@ -382,6 +383,7 @@ namespace ast {
 		RealNode(double realVal) : realVal(realVal) {
 			type = TypeKind::REALtype;
 			subType = "Real";
+			exprType = "Real";
 		}
 		void printAstNode() {
 			cout << "ReadNode: " << realVal << endl;
@@ -398,6 +400,7 @@ namespace ast {
 		CharNode(char charVal) : charVal(charVal) {
 			type = TypeKind::CHARtype;
 			subType = "Char";
+			exprType = "Char";
 		}
 		void printAstNode() {
 			cout << "CharNode: " << charVal << endl;
@@ -414,6 +417,7 @@ namespace ast {
 		StringNode(string stringVal) : stringVal(stringVal) {
 			type = TypeKind::STRINGtype;
 			subType = "String";
+			exprType = "String";
 		}
 		void printAstNode() {
 			cout << "StringNode: " << stringVal << endl;
@@ -430,6 +434,7 @@ namespace ast {
 		BooleanNode(bool boolVal) : boolVal(boolVal) {
 			type = TypeKind::BOOLEANtype;
 			subType = "Boolean";
+			exprType = "Boolean";
 		}
 		void printAstNode() {
 			cout << "BooleanNode: " << boolVal << endl;
@@ -447,6 +452,7 @@ namespace ast {
 			maxintVal = 32767;
 			type = TypeKind::INTtype;
 			subType = "MaxInt";
+			exprType = "MaxInt";
 		}
 		void printAstNode() {
 			cout << "MaxIntNode: " << maxintVal << endl;
@@ -503,6 +509,7 @@ namespace ast {
 		ArrayType(BasicType* range, BasicType* elementType) : range(range), elementType(elementType) {
 			type = TypeKind::ARRAYtype;
 			subType = "Array";
+			exprType = "Array";
 		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -522,6 +529,7 @@ namespace ast {
 		RecordType(VarDeclList* fieldList) : fieldList(fieldList) {
 			type = TypeKind::RECORDtype;
 			subType = "Record";
+			exprType = "Record";
 		}
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -538,7 +546,7 @@ namespace ast {
 	class BooleanType : public SimpleType
 	{
 	public:
-		BooleanType() { type = TypeKind::BOOLEANtype; subType = "Boolean"; }
+		BooleanType() { type = TypeKind::BOOLEANtype; subType = "Boolean"; exprType = "Boolean";}
 		void printAstNode() {
 			cout << "Boolean" << endl;
 		}
@@ -547,7 +555,7 @@ namespace ast {
 	class CharType : public SimpleType
 	{
 	public:
-		CharType() { type = TypeKind::CHARtype; subType = "Char"; }
+		CharType() { type = TypeKind::CHARtype; subType = "Char"; exprType = "Char"; }
 		void printAstNode() {
 			cout << "Char" << endl;
 		}
@@ -556,7 +564,7 @@ namespace ast {
 	class IntegerType : public SimpleType
 	{
 	public:
-		IntegerType() { type = TypeKind::INTtype; subType = "Integer"; }
+		IntegerType() { type = TypeKind::INTtype; subType = "Integer"; exprType = "Integer"; }
 		void printAstNode() {
 			cout << "Integer" << endl;
 		}
@@ -565,7 +573,7 @@ namespace ast {
 	class RealType : public SimpleType
 	{
 	public:
-		RealType() { type = TypeKind::REALtype; subType = "Real"; }
+		RealType() { type = TypeKind::REALtype; subType = "Real"; exprType = "Real"; }
 		void printAstNode() {
 			cout << "Real" << endl;
 		}
@@ -574,7 +582,7 @@ namespace ast {
 	class StringType : public SimpleType
 	{
 	public:
-		StringType() { type = TypeKind::STRINGtype; subType = "String"; }
+		StringType() { type = TypeKind::STRINGtype; subType = "String"; exprType = "String"; }
 		void printAstNode() {
 			cout << "String" << endl;
 		}
@@ -590,10 +598,12 @@ namespace ast {
 		RangeType(Name* lowerBName, Name* upperBName) : lowerBName(lowerBName), upperBName(upperBName) {
 			type = ValOrName::name;
 			subType == "Range";
+			exprType = "Range";
 		}
 		RangeType(Expression* lowerB, Expression* upperB) : lowerB(lowerB), upperB(upperB) {
 			type = ValOrName::val;
 			subType == "Range";
+			exprType = "Range";
 		}
 
 		childrenList* getChildrenList() {
@@ -616,7 +626,7 @@ namespace ast {
 	class VoidType : public SimpleType
 	{
 	public:
-		VoidType() { type = TypeKind::VOIDtype; subType = "Void"; }
+		VoidType() { type = TypeKind::VOIDtype; subType = "Void"; exprType = "Void"; }
 		void printAstNode() {
 			cout << "VOID" << endl;
 		}
@@ -825,8 +835,8 @@ namespace ast {
 	{
 	public:
 		Expression* cond;
-		BasicStmt*   exeStmt;
-		CaseExpr(Expression* cond, BasicStmt* exeStmt) : cond(cond), exeStmt(exeStmt) {subType = "CaseStmt";}
+		BasicStmt* exeStmt;
+		CaseExpr(Expression* cond, BasicStmt* exeStmt) : cond(cond), exeStmt(exeStmt) { subType = "CaseExpr"; }
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
 			children->push_back((BasicAstNode*)cond);
@@ -861,7 +871,7 @@ namespace ast {
 	class ProcCallStmt : public BasicStmt
 	{
 	public:
-		ProcCallStmt() {}
+		ProcCallStmt() { subType = "ProcCall";  }
 	};
 
 	class SysProcCall : public ProcCallStmt
@@ -870,9 +880,9 @@ namespace ast {
 		SYSPROC procName;
 		ArgList* args;
 		//有参数
-		SysProcCall(SYSPROC procName, ArgList* args) : procName(procName), args(args) { subType = "SysProcCall"; }
+		SysProcCall(SYSPROC procName, ArgList* args) : procName(procName), args(args) {}
 		//无参数
-		SysProcCall(SYSPROC procName) : procName(procName) { subType = "SysProcCall"; }
+		SysProcCall(SYSPROC procName) : procName(procName) {}
 
 		childrenList* getChildrenList() {
 			childrenList* children = new childrenList();
@@ -924,7 +934,12 @@ namespace ast {
 		Name*    procName;
 		ArgList* args;
 		//有参数
-		UserDefProcCall(Name* procName, ArgList* args) : procName(procName), args(args) {}
+		UserDefProcCall(Name* procName, ArgList* args) : procName(procName), args(args) { 
+			ProcCallStmt::subType = "ProcCall"; 
+			Expression::subType = "ProcCall";  
+			ProcCallStmt::id = procName->name; 
+			Expression::id = procName->name; 
+		}
 		//无参数
 		UserDefProcCall(Name* procName) : procName(procName) {}
 

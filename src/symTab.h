@@ -1,7 +1,6 @@
 #ifndef _SYMTAB_H_
 #define _SYMTAB_H_
 
-
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -36,7 +35,7 @@ public:
 class recordRec {
 public:
 	string recordName;
-	map<string, string> recordMember;
+	map<string, string> recordMember; //name, type
 	recordRec(string _recordName, map<string, string> _recordMember) {
 		recordName = _recordName;
 		recordMember = _recordMember;
@@ -101,7 +100,7 @@ Scope sc_top();
 void sc_push(string name);
 
 void st_insert(string id, int lineNo, int loc, string recType, string dataType);
-int st_lookup(string id);
+string st_lookup(string id);
 void st_print();
 
 namespace sym {

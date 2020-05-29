@@ -2,6 +2,7 @@
 using namespace std;
 
 static int current_depth = 0;
+static int memloc[1024];
 static vector<Scope> scopeStack; // current nested scopes
 static vector<Scope> scopes; // all existing scopes
 
@@ -26,6 +27,12 @@ Scope sc_create(string scopeName)
 		newScope->parentScope = nullptr;
 	}
 	current_depth++;
+	if (newScope->parentScope == NULL || newScope->parentScope->scopeName == "global") {
+		memloc[current_depth - 1] = 0;
+	}
+	else {
+		memloc[current_depth - 1] = memloc[current_depth - 2];
+	}
 	scopeStack.push_back(newScope);
 	scopes.push_back(newScope);
 	return newScope;
@@ -42,6 +49,8 @@ void sc_push(string name)
 	for (auto scope : scopes) {
 		if (scope->scopeName == name) {
 			scopeStack.push_back(scope);
+			current_depth++;
+			//cout << "SCPUSH: " << sc_top()->scopeName << endl;
 		}
 	}
 }
@@ -51,7 +60,7 @@ Scope sc_top()
 	return scopeStack[current_depth - 1];
 }
 
-void st_insert(string id, int lineNo, int loc, string recType, string dataType)
+void st_insert(string id, int lineNo, int size, string recType, string dataType)
 {
 	Scope currentScope = sc_top();
 	int hashValue = hashFunc(id);
@@ -65,24 +74,25 @@ void st_insert(string id, int lineNo, int loc, string recType, string dataType)
 		}
 	}
 	if (!found) {
-		BucketListRec newRec = BucketListRec(id, lineNo, loc, recType, dataType);
+		BucketListRec newRec = BucketListRec(id, lineNo, memloc[current_depth-1], recType, dataType);
+		memloc[current_depth - 1] += size;
 		currentScope->hashTable[hashValue].push_back(newRec);
 	}
 }
 
-int st_lookup(string id)
+string st_lookup(string id)
 {
 	int hashValue = hashFunc(id);
 	Scope currentScope = sc_top();
 	while (currentScope) {
 		for (auto item : currentScope->hashTable[hashValue]) {
 			if (item.id == id) {
-				return item.memloc;
+				return item.dataType;
 			}
 		}
 		currentScope = currentScope->parentScope;
 	}
-	return -1;
+	return "";
 }
 
 void st_print()
@@ -96,7 +106,8 @@ void st_print()
 			}
 			for (auto iden : item->hashTable[i]) {
 
-				cout << iden.id << '\t' << iden.memloc << '\t' << iden.recType << '\t' << iden.dataType << '\t';
+
+				cout << iden.id << '\t' << iden.recType << '\t' << iden.dataType << '\t' << iden.memloc << '\t';
 				for (auto lineNo : iden.lines) {
 					cout << '\t' << lineNo << " ";
 				}
