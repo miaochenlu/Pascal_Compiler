@@ -77,8 +77,8 @@ Pascal 的 Identifier 是以字母或下划线开头，后接若干字母、数�
 对于Pascal字面量，我们首先根据yytext里面的内容设置对应的yylval，然后返回对应类型的token
 
 ```cpp
-{number} 			{yylval.astint = atoi(yytext); return INTEGER;}
-\'.\'    			{yylval.astchar = yytext[1]; return CHAR;}
+{number} 		{yylval.astint = atoi(yytext); return INTEGER;}
+\'.\'    		{yylval.astchar = yytext[1]; return CHAR;}
 '([^']|'')+'  		{yylval.aststring = strdup(yytext); return STRING;}
 [0-9]+"."[0-9]+  	{yylval.astreal = atof(yytext); return REAL;}
 ```
@@ -112,13 +112,18 @@ Pascal 的 Identifier 是以字母或下划线开头，后接若干字母、数�
                 }
 ```
 
+### 1.3 其他
+Pascal是大小写不敏感的语言，我们在pascal.l中使用了
+```
+%option caseless
+```
 
 
 ## 2. Parser
 
 ### 2.1 文法分析
 
-首先给出文法如下
+根据给出的文法，我们绘制了下图来更清楚的观察结构
 
 ![image-20200523005608172](images/image-20200523005608172.png)
 
