@@ -284,9 +284,12 @@ namespace ast {
     llvm::Value* ast::LabelStmt::codeGen() {
         if(hasLabel)
         {
-            llvm::Function *nowFunc = irBuilder.GetInsertBlock()->getParent();
-            llvm::BasicBlock *blockLabel = llvm::BasicBlock::Create(llvmContext, std::to_string(label), nowFunc);
-            genEnv.getLabelEnv().setLabel(label, blockLabel);
+            llvm::BasicBlock *blockLabel = genEnv.getLabelEnv().getLabel(label) ;
+            if(blockLabel == nullptr) {
+                llvm::Function *nowFunc = irBuilder.GetInsertBlock()->getParent();
+                blockLabel = llvm::BasicBlock::Create(llvmContext, std::to_string(label), nowFunc);
+                genEnv.getLabelEnv().setLabel(label, blockLabel);
+            }
             irBuilder.CreateBr(blockLabel);
             irBuilder.SetInsertPoint(blockLabel);
         }
@@ -404,6 +407,20 @@ namespace ast {
 
         llvm::Value* llvmcase = exp->codeGen();
 
+        if (llvm::isa<llvm::ConstantInt>(llvmcase)) {
+            for(auto caseexpr: *caseList)
+            {
+                llvm::Value *llvmcond = caseexpr->cond->codeGen();
+                if ( llvm::isa<llvm::ConstantInt>(llvmcond)) {
+                    if (((llvm::ConstantInt*)llvmcond)->getValue() ==((llvm::ConstantInt*)llvmcase)->getValue()) {
+                        caseexpr->exeStmt->codeGen();
+                        return nullptr;
+                    }
+                }
+                else break;
+            }
+        }
+
         llvm::Function *llvmFunc = irBuilder.GetInsertBlock()->getParent();
         std::vector <llvm::BasicBlock *> caseBlocks;
         std::vector <llvm::BasicBlock *> condBlocks;
@@ -433,7 +450,13 @@ namespace ast {
     llvm::Value* ast::GotoStmt::codeGen() {
         llvm::Function *llvmFunc = irBuilder.GetInsertBlock()->getParent();
         llvm::BasicBlock* gotoBlock = genEnv.getLabelEnv().getLabel(label);
-        irBuilder.CreateBr(gotoBlock);
+        if (gotoBlock == nullptr) {
+            llvm::Function *nowFunc = irBuilder.GetInsertBlock()->getParent();
+            llvm::BasicBlock *blockLabel = llvm::BasicBlock::Create(llvmContext, std::to_string(label), nowFunc);
+            genEnv.getLabelEnv().setLabel(label, blockLabel);
+            irBuilder.CreateBr(blockLabel);
+        }
+        else irBuilder.CreateBr(gotoBlock);
         llvm::BasicBlock* gotoContinue = llvm::BasicBlock::Create(llvmContext, "gotocontinue", llvmFunc);
         irBuilder.SetInsertPoint(gotoContinue);
 

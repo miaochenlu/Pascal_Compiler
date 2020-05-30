@@ -16,7 +16,6 @@ BEGIN
 	WRITE('c:');
 	WRITELN(c);
 	WRITE('abs(a): ');
-	WRITE('abs(a): ');
 	WRITELN(ABS(a));
 	WRITE('sqr(a): ');
 	WRITELN(SQR(a));

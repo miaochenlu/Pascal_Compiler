@@ -1307,8 +1307,6 @@ value 类用来 LLVM 中的表示具有类型的值。在表达式代码生成�
 
 如赋值语句中，赋值左端为 identity， 而右端出现的变量名为 name。WRITE 函数的参数为name类型，READ 函数的参数为 identity类型。 对 name 类型的代码生成，会在得到指针变量后直接进行 Load 操作，而对 identity 则不会。
 
-
-
 ### 4.2 环境维护
 
 
@@ -1340,11 +1338,7 @@ value 类用来 LLVM 中的表示具有类型的值。在表达式代码生成�
 
 #### 4.2.4 标签信息维护
 
-标签信息主要用于 goto 语句，只有 label 语句中的标签名是用户定义的，会被加入到标签栈中，
-
-
-
-
+标签信息主要用于 goto 语句，只有 label 语句中的标签名是用户定义的，会被加入到标签栈中。由于 goto 语句可能会前往还未定义的标签，当出现goto语句时若标签未定义，会先定义出该标签，在之后进行标签内语句的定义。
 
 ### 4.3 llvm 变量生成
 
@@ -1531,78 +1525,233 @@ if(readElement->nodeType == "Name") {
 }
 ```
 
+### 4.5 测试
 
+#### 4.5.1 函数定义与调用测试
 
+同时测试了有函数与过程，参数传递，全局变量读取等方面：/test/procTest.pas
 
+``` pascal
+PROGRAM procTest;
+{routine head}
 
+{var part}
+VAR	
+	k : INTEGER;
+{routine part}
+FUNCTION inner1(a , b : INTEGER) : INTEGER;
+BEGIN
+	WRITELN('IN inner1: (a,b)');
+	inner1 := a + b;
+	WRITELN('return (a+b)');
+END;
 
+PROCEDURE inner2(aa : INTEGER; b :INTEGER);
+BEGIN
+	WRITELN('IN inner2: (a,b)');
+	WRITELN('a = call inner1: (a,b)');
+	aa := inner1(aa , b);
+	k := k + 5;
+	WRITE('a: shoule be a+b = k+2');
+	WRITELN(aa);
+	WRITELN('global k:');
+	WRITE('k+5: shoule be k+5');
+	WRITE(k);
+END;
+PROCEDURE outer;
+{subroutine var part}
+VAR 
+	added : INTEGER;
+{subroutine routine part}
+BEGIN
+	WRITELN('IN outer: define added = 1; read k');
+	added := 1;
+	READ(k);
+	WRITELN('call inner2: (k+1, added)');
+	inner2(k+1 , added);
+END;
 
-## 6. 构建与运行
-
-### 6.1 构建工程
-
-工程使用 cmake 构建
-
-#### 6.1.1 依赖
-
-+ cmake >= 3.10
-+ g++： C++14标准
-+ llvm 10.0.0
-+ flex
-+ bison
-
-#### 6.1.2 构建命令
-
-在工程目录下
-
-```bash
-mkdir ./build
-cd ./build
-cmake ..
-make
+{routine body}
+BEGIN
+	WRITELN('main: define k;');
+	WRITELN('call outer');
+	outer;
+END.
 ```
 
-`./build/src` 目录下的 Pascal_Compiler 即为目标编译器。
+![1590832204(1)](/images/1590832204(1).png)
 
-### 6.2 编译器使用
+#### 4.5.2 控制语句测试
 
-运行 Pascal_Compiler 即可看到使用说明。编译器支持输出 `.ll` 的 llvm 中间代码文件，`.s` 汇编代码文件， `.o` 的 obj文件 以及可执行文件 (默认)。
+生成llvm中间代码可以看到控制语句有不同 BasicBlock 组成：/test/stmtTest.pas
 
-![WeChat Screenshot_20200529105550](./images/WeChat Screenshot_20200529105550.png)
+``` pascal
+PROGRAM stmtTest;
+VAR
+    a, b, c, d : INTEGER;
 
-####  6.2.1 生成树 & 符号表显示
+BEGIN
+    READ(a);
+    b := 1;
+    c := 0;
+    1: IF a = 1 THEN BEGIN
+        FOR d:= 1 TO 10 DO BEGIN 
+            c := c + 1;
+        END;
+    END  
+    ELSE 
+    BEGIN 
+        d := 0;
+    END;
+    WRITELN(d);
+    
+    CASE b + 1 OF 
+		0: c := 1; 
+		1: c := 2; 
+		2: c := 3; 
+		3: c := 4; 
+	END;
 
-程序编译过程中会输出生成树与符号表。
+    WRITELN(c);
+END.
+```
 
-生成树：
+``` asm
+define void @main() {
+STMTTEST:
+  %0 = load i32, i32* @0
+  %read = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @scanfstring, i32 0, i32 0), i32* @0)
+  store i32 1, i32* @1
+  store i32 0, i32* @2
+  br label %"1"
 
-![WeChat Screenshot_20200529120519](./images/WeChat Screenshot_20200529120519.png)
+"1":                                              ; preds = %STMTTEST
+  %1 = load i32, i32* @0
+  %ieq = icmp eq i32 %1, 1
+  br i1 %ieq, label %ifThen, label %ifElse
 
-符号表：
+ifThen:                                           ; preds = %"1"
+  store i32 1, i32* @3
+  br label %ForLoop
 
-![WeChat Screenshot_20200529120539](./images/WeChat Screenshot_20200529120539.png)
+ifElse:                                           ; preds = %"1"
+  store i32 0, i32* @3
+  br label %ifContinue
 
-#### 6.2.2 生成 llvm 中间代码
+ifContinue:                                       ; preds = %ifElse, %ForContinue
+  %2 = load i32, i32* @3
+  %write = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @printstring, i32 0, i32 0), i32 %2)
+  %3 = load i32, i32* @1
+  %iadd1 = add i32 %3, 1
+  br label %Casecond
 
-在编译中加入 `-l` 参数即可生成 llvm 中间代码
+ForLoop:                                          ; preds = %ForLoop, %ifThen
+  %4 = load i32, i32* @2
+  %iadd = add i32 %4, 1
+  store i32 %iadd, i32* @2
+  %5 = load i32, i32* @3
+  %6 = add i32 %5, 1
+  store i32 %6, i32* @3
+  %7 = load i32, i32* @3
+  %8 = icmp eq i32 %7, 10
+  br i1 %8, label %ForContinue, label %ForLoop
 
-![WeChat Screenshot_20200529121043](/images/WeChat Screenshot_20200529121043.png)
+ForContinue:                                      ; preds = %ForLoop
+  br label %ifContinue
 
-#### 6.2.3 生成汇编代码
+Casecond:                                         ; preds = %ifContinue
+  %9 = icmp eq i32 %iadd1, 0
+  br i1 %9, label %Casecase, label %Casecond2
 
-在编译中加入 `-s` 参数即可生成汇编代码
+Casecase:                                         ; preds = %Casecond
+  store i32 1, i32* @2
+  br label %CaseContinue
 
-![WeChat Screenshot_20200529121344](/images/WeChat Screenshot_20200529121344.png)
+Casecond2:                                        ; preds = %Casecond
+  %10 = icmp eq i32 %iadd1, 1
+  br i1 %10, label %Casecase3, label %Casecond4
+  
+...
 
-直接通过 llvm 中的调用操作即可转换为中间代码。函数调用一般都用过命令跳转实现。通过 LLVM 可以完成调用完函数后返回原 Basiclock，从而无需实现 control link。
+CaseContinue:                                     ; preds = %Casecase7, %Casecond6, %Casecase5, %Casecase3, %Casecase
+  %13 = load i32, i32* @2
+  %write8 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @printstring.1, i32 0, i32 0), i32 %13)
+  ret void
+}
+```
+
+#### 4.5.3 系统函数测试
+
+测试了系统函数的功能：/test/sysFuncTest.pas
+
+![WeChat Screenshot_20200530174311](/images/WeChat Screenshot_20200530174311.png)
 
 
 
-#### 4.2.3 类型信息维护
+## 5 优化处理
 
-类型栈主要保存用户定义的结构体与定义的类型别名。保存定义的名称与 llvm::Type 的映射。
+### 5.1 常量叠加优化
 
-对于 Recoed 的结构体
+llvm 中若需要产生两个常量之间操作的中间代码，会自行进行优化，因此无需手动进行常量叠加的优化。
+
+### 5.2 冗余代码优化
+
+程序对 `if` 语句和 `case` 语句进行了冗余代码的优化。
+
+对 `if` 语句，当判断条件为 llvm::Constant 类型时，判断它为 1 则编译 `then` 部分，为 0 则编译 `else` 部分。
+
+对 `case` 语句，若判断条件为常量，则依次判断每个case，对常量的case，不等时不编译，遇到相等的case则只编译该 case，后面的 case 均不编译。若遇到不为常量的case，则对该case和后续case都进行编译。
+
+### 5.3 效果展示
+
+/test/optimizeTest.pas
+
+```pascal
+PROGRAM stmtTest;
+CONST
+    a = 1;
+    b = 1;
+VAR
+    c: INTEGER;
+BEGIN
+    
+    IF a = 1 THEN BEGIN
+        WRITELN('a=1');
+    END  
+    ELSE BEGIN 
+        WRITELN('a!=1');
+    END;    
+    CASE b + 1 OF 
+		0: c := 1+2;
+		1: c := 2+3;
+		2: c := 3+4;
+	END;
+    WRITELN(c);
+END.
+```
+
+```asm
+; ModuleID = 'Module'
+source_filename = "Module"
+
+@0 = internal global i32 zeroinitializer
+@1 = private unnamed_addr constant [6 x i8] c"'a=1'\00"
+@printstring = private unnamed_addr constant [5 x i8] c"%s \0A\00"
+@printstring.1 = private unnamed_addr constant [5 x i8] c"%d \0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @scanf(i8*, ...)
+
+define void @main() {
+STMTTEST:
+  %write = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @printstring, i32 0, i32 0), [6 x i8]* @1)
+  store i32 7, i32* @0
+  %0 = load i32, i32* @0
+  %write1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @printstring.1, i32 0, i32 0), i32 %0)
+  ret void
+}
+```
 
 
 

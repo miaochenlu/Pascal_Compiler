@@ -24,7 +24,7 @@ BEGIN
 	WRITELN(aa);
 	WRITELN('global k:');
 	WRITE('k+5: shoule be k+5');
-	WRITE(k);
+	WRITELN(k);
 END;
 
 PROCEDURE outer;
