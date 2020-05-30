@@ -220,6 +220,7 @@ string sym::getArrayType(string id, string scope){
 
 string sym::getRecordElementType(string id, string memberid, string scope){
     Scope currentScope = getscope(scope);
+    /*
     while (currentScope) {
         for (auto record : currentScope->recordList) {
             if (record.recordName == id) {
@@ -233,6 +234,7 @@ string sym::getRecordElementType(string id, string memberid, string scope){
         }
         currentScope = currentScope->parentScope;
     }
+     */
     return "";
 }
 
@@ -251,6 +253,7 @@ int sym::getArrayBegin(string id, string scope) {
 
 int sym::getRecordNo(string id, string memberid, string scope) {
     Scope currentScope = getscope(scope);
+    /*
     while (currentScope) {
         for (auto record : currentScope->recordList) {
             if (record.recordName == id) {
@@ -266,6 +269,7 @@ int sym::getRecordNo(string id, string memberid, string scope) {
         }
         currentScope = currentScope->parentScope;
     }
+    */
     return -1;
 
 }
