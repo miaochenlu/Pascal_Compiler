@@ -439,7 +439,8 @@ Pascal是大小写不敏感的语言，我们在pascal.l中使用了
 
 
 
-#### A. Expression 部分
+#### A. Expression 
+对于左结合的运算符，我们通过左递归来处理左结合以及表达式的优先级。
 
 ```cpp
 expression      :  expression  GE  expr {
@@ -501,7 +502,7 @@ factor          :  NAME {
 
 
 
-#### B. Statement部分
+#### B. Statement
 
 ```cpp
 stmt_list       : stmt_list  stmt  SEMI {
@@ -611,6 +612,7 @@ record_type_decl: RECORD  field_decl_list  END {
 ```
 
 #### D. 字面量
+对字面量，只需新建 一个对应的语法树节点，并将字面量的值传给其构造函数。
 
 ```cpp
 const_value     :  INTEGER          {$$ = new ast::IntegerNode($1);}
@@ -752,7 +754,7 @@ Program
 |   |   |   |   |   |---IntegerNode: 10
 |   |---UserDefProcCall: outer
 ```
-
+经过验证，该语法树是正确的
 
 
 ## 3. 语义分析
