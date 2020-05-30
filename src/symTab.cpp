@@ -124,12 +124,21 @@ void st_print()
 				continue;
 			}
 			for (auto iden : item->hashTable[i]) {
-				
-				cout << iden.id << '\t' << iden.recType << '\t' << iden.dataType << '\t' << iden.memloc << '\t';
+				cout.setf(ios::left);
+				cout.width(12);
+				cout << iden.id;
+				cout.setf(ios::left);
+				cout.width(12);
+				cout << iden.recType;
+				cout.setf(ios::left);
+				cout.width(12);
+				cout << iden.dataType;
+				cout.setf(ios::left);
+				cout.width(12); 
+				cout << iden.memloc;
 				for (auto lineNo : iden.lines) {
-					cout << '\t' << lineNo << " ";
+					cout << lineNo << " ";
 				}
-				
 				if (iden.dataType == "Array") {
 					int begin, end;
 					string type;
