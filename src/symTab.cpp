@@ -114,6 +114,18 @@ string st_lookup(string id)
 	return "";
 }
 
+string st_lookupCurr(string id)
+{
+	int hashValue = hashFunc(id);
+	Scope currentScope = sc_top();
+	for (auto item : currentScope->hashTable[hashValue]) {
+		if (item.id == id) {
+			return item.dataType;
+		}
+	}
+	return "";
+}
+
 void st_print()
 {
 	for (auto item : scopes) {
