@@ -296,11 +296,21 @@ static void checkNode(ast::BasicAstNode *node)
 	else if (node->nodeType == "Expr") {
 		if (node->subType == "ArrayElementRef") {
 			string arrayName = (*(node->getChildrenList()))[0]->id;
+			int lineNo = node->lineNo;
 			string dataType;
+			int begin, end;
 			for (auto array : sc_top()->arrayList) {
 				if (array.arrayName == arrayName) {
 					dataType = array.arrayType;
+					begin = array.arrayBegin;
+					end = array.arrayEnd;
+					break;
 				}
+			}
+			int index = (*(node->getChildrenList()))[1]->intVal;
+			if (index >= end || index < begin) {
+				cout << "Error in line[" << lineNo << "]: Array reference out of bounds." << endl;
+				exit(-1);
 			}
 			node->exprType = dataType;
 		}
@@ -308,8 +318,13 @@ static void checkNode(ast::BasicAstNode *node)
 			string recordName = (*(node->getChildrenList()))[0]->id;
 			string memberName = (*(node->getChildrenList()))[1]->id;
 			string memberType;
+			int lineNo = node->lineNo;
 			sc_push(recordName);
-			memberType = st_lookup(memberName);
+			memberType = st_lookupCurr(memberName);
+			if (memberType == "") {
+				cout << "Error in line[" << lineNo << "]: No member named '" << memberName << "' in '" << recordName << "'." << endl;
+				exit(-1);
+			}
 			node->exprType = memberType;
 			sc_pop();
 		}
