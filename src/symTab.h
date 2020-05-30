@@ -85,6 +85,7 @@ Scope sc_find(string name);
 
 void st_insert(string id, int lineNo, int loc, string recType, string dataType);
 string st_lookup(string id);
+string st_lookupCurr(string id);
 void st_print();
 
 #endif
