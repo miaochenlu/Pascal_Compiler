@@ -13,7 +13,6 @@ using namespace std;
 
 void buildSymTable(ast::BasicAstNode *Tree);
 void typeCheck(ast::BasicAstNode *Tree);
-//void initSymTable();
 static void traverse(ast::BasicAstNode * node, void(*preProc) (ast::BasicAstNode *), void(*postProc) (ast::BasicAstNode *));
 static void insertNode(ast::BasicAstNode *node);
 static void checkNode(ast::BasicAstNode *node);

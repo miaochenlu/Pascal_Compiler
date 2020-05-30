@@ -1,7 +1,5 @@
 #include "analyze.h"
 
-//Scope global;
-
 void buildSymTable(ast::BasicAstNode *Tree)
 {
 	Scope global = sc_create("global");
@@ -9,13 +7,6 @@ void buildSymTable(ast::BasicAstNode *Tree)
 	traverse(Tree, insertNode, popScope);
 	//sc_pop();
 	st_print();
-	//cout << sc_top()->scopeName << endl;
-	//map<string, string>::iterator it;
-	//it = userDefType.begin();
-	//while (it != userDefType.end()) {
-	//	cout << it->first << " : " << it->second << endl;
-	//	it++;
-	//}
 }
 
 void typeCheck(ast::BasicAstNode *Tree)
@@ -36,15 +27,13 @@ static void traverse(ast::BasicAstNode * node, void(*preProc) (ast::BasicAstNode
 	}
 }
 
-//TODO:  loc
 static void insertNode(ast::BasicAstNode *node)
 {
-	//Scope currentScope = sc_top();
 	if(node->nodeType == "ProgramHead") { // program head
 		ast::childrenList* children = node->getChildrenList();
 		string progName, progDataType, paraName, paraType, progArrayType, paraArrayType;
 		int progLineNo, paraLineNo, progArrayBegin, progArrayEnd, paraArrayBegin, paraArrayEnd, size;
-		map<string, string> progRecordMember, paraRecordMember; // TODO
+		int isProgRecord = 0;
 		for (auto child : *children) {
 			if (child->nodeType == "Identifier") {
 				progName = child->id;
@@ -63,24 +52,23 @@ static void insertNode(ast::BasicAstNode *node)
 					size = (progArrayEnd - progArrayBegin) * varSize[progArrayType];
 				}
 				else if (progDataType == "Record") {
-					map<string, string> recMem;
-					ast::childrenList* gchildren = child->getChildrenList();
-					size = 0;
-					for (auto gchild : *gchildren) {
-						string id = (*(gchild->getChildrenList()))[0]->id;
-						string type = (*(gchild->getChildrenList()))[1]->subType;
-						recMem.insert(pair<string, string>(id, type));
-						size += varSize[type];
-					}
-					recordRec newRecord = recordRec(progName, recMem);
+					isProgRecord = 1;
+					sc_create(progName+"Rec");
 				}
 			}
 		}
+		if (isProgRecord) {
+			sc_pop();
+		}
 		st_insert(progName, progLineNo, size, "Function", progDataType);
+		if (isProgRecord) {
+			sc_push(progName + "Rec");
+		}
 		sc_create(progName);
 		for (auto child : *children) {
 			if (child->nodeType == "Parameter") {
 				ast::childrenList* gchildren = child->getChildrenList();
+				int isParaRecord = 0;
 				for (auto gchild : *gchildren) {
 					if (gchild->nodeType == "Identifier") { // name
 						paraName = gchild->id;
@@ -99,20 +87,18 @@ static void insertNode(ast::BasicAstNode *node)
 							size = (paraArrayEnd - paraArrayBegin) * varSize[paraArrayType];
 						}
 						else if (paraType == "Record") {
-							map<string, string> recMem;
-							ast::childrenList* ggchildren = gchild->getChildrenList();
-							size = 0;
-							for (auto ggchild : *ggchildren) {
-								string id = (*(ggchild->getChildrenList()))[0]->id;
-								string type = (*(ggchild->getChildrenList()))[1]->subType;
-								recMem.insert(pair<string, string>(id, type));
-								size += varSize[type];
-							}
-							recordRec newRecord = recordRec(paraName, recMem);
+							isParaRecord = 1;
+							sc_create(paraName);
 						}
 					}
 				}
+				if (isParaRecord) {
+					sc_pop();
+				}
 				st_insert(paraName, paraLineNo, size, "Variable", paraType);
+				if (isParaRecord) {
+					sc_push(paraName);
+				}
 			}
 		}
 	}
@@ -138,6 +124,7 @@ static void insertNode(ast::BasicAstNode *node)
 			st_insert(declName, declLineNo, varSize[declType], "Const", declType);
 		}
 		else if (node->subType == "type") {
+			int isRecord = 0;
 			for (auto child : *children) {
 				if (child->nodeType == "Name") {
 					declName = child->id;
@@ -154,23 +141,20 @@ static void insertNode(ast::BasicAstNode *node)
 						sc_top()->arrayList.push_back(newArray);
 					}
 					else if (declType == "Record") {
-						map<string, string> recMem;
-						ast::childrenList* gchildren = child->getChildrenList();
-						for (auto gchild : *gchildren) {
-							string id = (*(gchild->getChildrenList()))[0]->id;
-							string type = (*(gchild->getChildrenList()))[1]->subType;
-							recMem.insert(pair<string, string>(id, type));
-						}
-						recordRec newRecord = recordRec(declName, recMem);
-						sc_top()->recordList.push_back(newRecord);
+						sc_create(declName);
+						sc_pop();
+						isRecord = 1;
 					}
 				}
 			}
 			sc_top()->userDefType.insert(pair<string, string>(declName, declType));
-			//cout << declName << " : " << declType << " - " << sc_top()->scopeName << endl;
+			if (isRecord) {
+				sc_push(declName);
+			}
 		}
 		else if (node->subType == "var") {
 			int size;
+			int isRecord = 0;
 			for (auto child : *children) {
 				if (child->nodeType == "Identifier") {
 					declName = child->id;
@@ -189,21 +173,10 @@ static void insertNode(ast::BasicAstNode *node)
 						size = (arrayEnd - arrayBegin) * varSize[arrayType];
 					}
 					else if (declType == "Record") {
-						map<string, string> recMem;
-						ast::childrenList* gchildren = child->getChildrenList();
-						size = 0;
-						for (auto gchild : *gchildren) {
-							string id = (*(gchild->getChildrenList()))[0]->id;
-							string type = (*(gchild->getChildrenList()))[1]->subType;
-							recMem.insert(pair<string, string>(id, type));
-							size += varSize[type];
-						}
-						recordRec newRecord = recordRec(declName, recMem);
+						isRecord = 1;
+						sc_create(declName);
 					}
-					//cout << sc_top()->scopeName << endl;
 					if (sc_top()->userDefType[declType] != "") {
-						//cout << sc_top()->userDefType[declType] << endl;
-						//declType = sc_top()->userDefType[declType];
 						if (sc_top()->userDefType[declType] == "Array") {
 							for (auto array : sc_top()->arrayList) {
 								if (array.arrayName == declType) {
@@ -212,26 +185,34 @@ static void insertNode(ast::BasicAstNode *node)
 									size = (newArray.arrayEnd - newArray.arrayBegin) * varSize[newArray.arrayType];
 								}
 							}
+							declType = "Array";
 						}
 						else if (sc_top()->userDefType[declType] == "Record") {
-							//cout << declType << endl;
-							for (auto record : sc_top()->recordList) {
-								if (record.recordName == declType) {
-									size = 0;
-									//cout << "---2" << endl;
-									recordRec newRecord = recordRec(declName, record);
-									sc_top()->recordList.push_back(newRecord);
-									for (auto rec : newRecord.recordMember) {
-										size += varSize[rec.second];
-									}
+							sc_create(declName, sc_find(declType));
+							declType = "Record";
+							size = 0;
+							sc_push(declName);
+							for (auto hash : sc_top()->hashTable) {
+								for (auto item : hash) {
+									size += varSize[item.dataType];
 								}
 							}
+							sc_pop();
 						}
-						declType = sc_top()->userDefType[declType];
+						else {
+							declType = sc_top()->userDefType[declType];
+						}
+						
 					}
 				}
 			}
+			if (isRecord) {
+				sc_pop();
+			}
 			st_insert(declName, declLineNo, size, "Variable", declType);
+			if (isRecord) {
+				sc_push(declName);
+			}
 		}
 		
 	}
@@ -256,7 +237,6 @@ static void checkNode(ast::BasicAstNode *node)
 				int lineNo = child->lineNo;
 				string idName = child->id;
 				if (st_lookup(idName) == "") {
-					//cout << sc_top()->scopeName << endl;
 					cout << "Error in line[" << lineNo << "]: Undefined expression: '" << idName << "'." << endl;
 					exit(-1);
 				}
@@ -267,27 +247,7 @@ static void checkNode(ast::BasicAstNode *node)
 		//cout << node->id << endl;
 		node->exprType = st_lookup(node->id);
 	}
-	else if (node->subType == "ArrayElementRef") {
-		string arrayName = (*(node->getChildrenList()))[0]->id;
-		string dataType;
-		for (auto array : sc_top()->arrayList) {
-			if (array.arrayName == arrayName) {
-				dataType = array.arrayType;
-			}
-		}
-		node->exprType = dataType;
-	}
-	else if (node->subType == "RecordElementRef") {
-		string recordName = (*(node->getChildrenList()))[0]->id;
-		string memberName = (*(node->getChildrenList()))[1]->id;
-		string memberType;
-		for (auto rec : sc_top()->recordList) {
-			if (rec.recordName == recordName) {
-				memberType = rec.recordMember[memberName];
-			}
-		}
-		node->exprType = memberType;
-	}
+
 	if (node->nodeType == "Stmt") {
 		if (node->subType == "Assign") {
 			ast::BasicAstNode *child = (*(node->getChildrenList()))[0];
@@ -333,7 +293,41 @@ static void checkNode(ast::BasicAstNode *node)
 		}
 	}
 	else if (node->nodeType == "Expr") {
-		if (node->subType == "Binary") {
+		if (node->subType == "ArrayElementRef") {
+			string arrayName = (*(node->getChildrenList()))[0]->id;
+			int lineNo = node->lineNo;
+			string dataType;
+			int begin, end;
+			for (auto array : sc_top()->arrayList) {
+				if (array.arrayName == arrayName) {
+					dataType = array.arrayType;
+					begin = array.arrayBegin;
+					end = array.arrayEnd;
+					break;
+				}
+			}
+			int index = (*(node->getChildrenList()))[1]->intVal;
+			if (index >= end || index < begin) {
+				cout << "Error in line[" << lineNo << "]: Array reference out of bounds." << endl;
+				exit(-1);
+			}
+			node->exprType = dataType;
+		}
+		else if (node->subType == "RecordElementRef") {
+			string recordName = (*(node->getChildrenList()))[0]->id;
+			string memberName = (*(node->getChildrenList()))[1]->id;
+			string memberType;
+			int lineNo = node->lineNo;
+			sc_push(recordName);
+			memberType = st_lookupCurr(memberName);
+			if (memberType == "") {
+				cout << "Error in line[" << lineNo << "]: No member named '" << memberName << "' in '" << recordName << "'." << endl;
+				exit(-1);
+			}
+			node->exprType = memberType;
+			sc_pop();
+		}
+		else if (node->subType == "Binary") {
 			ast::BasicAstNode *fchild = (*(node->getChildrenList()))[0];
 			ast::BasicAstNode *lchild = (*(node->getChildrenList()))[1];
 			if (fchild->nodeType == "Name" || fchild->nodeType == "Identifier") {
@@ -399,7 +393,7 @@ static void checkNode(ast::BasicAstNode *node)
 
 static void popScope(ast::BasicAstNode *node)
 {
-	if (node->nodeType == "Program") {
+	if (node->nodeType == "Program" || node->subType == "Record") {
 		sc_pop();
 	}
 }
@@ -416,7 +410,6 @@ static void pushScope(ast::BasicAstNode *node)
 			}
 		}
 		sc_push(progName);
-		//cout << "PUSH: " << progName << endl;
 	}
 }
 

@@ -12,7 +12,6 @@ static int hashFunc(string str)
     for(int i=0; i<str.length(); i++){
         value = ( (value << SHIFT) + str[i] ) % TABLE_SIZE;
     }
-	//cout << value << endl;
     return value;
 }
 
@@ -38,6 +37,13 @@ Scope sc_create(string scopeName)
 	return newScope;
 }
 
+Scope sc_create(string scopeName, Scope oriScope)
+{
+	Scope newScope = new ScopeRec(scopeName, oriScope);
+	scopes.push_back(newScope);
+	return newScope;
+}
+
 void sc_pop()
 {
 	scopeStack.pop_back();
@@ -50,9 +56,18 @@ void sc_push(string name)
 		if (scope->scopeName == name) {
 			scopeStack.push_back(scope);
 			current_depth++;
-			//cout << "SCPUSH: " << sc_top()->scopeName << endl;
 		}
 	}
+}
+
+Scope sc_find(string name) 
+{
+	for (auto scope : scopes) {
+		if (scope->scopeName == name) {
+			return scope;
+		}
+	}
+	return sc_find("global");
 }
 
 Scope sc_top()
@@ -78,6 +93,10 @@ void st_insert(string id, int lineNo, int size, string recType, string dataType)
 		memloc[current_depth - 1] += size;
 		currentScope->hashTable[hashValue].push_back(newRec);
 	}
+	else {
+		cout << "Error in line[" << lineNo << "]: Variable '" << id << "' is already defined." << endl;
+		exit(-1);
+	}
 }
 
 string st_lookup(string id)
@@ -95,6 +114,18 @@ string st_lookup(string id)
 	return "";
 }
 
+string st_lookupCurr(string id)
+{
+	int hashValue = hashFunc(id);
+	Scope currentScope = sc_top();
+	for (auto item : currentScope->hashTable[hashValue]) {
+		if (item.id == id) {
+			return item.dataType;
+		}
+	}
+	return "";
+}
+
 void st_print()
 {
 	for (auto item : scopes) {
@@ -107,11 +138,21 @@ void st_print()
 			for (auto iden : item->hashTable[i]) {
 
 
-				cout << iden.id << '\t' << iden.recType << '\t' << iden.dataType << '\t' << iden.memloc << '\t';
+				cout.setf(ios::left);
+				cout.width(12);
+				cout << iden.id;
+				cout.setf(ios::left);
+				cout.width(12);
+				cout << iden.recType;
+				cout.setf(ios::left);
+				cout.width(12);
+				cout << iden.dataType;
+				cout.setf(ios::left);
+				cout.width(12); 
+				cout << iden.memloc;
 				for (auto lineNo : iden.lines) {
-					cout << '\t' << lineNo << " ";
+					cout << lineNo << " ";
 				}
-				
 				if (iden.dataType == "Array") {
 					int begin, end;
 					string type;
@@ -124,28 +165,6 @@ void st_print()
 						}
 					}
 					cout << '\t' << "<Array: range [" << begin << ":" << end << "], type " << type << " >" ;
-				}
-				else if (iden.dataType == "Record"){
-					cout << '\t' << "<Record: ";
-					for (auto record : item->recordList) {
-						if (record.recordName == iden.id) {
-							//cout << "--1" << endl;
-							map<string, string>::iterator it;
-							it = record.recordMember.begin();
-							int isBegin = 1;
-							while (it != record.recordMember.end()) {
-								if (isBegin) {
-									cout << it->first << " " << it->second;
-									isBegin = 0;
-								}
-								else {
-									cout << ", " << it->first << " " << it->second;
-								}
-								it++;
-							}
-						}
-					}
-					cout << ">";
 				}
 				cout << endl;
 			}
