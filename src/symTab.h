@@ -39,13 +39,15 @@ public:
 	int memloc;
 	string recType; // function, variable, const
 	string dataType; // void, integer, char, string..
+	int order;
 
-	BucketListRec(string _id, int _lineno, int _memloc, string _recType, string _dataType) {
+	BucketListRec(string _id, int _lineno, int _memloc, string _recType, string _dataType, int _order) {
 		id = _id; 
         memloc = _memloc;
 		lines.push_back(_lineno);
 		recType = _recType;
 		dataType = _dataType;
+		order = _order;
 	}
 };
 typedef vector<BucketListRec> BucketList;
@@ -58,9 +60,11 @@ public:
 	BucketList hashTable[TABLE_SIZE];
 	map<string, string> userDefType;
 	vector<arrayRec> arrayList;
+	int order;
 
 	ScopeRec(string _scopeName) {
         scopeName = _scopeName; 
+		order = 0;
     }
 	ScopeRec(string _scopeName, ScopeRec* oriScope) {
 		scopeName = _scopeName;
@@ -71,6 +75,7 @@ public:
 		}
 		userDefType = oriScope->userDefType;
 		arrayList = oriScope->arrayList;
+		order = 0;
 	}
 };
 typedef ScopeRec* Scope;

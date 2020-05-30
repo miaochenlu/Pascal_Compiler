@@ -1,4 +1,4 @@
-# Pascal_Compiler
+Pascal_Compiler
 
 ## 1. Scanner
 
@@ -1207,9 +1207,10 @@ public:
 	vector<int> lines;
 	int memloc;
 	string recType;
-	string dataType; // void, integer, char, string..
+	string dataType;
+    int order;
 
-	BucketListRec(string _id, int _lineno, int _memloc, string _recType, string _dataType) {
+	BucketListRec(string _id, int _lineno, int _memloc, string _recType, string _dataType, int _order) {
 		id = _id; 
         memloc = _memloc;
 		lines.push_back(_lineno);
@@ -1238,6 +1239,8 @@ public:
   变量的数据类型 / 函数返回的数据类型 
 
   Void / Integer / Char / Real / String / Array / Record ..
+
+- `order`：变量被定义的顺序（从0开始）
 
 ##### Class arrayRec
 
@@ -1295,9 +1298,11 @@ public:
 	map<string, string> userDefType;
 	vector<arrayRec> arrayList;
 	vector<recordRec> recordList;
+    int order;
 
 	ScopeRec(string _scopeName) { 
         scopeName = _scopeName; 
+        order = 0;
     }
     
     ScopeRec(string _scopeName, ScopeRec* oriScope) {
@@ -1309,6 +1314,7 @@ public:
         }
         userDefType = oriScope->userDefType;
         arrayList = oriScope->arrayList;
+        order = 0;
 	}
 };
 ```
@@ -1335,6 +1341,8 @@ public:
 
 - `recordList`：用于存储当前作用域中的所有`Record`类型的变量
 
+- `order`：最后一个被定义变量的编号
+
 - 两个构造函数分别用于新建并初始化作用域，和维护用户自定义数据类型中的Record变量
 
 #### 3.1.2 符号表操作实现
@@ -1354,11 +1362,11 @@ public:
   依次打印所有的作用域以及作用域中符号表的如下信息：
 
   - 作用域名称、作用域深度
-  - 符号名称、符号类型、数据类型、虚拟地址位置、行号信息
+  - 符号名称、符号类型、数据类型、虚拟地址位置、定义顺序、行号信息
 
   示例如下：
 
-  ![image-20200530141616754](/images/image-20200530141616754.png)
+  ![image-20200530190813801](images/image-20200530190813801.png)
 
 #### 3.1.3 作用域操作实现
 
@@ -1472,7 +1480,7 @@ END.
 
 输出符号表如下：
 
-![image-20200530162516414](/images/image-20200530162516414.png)
+![image-20200530190813801](images/image-20200530190813801.png)
 
 ##### 特殊数据类型
 
@@ -1498,7 +1506,6 @@ VAR
     k : rtype;
     r : atype;
     e : INTEGER;
-	{e : STRING;}
 	rrrr : RECORD
 		ra : INTEGER;
 		rb : REAL;
@@ -1517,13 +1524,13 @@ END.
 
 输出符号表如下：
 
-![image-20200530162706942](/images/image-20200530162706942.png)
+![image-20200530191316182](images/image-20200530191316182.png)
 
 #### 3.4.2 类型检查报错测试
 
 ##### 变量未定义
 
-![image-20200530171623478](/images/image-20200530171623478.png)
+![image-20200530171623478](images/image-20200530171623478.png)
 
 ##### 赋值类型错误
 
@@ -1535,7 +1542,7 @@ BEGIN
 END
 ```
 
-![image-20200530162836368](/images/image-20200530162836368.png)
+![image-20200530162836368](images/image-20200530162836368.png)
 
 ##### 不适当的左值类型
 
@@ -1547,7 +1554,7 @@ BEGIN
 END
 ```
 
-![image-20200530163023087](/images/image-20200530163023087.png)
+![image-20200530163023087](images/image-20200530163023087.png)
 
 ##### 数组越界
 
@@ -1559,7 +1566,7 @@ BEGIN
 END
 ```
 
-![image-20200530163827527](/images/image-20200530163827527.png)
+![image-20200530163827527](images/image-20200530163827527.png)
 
 ##### Record成员不存在
 
@@ -1577,7 +1584,7 @@ BEGIN
 END.
 ```
 
-![image-20200530164536014](/images/image-20200530164536014.png)
+![image-20200530164536014](images/image-20200530164536014.png)
 
 ##### 重复/冲突定义
 
@@ -1587,7 +1594,7 @@ VAR
 	e : STRING;
 ```
 
-![image-20200530170615290](/images/image-20200530170615290.png)
+![image-20200530170615290](images/image-20200530170615290.png)
 
 ##### for循环条件错误
 

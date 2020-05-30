@@ -89,7 +89,7 @@ void st_insert(string id, int lineNo, int size, string recType, string dataType)
 		}
 	}
 	if (!found) {
-		BucketListRec newRec = BucketListRec(id, lineNo, memloc[current_depth-1], recType, dataType);
+		BucketListRec newRec = BucketListRec(id, lineNo, memloc[current_depth-1], recType, dataType, currentScope->order++);
 		memloc[current_depth - 1] += size;
 		currentScope->hashTable[hashValue].push_back(newRec);
 	}
@@ -150,6 +150,9 @@ void st_print()
 				cout.setf(ios::left);
 				cout.width(12); 
 				cout << iden.memloc;
+				cout.setf(ios::left);
+				cout.width(12); 
+				cout << iden.order;
 				for (auto lineNo : iden.lines) {
 					cout << lineNo << " ";
 				}
