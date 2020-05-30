@@ -5,7 +5,7 @@ void buildSymTable(ast::BasicAstNode *Tree)
 	Scope global = sc_create("global");
 	Tree->scope = global;
 	traverse(Tree, insertNode, popScope);
-	//sc_pop();
+	sc_pop();
 	st_print();
 }
 
@@ -107,46 +107,40 @@ static void insertNode(ast::BasicAstNode *node)
 		int declLineNo, arrayBegin, arrayEnd;
 		map<string, string> recordMember;
 		ast::childrenList* children = node->getChildrenList();
+		ast::BasicAstNode* fchild = (*(node->getChildrenList()))[0];
+		ast::BasicAstNode* lchild = (*(node->getChildrenList()))[1];
+
+
 		if (node->subType == "const") {
-			for (auto child : *children) {
-				if (child->nodeType == "Name") {
-					declName = child->id;
-					declLineNo = child->lineNo;
-					child->scope = sc_top();
-				}
-				else if (child->nodeType == "BasicConst") {
-					declType = child->subType;
-					if (sc_top()->userDefType[declType] != "") {
-						declType = sc_top()->userDefType[declType];
-					}
-				}
+			declName = fchild->id;
+			declLineNo = fchild->lineNo;
+			fchild->scope = sc_top();
+			declType = lchild->subType;
+			if (sc_top()->userDefType[declType] != "") {
+				declType = sc_top()->userDefType[declType];
 			}
+			fchild->exprType = declType;
 			st_insert(declName, declLineNo, varSize[declType], "Const", declType);
 		}
 		else if (node->subType == "type") {
 			int isRecord = 0;
-			for (auto child : *children) {
-				if (child->nodeType == "Name") {
-					declName = child->id;
-					declLineNo = child->lineNo;
-					child->scope = sc_top();
-				}
-				else if (child->nodeType == "BasicType") {
-					declType = child->subType;
-					if (declType == "Array") {
-						arrayBegin = (*((*(child->getChildrenList()))[0]->getChildrenList()))[0]->intVal;
-						arrayEnd = (*((*(child->getChildrenList()))[0]->getChildrenList()))[1]->intVal;
-						arrayType = (*(child->getChildrenList()))[1]->subType;
-						arrayRec newArray = arrayRec(declName, arrayBegin, arrayEnd, arrayType);
-						sc_top()->arrayList.push_back(newArray);
-					}
-					else if (declType == "Record") {
-						sc_create(declName);
-						sc_pop();
-						isRecord = 1;
-					}
-				}
+			declName = fchild->id;
+			declLineNo = fchild->lineNo;
+			fchild->scope = sc_top();
+			declType = lchild->subType;
+			if (declType == "Array") {
+				arrayBegin = (*((*(lchild->getChildrenList()))[0]->getChildrenList()))[0]->intVal;
+				arrayEnd = (*((*(lchild->getChildrenList()))[0]->getChildrenList()))[1]->intVal;
+				arrayType = (*(lchild->getChildrenList()))[1]->subType;
+				arrayRec newArray = arrayRec(declName, arrayBegin, arrayEnd, arrayType);
+				sc_top()->arrayList.push_back(newArray);
 			}
+			else if (declType == "Record") {
+				sc_create(declName);
+				sc_pop();
+				isRecord = 1;
+			}
+			fchild->exprType = declType;
 			sc_top()->userDefType.insert(pair<string, string>(declName, declType));
 			if (isRecord) {
 				sc_push(declName);
@@ -155,57 +149,52 @@ static void insertNode(ast::BasicAstNode *node)
 		else if (node->subType == "var") {
 			int size;
 			int isRecord = 0;
-			for (auto child : *children) {
-				if (child->nodeType == "Identifier") {
-					declName = child->id;
-					declLineNo = child->lineNo;
-					child->scope = sc_top();
+			declName = fchild->id;
+			declLineNo = fchild->lineNo;
+			fchild->scope = sc_top();
+
+			declType = lchild->subType;
+			size = varSize[declType];
+			if (declType == "Array") {
+				arrayBegin = (*((*(lchild->getChildrenList()))[0]->getChildrenList()))[0]->intVal;
+				arrayEnd = (*((*(lchild->getChildrenList()))[0]->getChildrenList()))[1]->intVal;
+				arrayType = (*(lchild->getChildrenList()))[1]->subType;
+				arrayRec newArray = arrayRec(declName, arrayBegin, arrayEnd, arrayType);
+				sc_top()->arrayList.push_back(newArray);
+				size = (arrayEnd - arrayBegin) * varSize[arrayType];
+			}
+			else if (declType == "Record") {
+				isRecord = 1;
+				sc_create(declName);
+			}
+			if (sc_top()->userDefType[declType] != "") {
+				if (sc_top()->userDefType[declType] == "Array") {
+					for (auto array : sc_top()->arrayList) {
+						if (array.arrayName == declType) {
+							arrayRec newArray = arrayRec(declName, array);
+							sc_top()->arrayList.push_back(newArray);
+							size = (newArray.arrayEnd - newArray.arrayBegin) * varSize[newArray.arrayType];
+						}
+					}
+					declType = "Array";
 				}
-				else if (child->nodeType == "BasicType") {
-					declType = child->subType;
-					size = varSize[declType];
-					if (declType == "Array") {
-						arrayBegin = (*((*(child->getChildrenList()))[0]->getChildrenList()))[0]->intVal;
-						arrayEnd = (*((*(child->getChildrenList()))[0]->getChildrenList()))[1]->intVal;
-						arrayType = (*(child->getChildrenList()))[1]->subType;
-						arrayRec newArray = arrayRec(declName, arrayBegin, arrayEnd, arrayType);
-						sc_top()->arrayList.push_back(newArray);
-						size = (arrayEnd - arrayBegin) * varSize[arrayType];
-					}
-					else if (declType == "Record") {
-						isRecord = 1;
-						sc_create(declName);
-					}
-					if (sc_top()->userDefType[declType] != "") {
-						if (sc_top()->userDefType[declType] == "Array") {
-							for (auto array : sc_top()->arrayList) {
-								if (array.arrayName == declType) {
-									arrayRec newArray = arrayRec(declName, array);
-									sc_top()->arrayList.push_back(newArray);
-									size = (newArray.arrayEnd - newArray.arrayBegin) * varSize[newArray.arrayType];
-								}
-							}
-							declType = "Array";
+				else if (sc_top()->userDefType[declType] == "Record") {
+					sc_create(declName, sc_find(declType));
+					declType = "Record";
+					size = 0;
+					sc_push(declName);
+					for (auto hash : sc_top()->hashTable) {
+						for (auto item : hash) {
+							size += varSize[item.dataType];
 						}
-						else if (sc_top()->userDefType[declType] == "Record") {
-							sc_create(declName, sc_find(declType));
-							declType = "Record";
-							size = 0;
-							sc_push(declName);
-							for (auto hash : sc_top()->hashTable) {
-								for (auto item : hash) {
-									size += varSize[item.dataType];
-								}
-							}
-							sc_pop();
-						}
-						else {
-							declType = sc_top()->userDefType[declType];
-						}
-						
 					}
+					sc_pop();
+				}
+				else {
+					declType = sc_top()->userDefType[declType];
 				}
 			}
+			fchild->exprType = declType;
 			if (isRecord) {
 				sc_pop();
 			}
@@ -244,16 +233,17 @@ static void checkNode(ast::BasicAstNode *node)
 		}
 	}
 	if (node->subType == "ProcCall") {
-		//cout << node->id << endl;
 		node->exprType = st_lookup(node->id);
 	}
-
 	if (node->nodeType == "Stmt") {
 		if (node->subType == "Assign") {
 			ast::BasicAstNode *child = (*(node->getChildrenList()))[0];
 			string idName = child->id;
 			int lineNo = child->lineNo;
 			string idType = st_lookup(idName);
+			if ((*(node->getChildrenList()))[1]->exprType == "") {
+				(*(node->getChildrenList()))[1]->exprType = st_lookup((*(node->getChildrenList()))[1]->id);
+			}
 			string assignType = (*(node->getChildrenList()))[1]->exprType;
 			if (idType == "") {
 				idType = child->exprType;
@@ -280,12 +270,15 @@ static void checkNode(ast::BasicAstNode *node)
 			ast::childrenList *children = node->getChildrenList();
 			ast::BasicAstNode *fchild = (*(node->getChildrenList()))[0];
 			string stmtType = fchild->exprType;
+			if (stmtType == "") {
+				stmtType = st_lookup(fchild->id);
+			}
 			for (auto child : *children) {
 				if (child->subType == "CaseExpr") {
 					string caseType = (*(child->getChildrenList()))[0]->exprType;
 					int lineNo = (*(child->getChildrenList()))[0]->lineNo;
 					if (!canChange(caseType, stmtType) && (caseType != stmtType)) {
-						cout << "Error in line[" << lineNo << "]: Case type does not match <" << caseType << ", " << stmtType << ">." << endl;
+						cout << "Error in line[" << lineNo << "]: Case type does not match <" << stmtType << ", " << caseType << ">." << endl;
 						exit(-1);
 					}
 				}
@@ -412,5 +405,3 @@ static void pushScope(ast::BasicAstNode *node)
 		sc_push(progName);
 	}
 }
-
-
