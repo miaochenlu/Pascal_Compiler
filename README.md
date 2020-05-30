@@ -1194,17 +1194,98 @@ Program
 
 符号表是语义分析中较为重要的数据结构，存储了整个程序中各个区域的所有符号信息，在符号表中维护了符号名、符号类型、数据类型、内存虚拟地址、行号等信息。符号表将在类型检查、目标代码生成等过程中用作类型查找、分配变量内存空间等。
 
-在本项目中，以哈希表来维护符号表的结构，定义哈希表的大小为571，用571个桶来组成。其中使用分离链表的方式来处理哈希表冲突，即每个桶都是一个线性的链表，新的项将会被链接在对应的桶中链表的末尾。
+在本项目中，以哈希表来维护符号表的结构，定义哈希表的大小为571，用571个桶来组成。其中使用类似于分离链表的方式来处理哈希表冲突，即每个桶都是一个线性的容器（用STL中的vector来存储），新的项将会被放置在对应的桶中容器的末尾。
+
+哈希函数：$h = (\sum^n_{i=1} \alpha^{n-i}c_i) \;  mod \; size$，其中$c_i$为变量/函数名字符串第$i$个字符的数字值
 
 #### 3.1.1 数据结构
 
 ##### Class BucketListRec
 
-BucketListRec用于维护哈希表中的记录。
+BucketListRec作为符号表每一项内容的索引，用于维护表中的记录。结构如下：
 
-##### Class recordRec
+```c++
+class BucketListRec {
+public:
+	string id;
+	vector<int> lines;
+	int memloc;
+	string recType;
+	string dataType; // void, integer, char, string..
+
+	BucketListRec(string _id, int _lineno, int _memloc, string _recType, string _dataType) {
+		id = _id; 
+        memloc = _memloc;
+		lines.push_back(_lineno);
+		recType = _recType;
+		dataType = _dataType;
+	}
+};
+```
+
+其中各成员含义如下：
+
+- `id`：变量/函数名称
+
+- `lines`：变量/函数出现的行号信息
+
+- `memloc`：内存地址
+
+  在符号表内为所有符号分配虚拟内存地址，便于生成目标代码时分配内存空间
+
+- `recType`：符号类型
+
+  Function / Const / Variable
+
+- `dataType`：数据类型
+
+  变量的数据类型 / 函数返回的数据类型 
+
+  Void / Integer / Char / Real / String / Array / Record ..
+
+##### Class arrayRec
+
+由于Pascal文法中数组变量的特殊性，定义一个类来单独用于记录数组类型变量的信息。
+
+结构如下：
+
+```c++
+class arrayRec {
+public:
+	string arrayName;
+	int arrayBegin;
+	int arrayEnd;
+	string arrayType;
+    
+	arrayRec(string _arrayName, int _arrayBegin, int _arrayEnd, string _arrayType) {
+		arrayName = _arrayName;
+		arrayBegin = _arrayBegin;
+		arrayEnd = _arrayEnd;
+		arrayType = _arrayType;
+	}
+    
+	arrayRec(string newName, arrayRec rec) {
+		arrayName = newName;
+		arrayBegin = rec.arrayBegin;
+		arrayEnd = rec.arrayEnd;
+		arrayType = rec.arrayType;
+	}
+};
+```
+
+各成员含义如下：
+
+- `arrayName`：变量名称
+- `arrayBegin`：数组起始下标
+- `arrayEnd`：数组结束的下标
+- `arrayType`：数组内元素的数据类型
+- 两个构造函数分别用于新建并初始化Array变量，以及用户自定义数据类型中有Array的情况
+
+##### Class ScopeRec
 
 由于Pascal中的函数和变量存在作用域限制，并且Pascal语言具有能够嵌套定义函数的功能，我们在符号表的基础上定义了表示作用域的类ScopeRec，在每个作用域内维护一张符号表，而每张符号表之间也继承了作用域之间的拓扑关系。
+
+同时，由于Pascal中Record数据类型的特殊性，Record也将使用作用域类来维护。
 
 作用域类的结构定义如下所示：
 
@@ -1222,10 +1303,21 @@ public:
 	ScopeRec(string _scopeName) { 
         scopeName = _scopeName; 
     }
+    
+    ScopeRec(string _scopeName, ScopeRec* oriScope) {
+        scopeName = _scopeName;
+        depth = oriScope->depth;
+        parentScope = oriScope->parentScope;
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            hashTable[i] = oriScope->hashTable[i];
+        }
+        userDefType = oriScope->userDefType;
+        arrayList = oriScope->arrayList;
+	}
 };
 ```
 
-每个属性的含义如下：
+各成员的含义如下：
 
 - `scopeName`：作用域名称
 
@@ -1235,7 +1327,7 @@ public:
 
   定义全局作用域（global）的深度为0，在此基础上每嵌套一层depth增加1
 
-- `parentScope`：父作用域的指针
+- `parentScope`：指向父作用域的指针
 
   指向上一层作用域，用于查找上一层作用域定义的变量
 
@@ -1247,11 +1339,314 @@ public:
 
 - `recordList`：用于存储当前作用域中的所有`Record`类型的变量
 
-##### 
+- 两个构造函数分别用于新建并初始化作用域，和维护用户自定义数据类型中的Record变量
 
+#### 3.1.2 符号表操作实现
 
+根据语义分析的需求，为符号表维护了插入、查找、打印三个方法。
 
+- `void st_insert(string id, int lineNo, int size, string recType, string dataType)`
 
+  在语法树中检测到有新的变量或者函数被声明时，将该变量/函数插入对应作用域的符号表中。如果同名的变量/函数已经被声明过，则报出对应的语法错误，退出程序。
+
+- `string st_lookup(string id)`
+
+  根据函数/变量名在符号表中搜索，返回该函数/变量的数据类型（可用于类型检查）。考虑到作用域的特性，子作用域可以覆盖父作用域中的声明，且子作用域能够使用父作用域中定义的函数/变量，因此在检索时利用到作用域定义时候指向父作用域的指针。首先在当前作用域搜索，如果没有找到则进入上一层作用域，直到进入全局作用域。
+
+- `void st_print()`
+
+  依次打印所有的作用域以及作用域中符号表的如下信息：
+
+  - 作用域名称、作用域深度
+  - 符号名称、符号类型、数据类型、虚拟地址位置、行号信息
+
+  示例如下：
+
+  ![image-20200530141616754](/images/image-20200530141616754.png)
+
+#### 3.1.3 作用域操作实现
+
+根据语言特性，作用域类通过类似栈的操作方式进行维护，在进入子作用域时，将子作用域入栈，退出时将其出栈。维护了入栈、出栈、返回栈顶作用域的方法，除此之外维护作用域的创建和查找方法。
+
+- `void sc_pop()`
+
+  将栈顶的作用域pop出栈
+
+- `void sc_push(string name)`
+
+  根据作用域名将对应作用域push入栈
+
+- `Scope sc_top()`
+
+  返回栈顶的作用域（即当前子作用域）
+
+- `Scope sc_find(string name)`
+
+  根据作用域名称找到并返回对应作用域（用于用户自定义数据类型中Record类型的维护）
+
+- `Scope sc_create(string scopeName)`
+
+  在当前父作用域下创建新的子作用域，以scopeName作为作用域名称
+
+- `Scope sc_create(string scopeName, Scope oriScope)`
+
+  重载作用域创建函数，用于用户自定义数据类型中Record类型的维护
+
+### 3.2 语义分析
+
+语义分析的过程即根据抽象语法树生成作用域和符号表的过程。
+
+由于Pascal语法中作用域的特性，在遇到标志函数和Record的节点时，要新建一个作用域并将其入栈，退出时要将该作用域出栈。
+
+可以看出来，由于作用域结构的嵌套关系，作用域和符号表的创建将是从根节点到叶节点前序遍历的过程，而与之对应，作用域出栈的过程将是后序遍历。为了操作方便，通过traverse函数对语法树进行相应遍历。定义如下：
+
+```c++
+static void traverse(ast::BasicAstNode * node, void(*preProc) (ast::BasicAstNode *), void(*postProc) (ast::BasicAstNode *)) {
+	ast::childrenList* children = node->getChildrenList();
+	if (children->size()) {
+		for (auto child : *children) {
+			if (child != NULL) {
+				preProc(child);
+				traverse(child, preProc, postProc);
+				postProc(child);
+			}
+		}
+	}
+}
+```
+
+在这个函数中，可以实现对preProc指向的函数的前序遍历和对postProc指向的函数的后序遍历。
+
+在遍历过程中对作用域栈和符号表的操作分为以下几种情况：
+
+- 函数声明：在原作用域的符号表中插入函数的记录，创建新的作用域并入栈，在新的作用域的符号表中插入参数对应的记录
+- 常量/变量声明：向栈顶作用域的符号表中插入对应常量/变量的记录
+- 用户定义数据类型声明：向栈顶作用域的`userDefType`中插入对应记录
+- Array类型：向栈顶作用域的符号表中插入对应常量/变量，记录数据类型为Array。同时将数组起点、终点、元素数据类型等信息记录在对应作用域的`arrayList`中
+- Record类型：在原符号表中插入对应常量/变量，记录数据类型为Record，创建新的作用域并入栈，在新作用域的符号表中记录Record的成员信息
+- 声明的数据类型为用户定义类型：从当前作用域的`userDefType`中找到该用户定义类型对应的数据类型，用新的类型记录到符号表中
+
+###  3.3 类型检查
+
+类型检查即属性计算的过程。在该过程中，需要在抽象语法树中维护各节点的类型信息，同时检查是否具有语义层面上的类型错误，如果有错则打印报错信息。
+
+错误信息包括赋值时的类型匹配错误、不适当的左值类型（Record、Array等）、函数返回值类型错误、Array和Record的非法访问、重复/冲突定义、for循环语句条件错误、case语句选择条件和常量表达式类型不匹配、表达式计算时类型错误等等。
+
+类型检查也通过遍历语法树的方式来进行。由于需要查找符号表，在进行属性计算时需要让子作用域入栈，然后再进行对应的属性计算和错误检查。很显然，作用域入栈是一个前序遍历的过程，而属性计算和错误检查将是后序遍历的过程。因此我们依然会用到上一节所提到的`traverse`函数来对语法树进行遍历。
+
+### 3.4 测试
+
+#### 3.4.1 符号表测试
+
+##### 多层嵌套
+
+```Pascal
+PROGRAM procTest;
+CONST
+	cn = 2;
+	dn = 123.23;
+VAR	
+	k : INTEGER;
+
+PROCEDURE outer;
+VAR 
+	res : INTEGER;
+	added : INTEGER;
+	
+FUNCTION inner1(a , b : INTEGER) : INTEGER;
+BEGIN
+	inner1 := a + b;
+END;
+
+PROCEDURE inner2(aa : INTEGER; b :INTEGER);
+BEGIN
+	aa := inner1(aa , b);
+	k := k + 10;
+END;
+
+BEGIN
+	k := 0;
+	inner2(k , 10);
+END;
+
+BEGIN
+	outer;
+END.
+```
+
+输出符号表如下：
+
+![image-20200530162516414](/images/image-20200530162516414.png)
+
+##### 特殊数据类型
+
+```pascal
+PROGRAM arrayRecord;
+CONST
+    a = FALSE;
+    b = 10;
+    c = 2.2;
+    d = 't';
+TYPE
+    test = INTEGER;
+    atype = ARRAY [1..4] OF REAL;
+    rtype = RECORD
+        a : INTEGER;
+        b,c : REAL;
+    END;
+VAR
+    f : test;
+    h : STRING;
+    i : BOOLEAN;
+    j : ARRAY [0..3] OF INTEGER;
+    k : rtype;
+    r : atype;
+    e : INTEGER;
+	{e : STRING;}
+	rrrr : RECORD
+		ra : INTEGER;
+		rb : REAL;
+	END;
+
+BEGIN
+    f := 1;
+    h := 'string';
+    i := FALSE;
+    j[0] := 0 + 1 + 2;
+    e := j[0] + j[1] * j[2];
+    k.a := j[0] + b - c * 4 DIV 3 * 3;
+    k.b := 1.3;
+END.
+```
+
+输出符号表如下：
+
+![image-20200530162706942](/images/image-20200530162706942.png)
+
+#### 3.4.2 类型检查报错测试
+
+##### 变量未定义
+
+![image-20200530171623478](/images/image-20200530171623478.png)
+
+##### 赋值类型错误
+
+```Pascal
+VAR
+	f : INTEGER;
+BEGIN
+	f := 'test';
+END
+```
+
+![image-20200530162836368](/images/image-20200530162836368.png)
+
+##### 不适当的左值类型
+
+```pascal
+VAR
+	j : ARRAY [0..3] OF INTEGER;
+BEGIN
+	j := 2;
+END
+```
+
+![image-20200530163023087](/images/image-20200530163023087.png)
+
+##### 数组越界
+
+```pascal
+VAR
+	j : ARRAY [0..3] OF INTEGER;
+BEGIN
+	j[4] := 2;
+END
+```
+
+![image-20200530163827527](/images/image-20200530163827527.png)
+
+##### Record成员不存在
+
+```pascal
+CONST
+    a = FALSE;
+    d = 't';
+VAR
+    k : RECORD
+        a : INTEGER;
+        b,c : REAL;
+    END;
+BEGIN
+    k.d := 1.3;
+END.
+```
+
+![image-20200530164536014](/images/image-20200530164536014.png)
+
+##### 重复/冲突定义
+
+```pascal
+VAR
+	e : INTEGER;
+	e : STRING;
+```
+
+![image-20200530170615290](/images/image-20200530170615290.png)
+
+##### for循环条件错误
+
+```pascal
+VAR
+    b, c : INTEGER;
+    d : REAL;
+	str: STRING;
+BEGIN
+    FOR d:=1.1 TO 10 DO BEGIN 
+        c := c + 1;
+        WHILE c <= 5 DO BEGIN 
+            d := 0;
+            d := 0;
+        END;
+
+        REPEAT 
+            d := 0;
+        UNTIL c > 5;
+    END;
+END.
+```
+
+![image-20200530171301092](/images/image-20200530171301092.png)
+
+##### case条件类型不匹配
+
+```pascal
+VAR
+    b, c, d : INTEGER;
+	str: STRING;
+
+BEGIN
+    CASE str OF 
+		0: BEGIN str := 'A1'; c := 1; END;
+		1: str := 'B2';
+		2: str := 'C3';
+		3: str := 'D4';
+	END;
+END.
+```
+
+![image-20200530175233680](/images/image-20200530175233680.png)
+
+##### 表达式计算类型错误
+
+```pascal
+VAR A : INTEGER;
+	str : STRING;
+BEGIN
+	str := A;
+END.
+```
+
+![image-20200530175930259](/images/image-20200530175930259.png)
 
 
 
