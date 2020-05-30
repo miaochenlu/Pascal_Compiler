@@ -219,7 +219,7 @@ static bool canChange(string type1, string type2)
 
 static void checkNode(ast::BasicAstNode *node)
 {
-	if (node->nodeType != "Decl" && node->nodeType != "ProgramHead" && node->nodeType != "Parameter") {
+	if (node->nodeType != "Decl" && node->nodeType != "ProgramHead" && node->nodeType != "Parameter" ) {
 		ast::childrenList *children = node->getChildrenList();
 		for (auto child : *children) {
 			if (child->nodeType == "Name" || child->nodeType == "Identifier") {
@@ -311,7 +311,6 @@ static void checkNode(ast::BasicAstNode *node)
 			string memberName = (*(node->getChildrenList()))[1]->id;
 			string memberType;
 			int lineNo = node->lineNo;
-			sc_push(recordName);
 			memberType = st_lookupCurr(memberName);
 			if (memberType == "") {
 				cout << "Error in line[" << lineNo << "]: No member named '" << memberName << "' in '" << recordName << "'." << endl;
@@ -393,7 +392,7 @@ static void popScope(ast::BasicAstNode *node)
 
 static void pushScope(ast::BasicAstNode *node)
 {
-	if (node->nodeType == "ProgramHead") {
+	if (node->nodeType == "ProgramHead" || node->subType == "RecordElementRef") {
 		ast::childrenList* children = node->getChildrenList();
 		string progName;
 		for (auto child : *children) {

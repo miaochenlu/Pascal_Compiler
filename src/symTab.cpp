@@ -222,22 +222,17 @@ string sym::getArrayType(string id, string scope){
 }
 
 string sym::getRecordElementType(string id, string memberid, string scope){
-    Scope currentScope = getscope(scope);
-    /*
-    while (currentScope) {
-        for (auto record : currentScope->recordList) {
-            if (record.recordName == id) {
-                map<string, string>::iterator it;
-                it = record.recordMember.begin();
-                while (it != record.recordMember.end()) {
-                    if(it->first == memberid) return it->second;
-                    it++;
+    for (auto scope: scopes) {
+        if(scope->scopeName == id) {
+            int hashValue = hashFunc(memberid);
+            for (auto item : scope->hashTable[hashValue]) {
+                if (item.id == memberid) {
+                    return item.dataType;
                 }
             }
         }
-        currentScope = currentScope->parentScope;
     }
-     */
+
     return "";
 }
 
@@ -255,24 +250,20 @@ int sym::getArrayBegin(string id, string scope) {
 }
 
 int sym::getRecordNo(string id, string memberid, string scope) {
-    Scope currentScope = getscope(scope);
-    /*
-    while (currentScope) {
-        for (auto record : currentScope->recordList) {
-            if (record.recordName == id) {
-                map<string, string>::iterator it;
-                it = record.recordMember.begin();
-                int no = 0;
-                while (it != record.recordMember.end()) {
-                    if(it->first == memberid) return no;
-                    no++;
-                    it++;
+
+
+    for (auto scope: scopes) {
+        if(scope->scopeName == id) {
+            int hashValue = hashFunc(memberid);
+            for (auto item : scope->hashTable[hashValue]) {
+                if (item.id == memberid) {
+                    return item.order;
                 }
             }
         }
-        currentScope = currentScope->parentScope;
     }
-    */
+
+
     return -1;
 
 }

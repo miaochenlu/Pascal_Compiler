@@ -1618,7 +1618,7 @@ BEGIN
 END.
 ```
 
-![image-20200530171301092](/images/image-20200530171301092.png)
+![image-20200530171301092](images/image-20200530171301092.png)
 
 ##### case条件类型不匹配
 
@@ -1637,7 +1637,7 @@ BEGIN
 END.
 ```
 
-![image-20200530175233680](/images/image-20200530175233680.png)
+![image-20200530175233680](images/image-20200530175233680.png)
 
 ##### 表达式计算类型错误
 
@@ -1649,7 +1649,7 @@ BEGIN
 END.
 ```
 
-![image-20200530175930259](/images/image-20200530175930259.png)
+![image-20200530175930259](images/image-20200530175930259.png)
 
 
 
@@ -1977,7 +1977,7 @@ BEGIN
 END.
 ```
 
-![1590832204(1)](/images/1590832204(1).png)
+![1590832204(1)](images/1590832204(1).png)
 
 #### 4.5.2 控制语句测试
 
@@ -2068,7 +2068,6 @@ Casecase:                                         ; preds = %Casecond
 Casecond2:                                        ; preds = %Casecond
   %10 = icmp eq i32 %iadd1, 1
   br i1 %10, label %Casecase3, label %Casecond4
-  
 ...
 
 CaseContinue:                                     ; preds = %Casecase7, %Casecond6, %Casecase5, %Casecase3, %Casecase
@@ -2078,11 +2077,107 @@ CaseContinue:                                     ; preds = %Casecase7, %Casecon
 }
 ```
 
-#### 4.5.3 系统函数测试
+#### 4.5.3 数组/结构体/类型别名测试
+
+/test/arrayRecordTest.pas
+
+``` pascal
+PROGRAM arrayRecordTest;
+CONST
+    b = 10;
+    c = 2.2;
+TYPE
+    test = INTEGER;
+    rtype = RECORD
+        a : INTEGER;
+        b,c : REAL;
+    END;
+
+VAR
+    f : test;
+    i : INTEGER;
+    j : ARRAY [0..3] OF INTEGER;
+    k : rtype;
+
+BEGIN
+    FOR i:= 0 TO 2 DO BEGIN
+    	j[i] := i * i;
+    END;
+    f := b;
+    WRITELN(f);
+    WRITELN(j[1]);
+    WRITELN(j[2]);
+    k.a := j[0] + j[1] * j[2];
+    k.b := 1.3;
+    WRITELN(k.a);
+    WRITELN(k.b);
+END.
+```
+
+``` asm
+; ModuleID = 'Module'
+source_filename = "Module"
+
+@0 = internal global i32 zeroinitializer
+@1 = internal global i32 zeroinitializer
+@2 = internal global [4 x i32] zeroinitializer
+@3 = internal global { i32, double, double } zeroinitializer
+@printstring = private unnamed_addr constant [5 x i8] c"%d \0A\00"
+@printstring.1 = private unnamed_addr constant [5 x i8] c"%d \0A\00"
+@printstring.2 = private unnamed_addr constant [5 x i8] c"%d \0A\00"
+@printstring.3 = private unnamed_addr constant [5 x i8] c"%d \0A\00"
+@printstring.4 = private unnamed_addr constant [6 x i8] c"%lf \0A\00"
+
+declare i32 @printf(i8*, ...)
+
+define void @main() {
+ARRAYRECORDTEST:
+  store i32 0, i32* @1
+  br label %ForLoop
+
+ForLoop:                                          ; preds = %ForLoop, %ARRAYRECORDTEST
+  %0 = load i32, i32* @1
+  %1 = sub i32 %0, 0
+  %arrayElementRef = getelementptr [4 x i32], [4 x i32]* @2, i32 0, i32 %1
+  %2 = load i32, i32* @1
+  %3 = load i32, i32* @1
+  %imul = mul i32 %2, %3
+  store i32 %imul, i32* %arrayElementRef
+  %4 = load i32, i32* @1
+  %5 = add i32 %4, 1
+  store i32 %5, i32* @1
+  %6 = load i32, i32* @1
+  %7 = icmp eq i32 %6, 2
+  br i1 %7, label %ForContinue, label %ForLoop
+
+ForContinue:                                      ; preds = %ForLoop
+  store i32 10, i32* @0
+  %8 = load i32, i32* @0
+  %write = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @printstring, i32 0, i32 0), i32 %8)
+  %array = load i32, i32* getelementptr inbounds ([4 x i32], [4 x i32]* @2, i32 0, i32 1)
+  %write1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @printstring.1, i32 0, i32 0), i32 %array)
+  %array2 = load i32, i32* getelementptr inbounds ([4 x i32], [4 x i32]* @2, i32 0, i32 2)
+  %write3 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @printstring.2, i32 0, i32 0), i32 %array2)
+  %load = load i32, i32* getelementptr inbounds ([4 x i32], [4 x i32]* @2, i32 0, i32 1)
+  %load4 = load i32, i32* getelementptr inbounds ([4 x i32], [4 x i32]* @2, i32 0, i32 2)
+  %imul5 = mul i32 %load, %load4
+  %load6 = load i32, i32* getelementptr inbounds ([4 x i32], [4 x i32]* @2, i32 0, i32 0)
+  %iadd = add i32 %load6, %imul5
+  store i32 %iadd, i32* getelementptr inbounds ({ i32, double, double }, { i32, double, double }* @3, i32 0, i32 0)
+  store double 1.300000e+00, double* getelementptr inbounds ({ i32, double, double }, { i32, double, double }* @3, i32 0, i32 1)
+  %record = load i32, i32* getelementptr inbounds ({ i32, double, double }, { i32, double, double }* @3, i32 0, i32 0)
+  %write7 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @printstring.3, i32 0, i32 0), i32 %record)
+  %record8 = load double, double* getelementptr inbounds ({ i32, double, double }, { i32, double, double }* @3, i32 0, i32 1)
+  %write9 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([6 x i8], [6 x i8]* @printstring.4, i32 0, i32 0), double %record8)
+  ret void
+}
+```
+
+#### 4.5.4 系统函数测试
 
 测试了系统函数的功能：/test/sysFuncTest.pas
 
-![WeChat Screenshot_20200530174311](/images/WeChat Screenshot_20200530174311.png)
+![WeChat Screenshot_20200530174311](images/WeChat Screenshot_20200530174311.png)
 
 
 
@@ -2184,7 +2279,7 @@ make
 
 运行 Pascal_Compiler 即可看到使用说明。编译器支持输出 `.ll` 的 llvm 中间代码文件，`.s` 汇编代码文件， `.o` 的 obj文件 以及可执行文件 (默认)。
 
-![WeChat Screenshot_20200529105550](./images/WeChat Screenshot_20200529105550.png)
+![WeChat Screenshot_20200529105550](images/WeChat Screenshot_20200529105550.png)
 
 ####  6.2.1 生成树 & 符号表显示
 
@@ -2192,26 +2287,30 @@ make
 
 生成树：
 
-![WeChat Screenshot_20200529120519](./images/WeChat Screenshot_20200529120519.png)
+![WeChat Screenshot_20200529120519](images/WeChat Screenshot_20200529120519.png)
 
 符号表：
 
-![WeChat Screenshot_20200529120539](./images/WeChat Screenshot_20200529120539.png)
+![WeChat Screenshot_20200529120539](images/WeChat Screenshot_20200529120539.png)
 
 #### 6.2.2 生成 llvm 中间代码
 
 在编译中加入 `-l` 参数即可生成 llvm 中间代码
 
-![WeChat Screenshot_20200529121043](/images/WeChat Screenshot_20200529121043.png)
+![WeChat Screenshot_20200529121043](images/WeChat Screenshot_20200529121043.png)
 
 #### 6.2.3 生成汇编代码
 
 在编译中加入 `-s` 参数即可生成汇编代码
 
-![WeChat Screenshot_20200529121344](/images/WeChat Screenshot_20200529121344.png)
+![WeChat Screenshot_20200529121344](images/WeChat Screenshot_20200529121344.png)
 
 #### 6.2.4 生成可执行文件
 
 默认参数会生成可执行文件，直接运行。
 
-![1590725921(1)](/images/1590725921(1).png)
+![1590725921(1)](images/1590725921(1).png)
+
+
+
+## 7 分工

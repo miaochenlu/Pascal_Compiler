@@ -396,8 +396,16 @@ namespace ast {
         irBuilder.CreateStore(temp, id);
         llvm::Value* llvmEnd = end->codeGen();
         loadid = irBuilder.CreateLoad(id);
-        llvm::Value* llvmCond = irBuilder.CreateICmpEQ(loadid, llvmEnd);
-        irBuilder.CreateCondBr(llvmCond, continueBlock, loopBlock);
+        llvm::Value* llvmCond = nullptr;
+        switch (direction) {
+            case Direction::To:
+                llvmCond = irBuilder.CreateICmpSLE(loadid, llvmEnd);
+                break;
+            case Direction ::DownTo:
+                llvmCond = irBuilder.CreateICmpSGE(loadid, llvmEnd);
+                break;
+        }
+        irBuilder.CreateCondBr(llvmCond, loopBlock, continueBlock);
         irBuilder.SetInsertPoint(continueBlock);
 
         return nullptr;

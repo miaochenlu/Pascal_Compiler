@@ -22,6 +22,7 @@ BEGIN
     f := b;
     WRITELN(f);
     WRITELN(j[1]);
+    WRITELN(j[2]);
     k.a := j[0] + j[1] * j[2];
     k.b := 1.3;
     WRITELN(k.a);
