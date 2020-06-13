@@ -1357,7 +1357,7 @@ END.
 
 LLVM 设计了 **LLVM IR** 的中间代码， 并以**库(Library)** 的方式提供一系列接口， 提供生成、操作IR，生成目标平台代码等功能。
 
-![WeChat Screenshot_20200520130516](images/WeChat Screenshot_20200520130516.png)
+<img src="images/20200520130516.png" alt="WeChat Screenshot_20200520130516" style="zoom:50%;" />
 
 LLVM IR 有三种不同的形式：内存中的编译中间语言（IR），保存在硬盘上的 bitcode（`.bc` 文件，适合快速地被一个 JIT 编译器加载），一个可读性的汇编语言表示 (`.ll` 文件)。LLVM项目提供不同代码之间的相互转换。
 
@@ -2009,7 +2009,7 @@ make
 
 运行 Pascal_Compiler 即可看到使用说明。编译器支持输出 `.ll` 的 llvm 中间代码文件，`.s` 汇编代码文件， `.o` 的 obj文件 以及可执行文件 (默认)。
 
-![WeChat Screenshot_20200529105550](images/WeChat Screenshot_20200529105550.png)
+<img src="images/20200529105550.png" alt="WeChat Screenshot_20200529105550" style="zoom:50%;" />
 
 ####  6.2.1 生成树 & 符号表显示
 
@@ -2017,23 +2017,23 @@ make
 
 生成树：
 
-![WeChat Screenshot_20200529120519](images/WeChat Screenshot_20200529120519.png)
+<img src="images/20200529120519.png" alt="WeChat Screenshot_20200529120519" style="zoom:50%;" />
 
 符号表：
 
-![WeChat Screenshot_20200529120539](images/WeChat Screenshot_20200529120539.png)
+<img src="images/20200529120539.png" alt="WeChat Screenshot_20200529120539" style="zoom:50%;" />
 
 #### 6.2.2 生成 llvm 中间代码
 
 在编译中加入 `-l` 参数即可生成 llvm 中间代码
 
-![WeChat Screenshot_20200529121043](images/WeChat Screenshot_20200529121043.png)
+<img src="images/20200529121043.png" alt="WeChat Screenshot_20200529121043" style="zoom:50%;" />
 
 #### 6.2.3 生成汇编代码
 
 在编译中加入 `-s` 参数即可生成汇编代码
 
-![WeChat Screenshot_20200529121344](images/WeChat Screenshot_20200529121344.png)
+<img src="images/20200529121344.png" alt="WeChat Screenshot_20200529121344" style="zoom:50%;" />
 
 #### 6.2.4 生成可执行文件
 
