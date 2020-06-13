@@ -1,0 +1,4 @@
+Code文件夹中放了源代码文件
+Pascal.xmind是我们画出的pascal文法示意图
+report_group5.pdf是实验报告
+exec文件夹放可执行程序，如需测试，可进入exec文件夹。具体运行指南请看exec/readme.txt
